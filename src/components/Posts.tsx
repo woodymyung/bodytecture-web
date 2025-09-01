@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { blogPosts } from '@/data/mockData';
-import { getPosts } from '@/lib/strapi';
+import { getPosts, STRAPI_URL } from '@/lib/strapi';
 import { BlogPost } from '@/types';
 
 // 바디텍쳐 포스트 (블로그) 컴포넌트
@@ -9,19 +12,20 @@ const Posts: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   // Strapi에서 포스트 데이터 가져오기
+  // Strapi API를 통해 실시간 포스트 데이터를 가져오고, 실패 시 mockData로 폴백 처리
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const data = await getPosts();
         if (data.length > 0) {
-          setPosts(data);
+          setPosts(data); // Strapi에서 가져온 실제 데이터 사용
         } else {
-          // Strapi에 데이터가 없으면 mockData 사용
+          // Strapi에 데이터가 없으면 mockData 사용 (개발 환경용)
           setPosts(blogPosts);
         }
       } catch (error) {
         console.error('포스트 데이터 로딩 실패:', error);
-        // 폴백으로 기존 mockData 사용
+        // 폴백으로 기존 mockData 사용 (네트워크 오류 시)
         setPosts(blogPosts);
       } finally {
         setLoading(false);
@@ -66,12 +70,12 @@ const Posts: React.FC = () => {
               key={post.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
-              {/* 포스트 이미지 */}
+              {/* 포스트 이미지 - Strapi의 coverImage 필드를 사용하며, 없을 경우 기본 아이콘 표시 */}
               <div className="aspect-video bg-gray-200 flex items-center justify-center">
-                {post.attributes?.image?.data ? (
+                {post.coverImage ? (
                   <img
-                    src={`${STRAPI_URL}${post.attributes.image.data.attributes.url}`}
-                    alt={post.attributes.title}
+                    src={`${STRAPI_URL}${post.coverImage}`}
+                    alt={post.title}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -83,26 +87,26 @@ const Posts: React.FC = () => {
                 )}
               </div>
 
-              {/* 포스트 내용 */}
+              {/* 포스트 내용 - Strapi의 title, slug, content 필드를 직접 사용하여 표시 */}
               <div className="p-6">
                 <div className="text-sm text-gray-500 mb-2">
-                  {post.attributes ? formatDate(post.attributes.publishedAt || post.attributes.createdAt) : formatDate(post.date)}
+                  {formatDate(post.publishedAt || post.published || post.createdAt || post.date)}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors duration-200">
-                  <a href={`/blog/${post.attributes?.slug || post.slug}`}>
-                    {post.attributes?.title || post.title}
-                  </a>
+                  <Link href={`/posts/${post.slug}`}>
+                    {post.title}
+                  </Link>
                 </h3>
                 <p className="text-gray-600 line-clamp-3">
-                  {post.attributes?.excerpt || post.excerpt}
+                  {post.content?.[0]?.children?.[0]?.text || post.excerpt || '내용이 없습니다.'}
                 </p>
                 <div className="mt-4">
-                  <a
-                    href={`/blog/${post.attributes?.slug || post.slug}`}
+                  <Link
+                    href={`/posts/${post.slug}`}
                     className="text-blue-600 hover:text-blue-700 font-medium text-sm"
                   >
                     더 읽어보기 →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>

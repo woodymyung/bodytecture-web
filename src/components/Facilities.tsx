@@ -100,7 +100,7 @@ const Facilities: React.FC = () => {
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                    index === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
+                    index === currentIndex ? 'bg-red-600' : 'bg-gray-300'
                   }`}
                   aria-label={`시설 ${index + 1}번으로 이동`}
                 />
@@ -116,7 +116,7 @@ const Facilities: React.FC = () => {
                   key={facility.id}
                   className={`p-6 rounded-lg border-2 transition-all duration-300 ${
                     index === currentIndex
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-red-500 bg-red-50'
                       : 'border-gray-200 bg-white'
                   }`}
                 >
@@ -134,7 +134,7 @@ const Facilities: React.FC = () => {
             <div className="mt-8 text-center">
               <a
                 href="/facilities"
-                className="bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-block"
+                className="bg-red-600 text-white hover:bg-red-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-block"
               >
                 자세히 보기
               </a>
@@ -143,22 +143,76 @@ const Facilities: React.FC = () => {
         </div>
 
         {/* 시설 특징 요약 */}
-        <div className="mt-16 grid md:grid-cols-4 gap-6 text-center">
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="text-3xl font-bold text-blue-600 mb-2">200명</div>
-            <p className="text-gray-600">최대 수용 인원</p>
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">시설 특징</h3>
+            <p className="text-gray-600">바디텍쳐의 특별한 시설 운영 방식</p>
           </div>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="text-3xl font-bold text-blue-600 mb-2">B1~1F</div>
-            <p className="text-gray-600">층별 구성</p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* 최대 수용 인원 */}
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600 mb-1">200명</div>
+                <p className="text-gray-700 font-medium">최대 수용 인원</p>
+                <p className="text-sm text-gray-600 mt-1">정원제 운영으로 쾌적함 보장</p>
+              </div>
+            </div>
+
+            {/* 층별 구성 */}
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600 mb-1">B1~1F</div>
+                <p className="text-gray-700 font-medium">층별 구성</p>
+                <p className="text-sm text-gray-600 mt-1">지하1층 ~ 지상1층 완전 시설</p>
+              </div>
+            </div>
+
+            {/* 운영 시간 */}
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600 mb-1">24시간</div>
+                <p className="text-gray-700 font-medium">운영 시간</p>
+                <p className="text-sm text-gray-600 mt-1">365일 연중무휴 운영</p>
+              </div>
+            </div>
+
+            {/* 주차 공간 */}
+            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 border border-red-200 hover:shadow-lg transition-all duration-300">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-red-600 mb-1">무료</div>
+                <p className="text-gray-700 font-medium">주차 공간</p>
+                <p className="text-sm text-gray-600 mt-1">편리한 무료 주차 제공</p>
           </div>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="text-3xl font-bold text-blue-600 mb-2">24시간</div>
-            <p className="text-gray-600">운영 시간</p>
           </div>
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="text-3xl font-bold text-blue-600 mb-2">무료</div>
-            <p className="text-gray-600">주차 공간</p>
           </div>
         </div>
       </div>

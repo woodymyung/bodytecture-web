@@ -25,59 +25,92 @@ const Trainers: React.FC = () => {
             >
               {/* 트레이너 이미지 */}
               <div className="aspect-square bg-gray-200 flex items-center justify-center">
-                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-blue-600">
-                    {trainer.name.charAt(0)}
-                  </span>
-                </div>
+                              <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
+                <span className="text-4xl font-bold text-red-600">
+                  {trainer.name.charAt(0)}
+                </span>
+              </div>
               </div>
 
               {/* 트레이너 정보 */}
-              <div className="p-6 text-center">
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
                   {trainer.name}
                 </h3>
-                <p className="text-gray-600">
-                  {trainer.description || '전문 트레이너'}
-                </p>
+
+                {/* 경력 정보 */}
+                {trainer.experience && trainer.experience.length > 0 && (
+                  <div className="mb-4">
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      {trainer.experience.slice(0, 3).map((exp, index) => (
+                        <li key={index} className="flex items-center">
+                          <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-2 flex-shrink-0"></span>
+                          {exp}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* 소셜 미디어 아이콘 */}
+                {trainer.socialMedia && (
+                  <div className="flex justify-center space-x-3 mb-4">
+                    {trainer.socialMedia.instagram && (
+                      <a
+                        href={trainer.socialMedia.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-200"
+                        aria-label={`${trainer.name} 인스타그램`}
+                      >
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                      </a>
+                    )}
+                    {trainer.socialMedia.naverBlog && (
+                      <a
+                        href={trainer.socialMedia.naverBlog}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-200"
+                        aria-label={`${trainer.name} 네이버 블로그`}
+                      >
+                        <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V12.845z"/>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {/* 버튼 그룹 */}
+                <div className="space-y-2">
+                  {/* OT예약 버튼 (Primary) */}
+                  <a
+                    href="/#contact"
+                    className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white hover:bg-red-700 font-medium rounded-lg transition-all duration-200"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    OT예약 상담
+                  </a>
+
+                  {/* 자세히 보기 버튼 (Secondary) */}
+                  <a
+                    href={`/trainers#trainer-${trainer.id}`}
+                    className="w-full inline-flex items-center justify-center px-4 py-2 border border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-medium rounded-lg transition-all duration-200"
+                  >
+                    자세히 보기
+                    <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* 트레이너 특징 설명 */}
-        <div className="mt-12 text-center">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">전문 자격증 보유</h3>
-              <p className="text-gray-600 text-sm">모든 트레이너가 전문 자격증을 보유하고 있습니다</p>
-            </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">친절한 서비스</h3>
-              <p className="text-gray-600 text-sm">회원님 한분 한분께 최선을 다하는 친절한 서비스</p>
-            </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">맞춤 프로그램</h3>
-              <p className="text-gray-600 text-sm">개인의 목표와 체력에 맞는 최적의 운동 프로그램</p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

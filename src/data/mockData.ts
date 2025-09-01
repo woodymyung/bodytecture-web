@@ -7,25 +7,61 @@ export const trainers: Trainer[] = [
     id: '1',
     name: '김권',
     image: '/trainers/kim-kwon.jpg',
-    description: '전문 트레이너'
+    description: '전문 트레이너',
+    experience: [
+      'NSCA-CSCS 자격증 보유',
+      '5년 이상 트레이닝 경력',
+      '개인 PT 전문'
+    ],
+    socialMedia: {
+      instagram: 'https://instagram.com/boditex_trainer_kim',
+      naverBlog: 'https://blog.naver.com/boditex_kimkwon'
+    }
   },
   {
     id: '2',
     name: '김예은',
     image: '/trainers/kim-ye-eun.jpg',
-    description: '전문 트레이너'
+    description: '전문 트레이너',
+    experience: [
+      'NASM-PES 자격증 보유',
+      '3년 이상 트레이닝 경력',
+      '다이어트 전문 트레이너'
+    ],
+    socialMedia: {
+      instagram: 'https://instagram.com/boditex_trainer_kimye',
+      naverBlog: 'https://blog.naver.com/boditex_kimye'
+    }
   },
   {
     id: '3',
     name: '전영주',
     image: '/trainers/jeon-young-ju.jpg',
-    description: '전문 트레이너'
+    description: '전문 트레이너',
+    experience: [
+      'ACSM 자격증 보유',
+      '4년 이상 트레이닝 경력',
+      '체형 교정 전문'
+    ],
+    socialMedia: {
+      instagram: 'https://instagram.com/boditex_trainer_jeonyj',
+      naverBlog: 'https://blog.naver.com/boditex_jeonyj'
+    }
   },
   {
     id: '4',
     name: '전채운',
     image: '/trainers/jeon-chae-un.jpg',
-    description: '전문 트레이너'
+    description: '전문 트레이너',
+    experience: [
+      'KATI 자격증 보유',
+      '6년 이상 트레이닝 경력',
+      '근력 트레이닝 전문'
+    ],
+    socialMedia: {
+      instagram: 'https://instagram.com/boditex_trainer_jeoncu',
+      naverBlog: 'https://blog.naver.com/boditex_jeoncu'
+    }
   }
 ];
 

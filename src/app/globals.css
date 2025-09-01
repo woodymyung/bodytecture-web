@@ -3,11 +3,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary-red-600: #dc2626;
+  --primary-red-700: #b91c1c;
+  --secondary-red-100: #fee2e2;
+  --secondary-red-200: #fecaca;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary-red-600: var(--primary-red-600);
+  --color-primary-red-700: var(--primary-red-700);
+  --color-secondary-red-100: var(--secondary-red-100);
+  --color-secondary-red-200: var(--secondary-red-200);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

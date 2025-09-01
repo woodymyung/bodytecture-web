@@ -5,6 +5,11 @@ export interface Trainer {
   name: string;
   image: string;
   description?: string;
+  experience?: string[]; // 경력 정보 (최대 3줄)
+  socialMedia?: {
+    instagram?: string;
+    naverBlog?: string;
+  };
 }
 
 export interface Review {

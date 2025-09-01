@@ -22,13 +22,6 @@ export default function TrainersPage() {
           </div>
         </section>
 
-        {/* 트레이너 섹션 */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Trainers />
-          </div>
-        </section>
-
         {/* 트레이너 상세 정보 */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,6 +33,7 @@ export default function TrainersPage() {
               {trainers.map((trainer, index) => (
                 <div
                   key={trainer.id}
+                  id={`trainer-${trainer.id}`}
                   className={`flex flex-col ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-8 items-center`}
                 >
                   {/* 트레이너 이미지 */}
