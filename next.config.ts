@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,  // 정적 export에서 이미지 최적화 비활성화
   },
-  basePath: '/bodytecture-web',  // GitHub Pages 서브디렉토리 경로 설정
+  // basePath를 제거하고 상대 경로 사용
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : undefined,  // 프로덕션에서 상대 경로 사용
 };
 
 export default nextConfig;
