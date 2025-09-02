@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { facilities } from '@/data/mockData';
 import { Facility } from '@/types';
 
@@ -132,12 +133,12 @@ const Facilities: React.FC = () => {
 
             {/* 자세히 보기 버튼 */}
             <div className="mt-8 text-center">
-              <a
+              <Link
                 href="/facilities"
                 className="bg-red-600 text-white hover:bg-red-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-block"
               >
                 자세히 보기
-              </a>
+              </Link>
             </div>
           </div>
         </div>
