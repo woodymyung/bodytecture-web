@@ -36,8 +36,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Rename assets
-        run: node scripts/rename-assets.js
+      - name: Add .nojekyll file
+        run: touch out/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
