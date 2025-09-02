@@ -4,7 +4,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
   output: 'export',  // Next.js를 정적 HTML/CSS/JS 파일로 변환 (GitHub Pages용)
-  trailingSlash: true,  // GitHub Pages 호환성을 위한 trailing slash
+  trailingSlash: false,  // trailing slash 비활성화로 라우팅 문제 방지
   ...(isProd && { basePath: '/bodytecture-web' }),  // 배포시에만 GitHub Pages 서브디렉토리 경로 설정
   // assetPrefix는 제거 - 빌드 후 _next를 assets로 변경하는 스크립트 사용
   images: {

@@ -1,20 +1,19 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
 
 // 바디텍쳐 포스트 (블로그) 컴포넌트
 const Posts: React.FC = () => {
-  const [posts] = useState<BlogPost[]>(blogPosts);
+  const posts = blogPosts;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    // Hydration 문제를 방지하기 위해 직접 포매팅
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}년 ${month}월 ${day}일`;
   };
 
   return (

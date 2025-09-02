@@ -47,7 +47,7 @@ export const trainers: Trainer[] = [
   },
   {
     id: '3',
-    name: '천정주',
+    name: '천영주',
     slug: 'chunjeongju',
     image: '/trainers/jeon-young-ju.jpg',
     description: '체형 교정과 재활 운동을 통한 건강한 몸만들기',

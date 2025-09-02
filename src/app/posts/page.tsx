@@ -56,11 +56,13 @@ export default function PostsPage() {
                   {/* 포스트 내용 */}
                   <div className="p-6">
                     <div className="text-sm text-gray-500 mb-2">
-                      {new Date(post.date).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
+                      {(() => {
+                        const date = new Date(post.date);
+                        const year = date.getFullYear();
+                        const month = date.getMonth() + 1;
+                        const day = date.getDate();
+                        return `${year}년 ${month}월 ${day}일`;
+                      })()}
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-3">
                       {post.title}
