@@ -2,47 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { reviews } from '@/data/mockData';
-import { getReviews } from '@/lib/strapi';
 import { Review } from '@/types';
 
 // 고객 후기 슬라이더 컴포넌트
 const Reviews: React.FC = () => {
-  const [reviewsData, setReviewsData] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [reviewsData] = useState<Review[]>(reviews);
+  const [loading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [usingFallback, setUsingFallback] = useState(false);
-
-  // Strapi에서 리뷰 데이터 가져오기
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        setError(null);
-        const data = await getReviews();
-
-        if (data.length > 0) {
-          setReviewsData(data);
-          setUsingFallback(false);
-          console.log('✅ Strapi에서 리뷰 데이터를 성공적으로 로드했습니다');
-        } else {
-          // Strapi에 데이터가 없으면 mockData 사용
-          setReviewsData(reviews);
-          setUsingFallback(true);
-          console.log('📝 Strapi에 데이터가 없어 샘플 데이터를 표시합니다');
-        }
-      } catch (error) {
-        console.error('❌ 리뷰 데이터 로딩 실패:', error);
-        setError('서버 연결에 실패했습니다. 샘플 데이터를 표시합니다.');
-        // 폴백으로 기존 mockData 사용
-        setReviewsData(reviews);
-        setUsingFallback(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchReviews();
-  }, []);
 
   // 자동 슬라이드 기능
   useEffect(() => {
@@ -73,28 +39,6 @@ const Reviews: React.FC = () => {
     );
   };
 
-  // 로딩 상태일 때 표시
-  if (loading) {
-    return (
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              고객 후기
-            </h2>
-            <p className="text-lg text-gray-600">
-              바디텍쳐를 이용하신 회원님들의 생생한 후기입니다
-            </p>
-          </div>
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">후기를 불러오는 중...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -105,24 +49,6 @@ const Reviews: React.FC = () => {
           <p className="text-lg text-gray-600">
             바디텍쳐를 이용하신 회원님들의 생생한 후기입니다
           </p>
-
-          {/* 에러 메시지 표시 */}
-          {error && (
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-yellow-800 text-sm">
-                ⚠️ {error}
-              </p>
-            </div>
-          )}
-
-          {/* 폴백 데이터 사용 표시 */}
-          {usingFallback && !error && (
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-blue-800 text-sm">
-                ℹ️ 현재 샘플 데이터를 표시하고 있습니다
-              </p>
-            </div>
-          )}
         </div>
 
         {/* 슬라이더 컨테이너 */}

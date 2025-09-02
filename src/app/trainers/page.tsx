@@ -1,7 +1,7 @@
 // 바디텍쳐 트레이너 소개 페이지
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import Trainers from '@/components/Trainers';
+// import Trainers from '@/components/Trainers';
 import { trainers } from '@/data/mockData';
 import Link from 'next/link';
 
