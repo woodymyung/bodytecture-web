@@ -2,7 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/bodytecture-web",
+  "homepage": "https://woodymyung.github.io/bodytecture-web/",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
