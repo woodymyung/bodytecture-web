@@ -61,20 +61,13 @@ export default function PostsPage() {
                         day: 'numeric'
                       })}
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 hover:text-purple-600 transition-colors duration-200">
-                      <a href={`/blog/${post.slug}`}>
-                        {post.title}
-                      </a>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      {post.title}
                     </h3>
                     <p className="text-gray-600 line-clamp-3 mb-4">
                       {post.excerpt}
                     </p>
-                    <a
-                      href={`/blog/${post.slug}`}
-                      className="text-purple-600 hover:text-purple-700 font-medium text-sm"
-                    >
-                      더 읽어보기 →
-                    </a>
+
                   </div>
                 </article>
               ))}

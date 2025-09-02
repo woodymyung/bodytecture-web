@@ -92,22 +92,13 @@ const Posts: React.FC = () => {
                 <div className="text-sm text-gray-500 mb-2">
                   {formatDate(post.publishedAt || post.createdAt || post.date || '')}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors duration-200">
-                  <Link href={`/posts/${post.slug}`}>
-                    {post.title}
-                  </Link>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  {post.title}
                 </h3>
                 <p className="text-gray-600 line-clamp-3">
                   {post.content?.[0]?.children?.[0]?.text || post.excerpt || '내용이 없습니다.'}
                 </p>
-                <div className="mt-4">
-                  <Link
-                    href={`/posts/${post.slug}`}
-                    className="text-blue-600 hover:text-blue-700 font-medium text-sm"
-                  >
-                    더 읽어보기 →
-                  </Link>
-                </div>
+
               </div>
             </article>
           ))}
