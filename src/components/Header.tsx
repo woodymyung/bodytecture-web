@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 // 헤더 컴포넌트 - 바디텍쳐 로고와 네비게이션 메뉴를 포함
 const Header: React.FC = () => {
@@ -14,6 +15,7 @@ const Header: React.FC = () => {
     { label: '트레이너', href: '/trainers' },
     { label: '시설', href: '/facilities' },
     { label: '포스트', href: '/posts' },
+    { label: '리뷰', href: '/reviews' },
     { label: '문의하기', href: '/#contact' },
   ];
 
@@ -31,13 +33,23 @@ const Header: React.FC = () => {
           {/* 데스크탑 메뉴 */}
           <nav className="hidden md:flex space-x-8">
             {menuItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-              >
-                {item.label}
-              </a>
+              item.href.startsWith('/#') ? (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
           </nav>
 
@@ -90,14 +102,25 @@ const Header: React.FC = () => {
       <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
           {menuItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {item.label}
-            </a>
+            item.href.startsWith('/#') ? (
+              <a
+                key={item.label}
+                href={item.href}
+                className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.label}
+              </Link>
+            )
           ))}
         </div>
       </div>
