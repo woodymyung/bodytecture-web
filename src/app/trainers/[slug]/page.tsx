@@ -5,8 +5,9 @@ import Footer from '@/components/Footer';
 import { trainers } from '@/data/mockData';
 import Link from 'next/link';
 
-export default function TrainerPage({ params }: { params: { slug: string } }) {
-  const trainer = trainers.find(t => t.slug === params.slug);
+export default async function TrainerPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const trainer = trainers.find(t => t.slug === slug);
 
   if (!trainer) {
     notFound();
@@ -182,7 +183,7 @@ export default function TrainerPage({ params }: { params: { slug: string } }) {
                   트레이닝 철학
                 </h2>
                 <p className="text-gray-700 text-lg leading-relaxed italic">
-                  "{trainer.philosophy}"
+                  &ldquo;{trainer.philosophy}&rdquo;
                 </p>
               </div>
             )}
@@ -263,8 +264,9 @@ export async function generateStaticParams() {
 }
 
 // 메타데이터 생성
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const trainer = trainers.find(t => t.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const trainer = trainers.find(t => t.slug === slug);
   
   if (!trainer) {
     return {

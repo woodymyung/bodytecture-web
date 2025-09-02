@@ -2,6 +2,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Posts from '@/components/Posts';
+import Link from 'next/link';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
 
@@ -118,18 +119,18 @@ export default function PostsPage() {
               바디텍쳐의 다양한 서비스와 정보를 확인해보세요
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/facilities"
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200 inline-block text-center"
               >
                 시설 안내
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/trainers"
-                className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
+                className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 inline-block text-center"
               >
                 트레이너 소개
-              </a>
+              </Link>
               <a
                 href="/reviews"
                 className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"

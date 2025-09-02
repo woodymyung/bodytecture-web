@@ -2,6 +2,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Facilities from '@/components/Facilities';
+import Link from 'next/link';
 import { facilities } from '@/data/mockData';
 
 export default function FacilitiesPage() {
@@ -143,12 +144,12 @@ export default function FacilitiesPage() {
               바디텍쳐의 다른 정보들도 확인해보세요
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/trainers"
-                className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
+                className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 inline-block text-center"
               >
                 트레이너 소개
-              </a>
+              </Link>
               <a
                 href="/reviews"
                 className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
