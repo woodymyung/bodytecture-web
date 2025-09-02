@@ -65,7 +65,7 @@ const Posts: React.FC = () => {
           <>
             {/* 블로그 포스트 그리드 */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {posts.slice(0, 6).map((post: any) => (
+              {posts.slice(0, 6).map((post: BlogPost) => (
             <article
               key={post.id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
@@ -90,7 +90,7 @@ const Posts: React.FC = () => {
               {/* 포스트 내용 - Strapi의 title, slug, content 필드를 직접 사용하여 표시 */}
               <div className="p-6">
                 <div className="text-sm text-gray-500 mb-2">
-                  {formatDate(post.publishedAt || post.published || post.createdAt || post.date)}
+                  {formatDate(post.publishedAt || post.createdAt || post.date || '')}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors duration-200">
                   <Link href={`/posts/${post.slug}`}>
@@ -115,12 +115,12 @@ const Posts: React.FC = () => {
 
             {/* 자세히 보기 버튼 */}
             <div className="text-center">
-              <a
+              <Link
                 href="/posts"
                 className="bg-blue-600 text-white hover:bg-blue-700 font-semibold py-3 px-8 rounded-lg transition-colors duration-200 inline-block"
               >
                 자세히 보기
-              </a>
+              </Link>
             </div>
           </>
         )}

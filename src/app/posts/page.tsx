@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Posts from '@/components/Posts';
 import { blogPosts } from '@/data/mockData';
-import { getPosts } from '@/lib/strapi';
+import { BlogPost } from '@/types';
 
 export default function PostsPage() {
   return (
@@ -38,7 +38,7 @@ export default function PostsPage() {
             </h2>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogPosts.map((post: any) => (
+              {blogPosts.map((post: BlogPost) => (
                 <article
                   key={post.id}
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"

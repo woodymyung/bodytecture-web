@@ -4,13 +4,26 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getPostBySlug, STRAPI_URL } from '@/lib/strapi';
+import { BlogPost } from '@/types';
+import { blogPosts } from '@/data/mockData';
+
+// Strapi rich text content 타입 정의
+interface RichTextChild {
+  type: string;
+  text?: string;
+}
+
+interface RichTextBlock {
+  type: string;
+  children?: RichTextChild[];
+}
 
 // 포스트 상세 페이지 컴포넌트
 const PostDetail: React.FC = () => {
   const params = useParams();
   const slug = params.slug as string;
 
-  const [post, setPost] = useState<any>(null);
+  const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -101,7 +114,7 @@ const PostDetail: React.FC = () => {
         {/* 포스트 헤더 */}
         <header className="mb-8">
           <div className="text-sm text-gray-500 mb-2">
-            {formatDate(post.publishedAt || post.published || post.createdAt)}
+            {formatDate(post.publishedAt || post.createdAt || '')}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             {post.title}
@@ -124,11 +137,11 @@ const PostDetail: React.FC = () => {
           {/* Strapi의 content 필드 처리 */}
           {post.content && Array.isArray(post.content) ? (
             <div className="space-y-4">
-              {post.content.map((block: any, index: number) => {
+              {post.content.map((block: RichTextBlock, index: number) => {
                 if (block.type === 'paragraph' && block.children) {
                   return (
                     <p key={index} className="text-gray-700 leading-relaxed">
-                      {block.children.map((child: any, childIndex: number) => {
+                      {block.children.map((child: RichTextChild, childIndex: number) => {
                         if (child.type === 'text') {
                           return <span key={childIndex}>{child.text}</span>;
                         }
@@ -152,7 +165,7 @@ const PostDetail: React.FC = () => {
         <footer className="mt-12 pt-8 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              마지막 수정: {formatDate(post.updatedAt || post.publishedAt || post.createdAt)}
+              마지막 수정: {formatDate(post.updatedAt || post.publishedAt || post.createdAt || '')}
             </div>
             <Link
               href="/posts"

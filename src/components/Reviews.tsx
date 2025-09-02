@@ -132,7 +132,7 @@ const Reviews: React.FC = () => {
               className="flex transition-transform duration-500 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {reviewsData.map((review: any) => (
+              {reviewsData.map((review: Review) => (
                 <div key={review.id} className="w-full flex-shrink-0">
                   <div className="p-8 md:p-12">
                     {/* 별점 */}
@@ -151,7 +151,7 @@ const Reviews: React.FC = () => {
                     {/* 후기 내용 */}
                     <blockquote className="text-center mb-6">
                       <p className="text-lg md:text-xl text-gray-700 italic leading-relaxed">
-                        "{review.attributes?.content || review.content}"
+                        &ldquo;{review.attributes?.content || review.content}&rdquo;
                       </p>
                     </blockquote>
 

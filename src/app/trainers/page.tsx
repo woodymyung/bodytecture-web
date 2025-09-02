@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Trainers from '@/components/Trainers';
 import { trainers } from '@/data/mockData';
+import Link from 'next/link';
 
 export default function TrainersPage() {
   return (
@@ -140,18 +141,18 @@ export default function TrainersPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/#contact"
                 className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 inline-block"
               >
                 PT 상담 신청하기
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/facilities"
                 className="bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors duration-200 inline-block"
               >
                 시설 둘러보기
-              </a>
+              </Link>
             </div>
           </div>
         </section>

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { trainers } from '@/data/mockData';
 import { Trainer } from '@/types';
 
@@ -87,7 +88,7 @@ const Trainers: React.FC = () => {
                 {/* 버튼 그룹 */}
                 <div className="space-y-2">
                   {/* OT예약 버튼 (Primary) */}
-                  <a
+                  <Link
                     href="/#contact"
                     className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white hover:bg-red-700 font-medium rounded-lg transition-all duration-200"
                   >
@@ -95,10 +96,10 @@ const Trainers: React.FC = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
                     OT예약 상담
-                  </a>
+                  </Link>
 
                   {/* 자세히 보기 버튼 (Secondary) */}
-                  <a
+                  <Link
                     href={`/trainers#trainer-${trainer.id}`}
                     className="w-full inline-flex items-center justify-center px-4 py-2 border border-red-600 text-red-600 hover:bg-red-600 hover:text-white font-medium rounded-lg transition-all duration-200"
                   >
@@ -106,7 +107,7 @@ const Trainers: React.FC = () => {
                     <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

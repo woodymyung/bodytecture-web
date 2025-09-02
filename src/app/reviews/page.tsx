@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Reviews from '@/components/Reviews';
 import { reviews } from '@/data/mockData';
+import Link from 'next/link';
 
 export default function ReviewsPage() {
   return (
@@ -58,7 +59,7 @@ export default function ReviewsPage() {
                   {/* 후기 내용 */}
                   <blockquote className="mb-4">
                     <p className="text-gray-700 italic text-center">
-                      "{review.content}"
+                      &ldquo;{review.content}&rdquo;
                     </p>
                   </blockquote>
 
@@ -114,24 +115,24 @@ export default function ReviewsPage() {
               직접 체험해보는 것이 가장 확실합니다.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
+              <Link
                 href="/#contact"
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
               >
                 무료 체험 신청하기
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/facilities"
                 className="bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors duration-200"
               >
                 시설 둘러보기
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/trainers"
                 className="bg-orange-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
               >
                 트레이너 소개
-              </a>
+              </Link>
             </div>
           </div>
         </section>
