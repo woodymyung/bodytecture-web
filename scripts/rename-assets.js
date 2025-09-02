@@ -30,7 +30,7 @@ function renameNextToAssets() {
   }
 }
 
-// HTML 파일들에서 _next 경로를 assets로 변경
+// HTML 및 CSS 파일들에서 _next 경로를 assets로 변경
 function updateHtmlFiles(dir) {
   const files = fs.readdirSync(dir);
   
@@ -41,12 +41,12 @@ function updateHtmlFiles(dir) {
     if (stat.isDirectory()) {
       // 하위 디렉토리 재귀 처리
       updateHtmlFiles(filePath);
-    } else if (file.endsWith('.html') || file.endsWith('.txt')) {
-      // HTML/TXT 파일에서 _next 경로를 assets로 변경
+    } else if (file.endsWith('.html') || file.endsWith('.txt') || file.endsWith('.css')) {
+      // HTML/TXT/CSS 파일에서 _next 경로를 assets로 변경
       let content = fs.readFileSync(filePath, 'utf8');
       const originalContent = content;
       
-      // _next 경로를 assets로 전체 변경
+      // _next 경로를 assets로 전체 변경 (HTML과 CSS 내부 모두 처리)
       content = content.replace(/\/_next\//g, '/assets/');
       
       if (content !== originalContent) {
