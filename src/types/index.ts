@@ -14,9 +14,13 @@ export interface RichTextBlock {
 export interface Trainer {
   id: string;
   name: string;
+  slug: string;
   image: string;
   description?: string;
   experience?: string[]; // 경력 정보 (최대 3줄)
+  specialties?: string[];
+  certifications?: string[];
+  philosophy?: string;
   socialMedia?: {
     instagram?: string;
     naverBlog?: string;

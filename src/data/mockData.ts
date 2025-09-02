@@ -6,13 +6,19 @@ export const trainers: Trainer[] = [
   {
     id: '1',
     name: '김권',
+    slug: 'kiwkwon',
     image: '/trainers/kim-kwon.jpg',
-    description: '전문 트레이너',
+    description: '5년 이상의 경력을 바탕으로 한 전문적인 PT 지도',
     experience: [
       'NSCA-CSCS 자격증 보유',
       '5년 이상 트레이닝 경력',
-      '개인 PT 전문'
+      '개인 PT 전문',
+      '근력 향상 프로그램 설계',
+      '체력 평가 및 분석'
     ],
+    specialties: ['웨이트 트레이닝', '근력 향상', '체력 증진', '자세 교정'],
+    certifications: ['NSCA-CSCS', '생활체육지도자 2급', '심폐소생술'],
+    philosophy: '회원님의 목표와 현재 상태를 정확히 파악하여, 단계별 맞춤 프로그램으로 안전하고 효과적인 운동을 제공합니다.',
     socialMedia: {
       instagram: 'https://instagram.com/boditex_trainer_kim',
       naverBlog: 'https://blog.naver.com/boditex_kimkwon'
@@ -21,13 +27,19 @@ export const trainers: Trainer[] = [
   {
     id: '2',
     name: '김예은',
+    slug: 'kimyeeun',
     image: '/trainers/kim-ye-eun.jpg',
-    description: '전문 트레이너',
+    description: '다이어트와 체형 관리에 특화된 여성 전문 트레이너',
     experience: [
       'NASM-PES 자격증 보유',
       '3년 이상 트레이닝 경력',
-      '다이어트 전문 트레이너'
+      '다이어트 전문 트레이너',
+      '여성 회원 체형 관리 특화',
+      '식단 상담 경험 풍부'
     ],
+    specialties: ['다이어트', '체형 관리', '하체 집중 운동', '코어 강화'],
+    certifications: ['NASM-PES', 'KATI', '영양사'],
+    philosophy: '건강한 다이어트를 통해 아름다운 몸매와 건강을 동시에 얻을 수 있도록 세심하게 지도해드립니다.',
     socialMedia: {
       instagram: 'https://instagram.com/boditex_trainer_kimye',
       naverBlog: 'https://blog.naver.com/boditex_kimye'
@@ -35,14 +47,20 @@ export const trainers: Trainer[] = [
   },
   {
     id: '3',
-    name: '전영주',
+    name: '천정주',
+    slug: 'chunjeongju',
     image: '/trainers/jeon-young-ju.jpg',
-    description: '전문 트레이너',
+    description: '체형 교정과 재활 운동을 통한 건강한 몸만들기',
     experience: [
       'ACSM 자격증 보유',
       '4년 이상 트레이닝 경력',
-      '체형 교정 전문'
+      '체형 교정 전문',
+      '재활 운동 지도',
+      '척추 건강 관리'
     ],
+    specialties: ['체형 교정', '재활 운동', '척추 건강', '기능성 운동'],
+    certifications: ['ACSM', 'NSCA-CPT', '체형교정사', '운동처방사'],
+    philosophy: '올바른 자세와 균형잡힌 근육 발달을 통해 건강하고 아름다운 체형을 만들어가겠습니다.',
     socialMedia: {
       instagram: 'https://instagram.com/boditex_trainer_jeonyj',
       naverBlog: 'https://blog.naver.com/boditex_jeonyj'
@@ -51,13 +69,19 @@ export const trainers: Trainer[] = [
   {
     id: '4',
     name: '전채운',
+    slug: 'jeonchaewoon',
     image: '/trainers/jeon-chae-un.jpg',
-    description: '전문 트레이너',
+    description: '체계적인 근력 트레이닝으로 강한 몸 만들기',
     experience: [
       'KATI 자격증 보유',
       '6년 이상 트레이닝 경력',
-      '근력 트레이닝 전문'
+      '근력 트레이닝 전문',
+      '보디빌딩 선수 출신',
+      '경기 준비 코칭 경험'
     ],
+    specialties: ['근력 트레이닝', '보디빌딩', '벌크업', '경기 준비'],
+    certifications: ['KATI', 'NSCA-CSCS', '보디빌딩 선수 자격'],
+    philosophy: '과학적이고 체계적인 트레이닝을 통해 목표하는 몸을 만들어가는 과정을 함께하겠습니다.',
     socialMedia: {
       instagram: 'https://instagram.com/boditex_trainer_jeoncu',
       naverBlog: 'https://blog.naver.com/boditex_jeoncu'
