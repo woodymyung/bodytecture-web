@@ -25,22 +25,25 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* 로고 섹션 */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-bold text-gray-900">
-              바디텍쳐 왕십리 청계점
-            </h1>
+            <Link href="/" className="block">
+              <h1 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
+                바디텍쳐 왕십리 청계점
+              </h1>
+            </Link>
           </div>
 
           {/* 데스크탑 메뉴 */}
           <nav className="hidden md:flex space-x-8">
             {menuItems.map((item) => (
               item.href.startsWith('/#') ? (
-                <a
+                <Link
                   key={item.label}
                   href={item.href}
                   className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                  scroll={true}
                 >
                   {item.label}
-                </a>
+                </Link>
               ) : (
                 <Link
                   key={item.label}
@@ -103,14 +106,15 @@ const Header: React.FC = () => {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t border-gray-200">
           {menuItems.map((item) => (
             item.href.startsWith('/#') ? (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
                 className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
                 onClick={() => setIsMobileMenuOpen(false)}
+                scroll={true}
               >
                 {item.label}
-              </a>
+              </Link>
             ) : (
               <Link
                 key={item.label}

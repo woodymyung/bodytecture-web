@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Posts from '@/components/Posts';
 import Link from 'next/link';
+import NewsletterForm from '@/components/NewsletterForm';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
 
@@ -79,37 +80,7 @@ export default function PostsPage() {
         </section>
 
         {/* 뉴스레터 구독 */}
-        <section className="py-16 bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-8 text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                건강 정보 뉴스레터
-              </h2>
-              <p className="text-lg text-gray-600 mb-8">
-                바디텍쳐의 건강과 운동 관련 최신 소식을
-                이메일로 받아보세요
-              </p>
-
-              <form className="max-w-md mx-auto flex gap-4">
-                <input
-                  type="email"
-                  placeholder="이메일 주소를 입력하세요"
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                />
-                <button
-                  type="submit"
-                  className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors duration-200"
-                >
-                  구독하기
-                </button>
-              </form>
-
-              <p className="text-sm text-gray-500 mt-4">
-                언제든지 구독을 취소하실 수 있습니다.
-              </p>
-            </div>
-          </div>
-        </section>
+        <NewsletterForm />
 
         {/* 관련 페이지 링크 */}
         <section className="py-16 bg-white">
