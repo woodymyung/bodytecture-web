@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { CONTACT_INFO, COMPANY_INFO, SOCIAL_LINKS } from '@/constants/contact';
+import { CONTACT_INFO, SOCIAL_LINKS } from '@/constants/contact';
+// import { COMPANY_INFO } from '@/constants/contact'; // 현재 사용하지 않음
 
 // 찾아오는 길 컴포넌트 - 정보 위계에 따라 재구성된 레이아웃
 const Location: React.FC = () => {

@@ -1,5 +1,6 @@
 import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
 // Sanity client 설정
 export const client = createClient({
@@ -12,12 +13,13 @@ export const client = createClient({
 // 이미지 URL 빌더 설정
 const builder = imageUrlBuilder(client)
 
-export function urlFor(source: any) {
+// 이미지 URL 생성 함수 - Sanity 이미지 에셋을 URL로 변환
+export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 
 // 🎨 고품질 이미지 URL 생성 함수들 - 화질 저하 방지
-export function getHighQualityImageUrl(source: any, width: number, height: number, quality: number = 90) {
+export function getHighQualityImageUrl(source: SanityImageSource, width: number, height: number, quality: number = 90) {
   return urlFor(source)
     .width(width)
     .height(height)
@@ -28,7 +30,7 @@ export function getHighQualityImageUrl(source: any, width: number, height: numbe
 }
 
 // 원본 품질 유지 (100% 품질)
-export function getOriginalQualityImageUrl(source: any, width?: number, height?: number) {
+export function getOriginalQualityImageUrl(source: SanityImageSource, width?: number, height?: number) {
   let imageBuilder = urlFor(source).quality(100)
   
   if (width) imageBuilder = imageBuilder.width(width)
@@ -38,7 +40,7 @@ export function getOriginalQualityImageUrl(source: any, width?: number, height?:
 }
 
 // 반응형 이미지 (85% 최적화 품질)
-export function getResponsiveImageUrl(source: any, width: number, height?: number) {
+export function getResponsiveImageUrl(source: SanityImageSource, width: number, height?: number) {
   const imageBuilder = urlFor(source)
     .width(width)
     .quality(85) // 85%로 최적화된 품질 (웹 최적화)

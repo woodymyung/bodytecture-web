@@ -2,7 +2,7 @@
 
 import React, { useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { Review } from '@/types';
+import { Review, SanityRichTextBlock, SanityRichTextSpan } from '@/types';
 import ReviewCard from './ReviewCard';
 import { COMPANY_INFO } from '@/constants/contact';
 // InfiniteSwipeSlider 제거하고 직접 구현
@@ -15,14 +15,15 @@ interface ReviewsProps {
 
 const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false }) => {
   // 🎯 Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수
-  const convertRichTextToPlainText = useCallback((blocks: any[]): string => {
+  // Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수 - Sanity Rich Text 블록 배열을 처리
+  const convertRichTextToPlainText = useCallback((blocks: SanityRichTextBlock[]): string => {
     if (!blocks || !Array.isArray(blocks)) return '';
     
     return blocks
       .map(block => {
         if (block._type === 'block' && block.children) {
           return block.children
-            .map((child: any) => child.text || '')
+            .map((child: SanityRichTextSpan) => child.text || '')
             .join('');
         }
         return '';

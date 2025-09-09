@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+// import { useEffect, useRef } from 'react'; // 현재 사용하지 않음
 import { Review, Trainer } from '@/types';
 import ReviewCard from './ReviewCard';
 import ReviewFilter, { ReviewFilterState } from './ReviewFilter';
-import Contact from './Contact';
-import Link from 'next/link';
+// import Contact from './Contact'; // 현재 사용하지 않음
+// import Link from 'next/link'; // 현재 사용하지 않음
 
 interface ReviewsPageContentProps {
   allReviews: Review[];

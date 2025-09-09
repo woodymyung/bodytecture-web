@@ -2,10 +2,13 @@
 // 각 트레이너별로 맞춤형 소셜 미디어 공유 이미지를 자동 생성
 
 import { ImageResponse } from 'next/og';
-import { getTrainerBySlug } from '@/lib/sanityData';
+import { getTrainerBySlug, getTrainers } from '@/lib/sanityData';
 
-// 이미지 런타임 설정
-export const runtime = 'edge';
+// Static export를 위한 설정
+export const dynamic = 'force-static';
+
+// 이미지 런타임 설정 - static export에서는 Node.js runtime 사용
+// export const runtime = 'edge'; // static export와 충돌하므로 제거
 
 // 이미지 크기 설정
 export const alt = '바디텍쳐 전문 트레이너';
@@ -60,7 +63,7 @@ export default async function OpengraphImage({
             width: '100%',
             display: 'flex',
             background: 'linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #f97316 100%)',
-            fontFamily: '"Pretendard", "Noto Sans KR", sans-serif',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
           }}
         >
           {/* 왼쪽 영역 - 브랜드 정보 */}
@@ -175,7 +178,7 @@ export default async function OpengraphImage({
                 color: 'rgba(255,255,255,0.6)',
               }}
             >
-              woodymyung.github.io/bodytecture-web
+              bodytecture.fit
             </div>
           </div>
         </div>
@@ -209,4 +212,13 @@ export default async function OpengraphImage({
       { ...size }
     );
   }
+}
+
+// Static export를 위한 정적 경로 생성
+export async function generateStaticParams() {
+  const trainers = await getTrainers();
+  
+  return trainers.map((trainer) => ({
+    slug: trainer.slug,
+  }));
 }

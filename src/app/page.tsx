@@ -7,7 +7,7 @@ import Reviews from '@/components/Reviews';
 import Services from '@/components/Services';
 import Trainers from '@/components/Trainers';
 import Facilities from '@/components/Facilities';
-import Posts from '@/components/Posts';
+// import Posts from '@/components/Posts'; // 사용하지 않으므로 주석 처리"
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';

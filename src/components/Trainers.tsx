@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Trainer } from '@/types';
 import { getHighQualityImageUrl } from '@/lib/sanity';
 import { COMPANY_INFO } from '@/constants/contact';
@@ -58,12 +59,15 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false }
               className="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
             >
               {/* 트레이너 이미지 */}
-              <div className="aspect-square bg-gray-200 flex items-center justify-center overflow-hidden">
+              <div className="aspect-square bg-gray-200 flex items-center justify-center overflow-hidden relative">
                 {trainer.images && trainer.images.length > 0 ? (
-                  <img 
+                  <Image 
                     src={getHighQualityImageUrl(trainer.images[0].asset._ref, 450, 450, 88)} // 🎨 88% 고품질 컨잘이미지
                     alt={trainer.images[0].alt || trainer.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 50vw, 450px"
+                    quality={88}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">

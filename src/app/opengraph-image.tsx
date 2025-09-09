@@ -3,11 +3,14 @@
 
 import { ImageResponse } from 'next/og';
 
-// 이미지 런타임 설정
-export const runtime = 'edge';
+// Static export를 위한 설정
+export const dynamic = 'force-static';
+
+// 이미지 런타임 설정 - static export에서는 Node.js runtime 사용
+// export const runtime = 'edge'; // static export와 충돌하므로 제거
 
 // 이미지 크기 설정 (Open Graph 표준)
-export const alt = '바디텍쳐 왕십리 청계점 - 정원제 프리미엄 헬스장';
+export const alt = '바디텍쳐 왕십리 청계점 - 정원제 프리미엄 헬스/PT';
 export const size = {
   width: 1200,
   height: 630,
@@ -30,7 +33,7 @@ export default async function OpengraphImage() {
             alignItems: 'center',
             justifyContent: 'center',
             background: 'linear-gradient(135deg, #dc2626 0%, #ea580c 100%)',
-            fontFamily: '"Pretendard", "Noto Sans KR", sans-serif',
+            fontFamily: 'system-ui, -apple-system, sans-serif',
           }}
         >
           {/* 상단 로고 영역 */}
@@ -49,7 +52,7 @@ export default async function OpengraphImage() {
                 textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
               }}
             >
-              BODY TEXTURE
+              BODYTECTURE
             </div>
           </div>
 
@@ -104,16 +107,13 @@ export default async function OpengraphImage() {
               color: 'rgba(255,255,255,0.7)',
             }}
           >
-            woodymyung.github.io/bodytecture-web
+            bodytecture.fit
           </div>
         </div>
       ),
       {
         ...size,
-        fonts: [
-          // Next.js 15+에서 폰트 지원이 향상되었지만, 여전히 제한적
-          // 기본 시스템 폰트 사용
-        ],
+        // fonts 속성 제거 - static export에서 시스템 기본 폰트 사용
       }
     );
   } catch (error) {
@@ -138,7 +138,10 @@ export default async function OpengraphImage() {
           바디텍쳐 왕십리 청계점
         </div>
       ),
-      { ...size }
+      {
+        ...size,
+        // fonts 속성 제거 - static export에서 시스템 기본 폰트 사용
+      }
     );
   }
 }

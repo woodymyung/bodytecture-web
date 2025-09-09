@@ -1,7 +1,7 @@
-import { RichTextBlock } from '@/types';
+import { RichTextBlock, SanityRichTextBlock } from '@/types';
 
 // Rich Text를 간단한 HTML 문자열로 변환하는 서버사이드 안전 함수
-export const renderRichTextToHTML = (content: RichTextBlock[]): string => {
+export const renderRichTextToHTML = (content: RichTextBlock[] | SanityRichTextBlock[]): string => {
   if (!content || !Array.isArray(content)) {
     return '';
   }
@@ -10,7 +10,7 @@ export const renderRichTextToHTML = (content: RichTextBlock[]): string => {
     if (!block || !block.children) return '';
     
     const text = block.children
-      .map((child: any) => {
+      .map((child: { text?: string; marks?: string[] }) => {
         if (!child || !child.text) return '';
         
         let text = child.text;
@@ -30,8 +30,9 @@ export const renderRichTextToHTML = (content: RichTextBlock[]): string => {
       .join('');
 
     // 스타일에 따른 태그 적용
-    const blockStyle = (block as any).style;
-    const listItem = (block as any).listItem;
+    // 블록 스타일 정보 추출
+    const blockStyle = (block as RichTextBlock & { style?: string }).style;
+    const listItem = (block as RichTextBlock & { listItem?: string }).listItem;
     
     if (listItem === 'bullet') {
       return `<li>${text}</li>`;
@@ -46,7 +47,7 @@ export const renderRichTextToHTML = (content: RichTextBlock[]): string => {
 };
 
 // Rich Text를 간단한 문자열 배열로 변환 (기존 함수 개선)
-export const richTextToPlainText = (content: RichTextBlock[]): string[] => {
+export const richTextToPlainText = (content: RichTextBlock[] | SanityRichTextBlock[]): string[] => {
   if (!content || !Array.isArray(content)) {
     return [];
   }
@@ -55,14 +56,14 @@ export const richTextToPlainText = (content: RichTextBlock[]): string[] => {
     if (!block || !block.children) return '';
     
     return block.children
-      .map((child: any) => child?.text || '')
+      .map((child: { text?: string }) => child?.text || '')
       .join('')
       .trim();
   }).filter(text => text.length > 0);
 };
 
 // Rich Text가 비어있는지 확인
-export const isRichTextEmpty = (content: RichTextBlock[]): boolean => {
+export const isRichTextEmpty = (content: RichTextBlock[] | SanityRichTextBlock[]): boolean => {
   if (!content || !Array.isArray(content) || content.length === 0) {
     return true;
   }
@@ -71,7 +72,7 @@ export const isRichTextEmpty = (content: RichTextBlock[]): boolean => {
     if (!block || !block.children) return true;
     
     const text = block.children
-      .map((child: any) => child?.text || '')
+      .map((child: { text?: string }) => child?.text || '')
       .join('')
       .trim();
     

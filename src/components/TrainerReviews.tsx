@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
+// import { useEffect, useRef } from 'react'; // 현재 사용하지 않음
 import { Review } from '@/types';
 import ReviewCard from './ReviewCard';
 
 interface TrainerReviewsProps {
-    trainerId: string;
     trainerName: string;
     initialReviews: Review[];
 }
 
 const TrainerReviews: React.FC<TrainerReviewsProps> = ({
-    trainerId,
     trainerName,
     initialReviews
 }) => {

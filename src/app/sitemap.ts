@@ -4,9 +4,12 @@
 import { MetadataRoute } from 'next';
 import { getTrainers } from '@/lib/sanityData';
 
+// Static export를 위한 설정
+export const dynamic = 'force-static';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 기본 사이트 URL
-  const baseUrl = 'https://woodymyung.github.io/bodytecture-web';
+  const baseUrl = 'https://bodytecture.fit';
 
   // 정적 페이지들 - 우선순위와 변경 빈도 설정
   const staticPages: MetadataRoute.Sitemap = [

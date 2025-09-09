@@ -6,6 +6,7 @@ import { getTrainers } from '@/lib/sanityData';
 import { client } from '@/lib/sanity';
 import { COMPANY_INFO } from '@/constants/contact';
 import { generatePageMetadata } from '@/lib/metadata';
+import { SanityReviewRaw } from '@/types';
 
 // SEO 최적화를 위한 메타데이터 설정
 export const metadata = generatePageMetadata({
@@ -37,8 +38,8 @@ export default async function ReviewsPage() {
       getTrainers()
     ]);
 
-    // 리뷰 데이터 변환
-    const transformedReviews = allReviews.map((review: any) => ({
+    // 리뷰 데이터 변환 - Sanity 데이터를 클라이언트 형식으로 변환
+    const transformedReviews = allReviews.map((review: SanityReviewRaw) => ({
       id: review._id,
       author: review.author,
       reviewContent: review.reviewContent,

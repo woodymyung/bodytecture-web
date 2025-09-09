@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { TrainerImage } from '@/types';
 import { getHighQualityImageUrl } from '@/lib/sanity';
 import InfiniteSwipeSlider, { SliderItem } from './InfiniteSwipeSlider';
@@ -21,12 +22,15 @@ const TrainerImageGallery: React.FC<TrainerImageGalleryProps> = ({ images, train
     return images.map((image, index) => ({
       id: `trainer-image-${index}`,
       content: (
-        <div className="w-full h-full">
-          <img 
+        <div className="w-full h-full relative">
+          <Image 
             src={getHighQualityImageUrl(image.asset._ref, 600, 600, 92)} // 🎨 92% 고품질 유지
             alt={image.alt || trainerName}
-            className="w-full h-full object-cover" // rounded-2xl 제거 (컨테이너에서 처리)
+            fill
+            className="object-cover" // rounded-2xl 제거 (컨테이너에서 처리)
             draggable={false}
+            sizes="(max-width: 768px) 100vw, 600px"
+            quality={92}
           />
         </div>
       )
@@ -63,7 +67,6 @@ const TrainerImageGallery: React.FC<TrainerImageGalleryProps> = ({ images, train
           swipeThreshold: 50,
           className: "aspect-square bg-white bg-opacity-20 shadow-2xl overflow-hidden rounded-2xl",
           slideClassName: "relative",
-          indicatorPosition: 'bottom',
           currentIndex: currentImageIndex, // 외부에서 제어
           onSlideChange: handleSlideChange // 슬라이드 변경 시 인덱스 동기화
         }}

@@ -2,14 +2,14 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { COMPANY_INFO } from '@/constants/contact';
+// import { COMPANY_INFO } from '@/constants/contact'; // 현재 사용하지 않음"
 
 // 히어로 섹션 - 최적화된 이미지와 메인 타이틀을 포함
 const Hero: React.FC = () => {
-  const handleContactClick = () => {
-    // 외부 링크로 연결 (실제 구현 시 외부 서비스로 연결)
-    window.open('https://example.com/contact', '_blank');
-  };
+  // 문의하기 버튼 클릭 핸들러 (현재는 사용하지 않음)
+  // const handleContactClick = () => {
+  //   window.open('https://example.com/contact', '_blank');
+  // };
 
   return (
     <section className="pt-20 relative bg-black text-white h-[400px] md:h-[500px] flex items-center overflow-hidden">

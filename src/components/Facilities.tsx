@@ -112,8 +112,7 @@ const Facilities: React.FC = () => {
                 enableSwipe: true,
                 swipeThreshold: 50,
                 className: "h-96 md:h-[550px] bg-gray-200 shadow-lg",
-                slideClassName: "relative",
-                indicatorPosition: 'bottom'
+                slideClassName: "relative"
               }}
             />
           </div>

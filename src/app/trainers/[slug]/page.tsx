@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { getTrainerBySlug, getTrainers, getReviewsByTrainer } from '@/lib/sanityData';
-import { urlFor } from '@/lib/sanity';
-import { renderRichTextToHTML, richTextToPlainText, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
+// import { urlFor } from '@/lib/sanity'; // 현재 사용하지 않음
+import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
+// import { richTextToPlainText } from '@/lib/simpleRichTextRenderer'; // 현재 사용하지 않음
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
 import Link from 'next/link';
@@ -22,7 +23,12 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
   const trainerReviews = await getReviewsByTrainer(trainer.id);
 
   // SEO 최적화를 위한 구조화된 데이터 생성
-  const personStructuredData = generatePersonStructuredData(trainer);
+  const personStructuredData = generatePersonStructuredData({
+    name: trainer.name,
+    description: trainer.description || `${trainer.name} 트레이너`,
+    slug: trainer.slug
+    // images는 타입 호환성 문제로 생략 (필수가 아님)
+  });
 
   return (
     <div className="min-h-screen">
@@ -176,7 +182,6 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
 
         {/* 트레이너 리뷰 섹션 */}
         <TrainerReviews
-          trainerId={trainer.id}
           trainerName={trainer.name}
           initialReviews={trainerReviews}
         />
@@ -213,5 +218,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   // 트레이너 정보로 최적화된 메타데이터 생성
-  return generateTrainerMetadata(trainer);
+  return generateTrainerMetadata({
+    name: trainer.name,
+    description: trainer.description || `${trainer.name} 트레이너`,
+    slug: trainer.slug
+  });
 }

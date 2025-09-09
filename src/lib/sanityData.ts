@@ -1,5 +1,14 @@
 import { client, queries } from './sanity'
-import type { Trainer, Review, BlogPost, Facility } from '@/types'
+import type { 
+  Trainer, 
+  Review, 
+  BlogPost, 
+  Facility,
+  SanityTrainerRaw,
+  SanityReviewRaw,
+  SanityBlogPostRaw,
+  SanityEquipmentRaw
+} from '@/types'
 
 // 트레이너 데이터 가져오기 함수들
 export async function getTrainers(): Promise<Trainer[]> {
@@ -106,7 +115,8 @@ export async function getFeaturedBlogPosts(): Promise<BlogPost[]> {
 }
 
 // 데이터 변환 함수들 - Sanity 데이터를 기존 타입 형식에 맞게 변환
-function transformTrainer(sanityTrainer: any): Trainer {
+// 트레이너 데이터 변환 함수 - Sanity 데이터를 애플리케이션 타입으로 변환
+function transformTrainer(sanityTrainer: SanityTrainerRaw): Trainer {
   return {
     id: sanityTrainer._id,
     name: sanityTrainer.name,
@@ -121,7 +131,8 @@ function transformTrainer(sanityTrainer: any): Trainer {
   }
 }
 
-function transformReview(sanityReview: any): Review {
+// 리뷰 데이터 변환 함수 - Sanity 리뷰 데이터를 애플리케이션 타입으로 변환
+function transformReview(sanityReview: SanityReviewRaw): Review {
   return {
     id: sanityReview._id,
     author: sanityReview.author,
@@ -129,26 +140,32 @@ function transformReview(sanityReview: any): Review {
     rating: sanityReview.rating,
     date: sanityReview.createdAt,
     source: sanityReview.source,
-    trainer: sanityReview.trainer // 🎯 trainer 정보 추가 (있는 경우만)
+    trainer: sanityReview.trainer ? {
+      _id: sanityReview.trainer._id,
+      name: sanityReview.trainer.name,
+      slug: sanityReview.trainer.slug.current // slug 객체에서 current 속성 추출
+    } : undefined
   }
 }
 
-function transformEquipment(sanityEquipment: any): Facility {
+// 운동기구 데이터 변환 함수 - Sanity 운동기구 데이터를 시설 타입으로 변환
+function transformEquipment(sanityEquipment: SanityEquipmentRaw): Facility {
   return {
     id: sanityEquipment._id,
     name: sanityEquipment.name,
     description: sanityEquipment.description,
-    image: sanityEquipment.cover ? `${sanityEquipment.cover.asset._ref}` : ''
+    image: sanityEquipment.cover ? sanityEquipment.cover._ref : ''
   }
 }
 
-function transformBlogPost(sanityPost: any): BlogPost {
+// 블로그 포스트 데이터 변환 함수 - Sanity 블로그 데이터를 애플리케이션 타입으로 변환
+function transformBlogPost(sanityPost: SanityBlogPostRaw): BlogPost {
   return {
     id: sanityPost._id,
     title: sanityPost.title,
     excerpt: sanityPost.excerpt,
     date: sanityPost.publishedAt?.split('T')[0] || '',
-    image: sanityPost.coverImage ? `${sanityPost.coverImage.asset._ref}` : '',
+    image: sanityPost.coverImage ? sanityPost.coverImage._ref : '',
     slug: sanityPost.slug?.current || '',
     publishedAt: sanityPost.publishedAt,
     content: sanityPost.content

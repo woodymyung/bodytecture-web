@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 const SITE_CONFIG = {
   name: '바디텍쳐 왕십리 청계점',
   description: '왕십리 청계천 근처의 정원제로 운영되는 프리미엄 헬스장. 개인 트레이닝, 그룹 클래스, 최신 운동 시설을 제공합니다.',
-  url: 'https://woodymyung.github.io/bodytecture-web',
+  url: 'https://bodytecture.fit',
   ogImage: '/images/bodytecture_cover_optimized.jpg',
   keywords: [
     '바디텍쳐', '왕십리', '청계', '헬스장', '피트니스', 
@@ -134,16 +134,13 @@ export function generateTrainerMetadata(
 export function generateLocalBusinessStructuredData() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': ['LocalBusiness', 'SportsActivityLocation', 'ExerciseGym'], // 통합된 업종 정보
     '@id': `${SITE_CONFIG.url}#organization`,
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/images/bodytecture-logo.svg`,
     image: `${SITE_CONFIG.url}${SITE_CONFIG.ogImage}`,
-    
-    // 업종 정보
-    '@type': ['LocalBusiness', 'SportsActivityLocation', 'ExerciseGym'],
     
     // 주소 정보
     address: {

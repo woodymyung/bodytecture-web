@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { CONTACT_INFO, COMPANY_INFO, SOCIAL_LINKS } from '@/constants/contact';
 
 // 푸터 컴포넌트
@@ -25,9 +26,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">서비스 정보</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="/#services" className="hover:text-white transition-colors duration-200">제공 서비스</a></li>
-              <li><a href="/trainers" className="hover:text-white transition-colors duration-200">트레이너 소개</a></li>
-              <li><a href="/#facilities" className="hover:text-white transition-colors duration-200">시설 안내</a></li>
+              <li><Link href="/#services" className="hover:text-white transition-colors duration-200">제공 서비스</Link></li>
+              <li><Link href="/trainers" className="hover:text-white transition-colors duration-200">트레이너 소개</Link></li>
+              <li><Link href="/#facilities" className="hover:text-white transition-colors duration-200">시설 안내</Link></li>
             </ul>
           </div>
 
@@ -36,7 +37,7 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">고객 지원</h4>
             <ul className="space-y-2 text-gray-300">
               <li><a href={`tel:${CONTACT_INFO.phone}`} className="hover:text-white transition-colors duration-200">문의하기</a></li>
-              <li><a href="/#location" className="hover:text-white transition-colors duration-200">찾아오는 길</a></li>
+              <li><Link href="/#location" className="hover:text-white transition-colors duration-200">찾아오는 길</Link></li>
             </ul>
           </div>
         </div>
