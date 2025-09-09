@@ -82,11 +82,11 @@ export const metadata: Metadata = {
   category: "Fitness & Health",
   classification: "Business",
   
-  // 사이트 인증 - 나중에 실제 값으로 교체 필요
+  // 사이트 인증 - 검색엔진 웹마스터 도구 인증을 위한 메타 태그
   verification: {
     other: {
-      "naver-site-verification": "", // 네이버 웹마스터 도구 인증 코드
-      "google-site-verification": "", // Google Search Console 인증 코드
+      "naver-site-verification": "64cacd4023b8740c8e97263f049f17d2ac44c297", // 네이버 웹마스터 도구 인증 코드
+      "google-site-verification": "", // Google Search Console 인증 코드 (DNS 인증 사용 중)
     }
   },
   
