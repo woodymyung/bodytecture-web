@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // 기본 URL 설정 - Open Graph 및 Twitter 이미지의 절대 URL 생성을 위해 필요
-  metadataBase: new URL('https://woodymyung.github.io/bodytecture-web/'),
+  metadataBase: new URL('https://bodytecture.fit/'),
   
   // 기본 메타데이터 - SEO 최적화를 위한 핵심 정보들
   title: {
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "바디텍쳐 왕십리 청계점",
-    url: "https://woodymyung.github.io/bodytecture-web/",
+    url: "https://bodytecture.fit/",
     images: [
       {
         url: "/images/bodytecture_cover_optimized.jpg",
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
   },
   
   // 기타 메타데이터
-  authors: [{ name: "바디텍쳐 왕십리 청계점", url: "https://woodymyung.github.io/bodytecture-web/" }],
+  authors: [{ name: "바디텍쳐 왕십리 청계점", url: "https://bodytecture.fit/" }],
   category: "Fitness & Health",
   classification: "Business",
   
@@ -93,7 +93,7 @@ export const metadata: Metadata = {
   
   // 언어 대안 - 나중에 다국어 지원시 활용
   alternates: {
-    canonical: "https://woodymyung.github.io/bodytecture-web/",
+    canonical: "https://bodytecture.fit/",
   },
 };
 
