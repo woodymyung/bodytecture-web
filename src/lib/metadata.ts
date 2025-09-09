@@ -2,13 +2,15 @@
 // 각 페이지에서 메타데이터를 일관되게 생성할 수 있도록 돕는 헬퍼 함수들
 
 import type { Metadata } from 'next';
+import { urlFor } from './sanity';
+import type { TrainerImage } from '@/types';
 
 // 기본 사이트 정보
 const SITE_CONFIG = {
   name: '바디텍쳐 왕십리 청계점',
   description: '왕십리 청계천 근처의 정원제로 운영되는 프리미엄 헬스장. 개인 트레이닝, 그룹 클래스, 최신 운동 시설을 제공합니다.',
   url: 'https://bodytecture.fit',
-  ogImage: '/images/bodytecture_cover_optimized.jpg',
+  ogImage: '/images/opengraphimage.png',
   keywords: [
     '바디텍쳐', '왕십리', '청계', '헬스장', '피트니스', 
     '개인트레이닝', 'PT', '그룹클래스', '정원제', 
@@ -103,17 +105,33 @@ export function generatePageMetadata({
   };
 }
 
-// 트레이너 페이지용 특별 메타데이터 생성
+// 트레이너 페이지용 특별 메타데이터 생성 - Sanity 이미지 reference를 URL로 변환
 export function generateTrainerMetadata(
   trainer: {
     name: string;
     description: string;
     slug: string;
-    images?: { asset: { url: string } }[];
+    images?: TrainerImage[];
   }
 ): Metadata {
-  // 트레이너 이미지가 있으면 사용, 없으면 기본 이미지
-  const trainerImage = trainer.images?.[0]?.asset?.url || SITE_CONFIG.ogImage;
+  // 트레이너 이미지가 있으면 Sanity URL로 변환하여 사용, 없으면 기본 이미지
+  let trainerImage = SITE_CONFIG.ogImage;
+  
+  if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
+    try {
+      // Sanity 이미지를 오픈그래프용 고품질 URL로 변환 (1200x630px)
+      trainerImage = urlFor(trainer.images[0])
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+    } catch (error) {
+      console.warn('트레이너 이미지 URL 생성 실패:', error);
+      // 실패하면 기본 이미지 사용
+    }
+  }
   
   return generatePageMetadata({
     title: `${trainer.name} - 전문 트레이너`,
@@ -203,13 +221,31 @@ export function generateLocalBusinessStructuredData() {
   };
 }
 
-// 트레이너 개별 페이지용 Person 스키마
+// 트레이너 개별 페이지용 Person 스키마 - Sanity 이미지 처리
 export function generatePersonStructuredData(trainer: {
   name: string;
   description: string;
   slug: string;
-  images?: { asset: { url: string } }[];
+  images?: TrainerImage[];
 }) {
+  // 트레이너 이미지 URL 생성 (구조화된 데이터용)
+  let personImage = SITE_CONFIG.ogImage;
+  
+  if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
+    try {
+      // Sanity 이미지를 구조화된 데이터용 URL로 변환
+      personImage = urlFor(trainer.images[0])
+        .width(400)
+        .height(400)
+        .quality(85)
+        .format('webp')
+        .fit('crop')
+        .url();
+    } catch (error) {
+      console.warn('Person 스키마용 이미지 URL 생성 실패:', error);
+    }
+  }
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -217,7 +253,7 @@ export function generatePersonStructuredData(trainer: {
     name: trainer.name,
     description: trainer.description,
     url: `${SITE_CONFIG.url}/trainers/${trainer.slug}`,
-    image: trainer.images?.[0]?.asset?.url || SITE_CONFIG.ogImage,
+    image: personImage,
     
     // 직업 정보
     jobTitle: '피트니스 트레이너',

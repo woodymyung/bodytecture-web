@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     url: "https://bodytecture.fit/",
     images: [
       {
-        url: "/images/bodytecture_cover_optimized.jpg",
+        url: "/images/opengraphimage.png",
         width: 1200,
         height: 630,
         alt: "바디텍쳐 왕십리 청계점 - 정원제 프리미엄 헬스장"
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "바디텍쳐 왕십리 청계점",
     description: "왕십리 청계천 근처의 정원제로 운영되는 프리미엄 헬스장",
-    images: ["/images/bodytecture_cover_optimized.jpg"],
+    images: ["/images/opengraphimage.png"],
   },
   
   // 검색엔진 크롤링 설정

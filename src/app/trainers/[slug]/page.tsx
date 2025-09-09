@@ -22,12 +22,12 @@ export default async function TrainerPage({ params }: { params: Promise<{ slug: 
   // 해당 트레이너의 리뷰들 가져오기
   const trainerReviews = await getReviewsByTrainer(trainer.id);
 
-  // SEO 최적화를 위한 구조화된 데이터 생성
+  // SEO 최적화를 위한 구조화된 데이터 생성 - 트레이너 이미지 포함
   const personStructuredData = generatePersonStructuredData({
     name: trainer.name,
     description: trainer.description || `${trainer.name} 트레이너`,
-    slug: trainer.slug
-    // images는 타입 호환성 문제로 생략 (필수가 아님)
+    slug: trainer.slug,
+    images: trainer.images // Person 스키마에도 트레이너 이미지 적용
   });
 
   return (
@@ -217,10 +217,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
-  // 트레이너 정보로 최적화된 메타데이터 생성
+  // 트레이너 정보로 최적화된 메타데이터 생성 - 트레이너별 커버 이미지를 오픈그래프로 사용
   return generateTrainerMetadata({
     name: trainer.name,
     description: trainer.description || `${trainer.name} 트레이너`,
-    slug: trainer.slug
+    slug: trainer.slug,
+    images: trainer.images // 트레이너의 첫 번째 이미지를 오픈그래프 이미지로 사용
   });
 }
