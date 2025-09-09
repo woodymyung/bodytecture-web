@@ -1,0 +1,2 @@
+# 커밋 전에 lint-staged 실행하여 코드 품질 검사
+npx lint-staged
