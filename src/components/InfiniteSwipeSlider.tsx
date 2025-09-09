@@ -191,8 +191,8 @@ const InfiniteSwipeSlider: React.FC<{
   // 아이템이 1개인 경우 무한 루프 없이 단일 아이템 표시
   if (items.length === 1) {
     return (
-      <div className={`relative ${className}`}>
-        <div className={`w-full ${slideClassName}`}>
+      <div className={`relative overflow-hidden h-full ${className}`}>
+        <div className={`w-full h-full ${slideClassName}`}>
           {items[0].content}
         </div>
       </div>
