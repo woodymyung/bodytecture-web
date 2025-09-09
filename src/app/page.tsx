@@ -11,10 +11,25 @@ import Posts from '@/components/Posts';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import { getTrainers, getReviews } from '@/lib/sanityData';
+import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 
-export default function Home() {
+export default async function Home() {
+  // Sanity에서 실제 데이터 가져오기
+  const trainers = await getTrainers();
+  const reviews = await getReviews();
+  
+  // SEO 최적화를 위한 구조화된 데이터 생성
+  const structuredData = generateLocalBusinessStructuredData();
+  
   return (
     <div className="min-h-screen">
+      {/* 구조화된 데이터 (JSON-LD) - Google 검색 최적화를 위한 비즈니스 정보 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      
       {/* 헤더 - 고정된 네비게이션 바 */}
       <Header />
 
@@ -24,19 +39,19 @@ export default function Home() {
         <Hero />
 
         {/* 고객 후기 섹션 - 자동 슬라이드 되는 리뷰들 */}
-        <Reviews />
+        <Reviews reviews={reviews} isMainPage={true} />
 
         {/* 제공 서비스 섹션 - 멤버십과 PT 가격표 */}
         <Services />
 
         {/* 트레이너 섹션 - 4분할로 배치된 트레이너 정보 */}
-        <Trainers />
+        <Trainers trainers={trainers} />
 
         {/* 시설 정보 섹션 - 이미지 슬라이더와 설명 */}
         <Facilities />
 
         {/* 바디텍쳐 소식 섹션 - 블로그 포스트 미리보기 */}
-        <Posts />
+        {/* <Posts /> */}
 
         {/* 찾아오는 길 섹션 - 주소, 교통, 주차 정보 */}
         <Location />

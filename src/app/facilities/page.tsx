@@ -4,13 +4,22 @@ import Footer from '@/components/Footer';
 import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { facilities } from '@/data/mockData';
+import { generatePageMetadata } from '@/lib/metadata';
+
+// SEO 최적화를 위한 메타데이터 설정
+export const metadata = generatePageMetadata({
+  title: '시설 안내',
+  description: '바디텍쳐 왕십리 청계점의 쾌적하고 최신식 시설을 만나보세요. 지하1층부터 지상1층까지 총 2개 층으로 구성된 넓은 공간에서 다양한 운동 기구와 편의시설을 이용하실 수 있습니다.',
+  path: '/facilities',
+  keywords: ['헬스장시설', '운동시설', '피트니스시설', '헬스기구', '라커룸', '샤워실', '주차장'],
+});
 
 export default function FacilitiesPage() {
   return (
     <div className="min-h-screen">
       <Header />
 
-      <main className="pt-16">
+      <main className="pt-12 md:pt-16">
         {/* 페이지 헤더 */}
         <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

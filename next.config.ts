@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   // 커스텀 도메인 사용 시 basePath/assetPrefix 불필요
   images: {
     unoptimized: true,  // 정적 export에서 이미지 최적화 비활성화
+    qualities: [75, 85, 90, 95], // 이미지 품질 옵션 설정 (Next.js 16 대비)
   },
 };
 

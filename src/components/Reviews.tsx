@@ -1,44 +1,86 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import Link from 'next/link';
-import { reviews } from '@/data/mockData';
 import { Review } from '@/types';
+import ReviewCard from './ReviewCard';
+import { COMPANY_INFO } from '@/constants/contact';
+// InfiniteSwipeSlider 제거하고 직접 구현
 
 // 고객 후기 슬라이더 컴포넌트
-const Reviews: React.FC = () => {
-  const [reviewsData] = useState<Review[]>(reviews);
-  const [loading] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+interface ReviewsProps {
+  reviews?: Review[];
+  isMainPage?: boolean; // 메인 페이지에서 사용 시 모바일에서 텍스트 제한 적용
+}
 
-  // 자동 슬라이드 기능
-  useEffect(() => {
-    if (reviewsData.length === 0) return;
+const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false }) => {
+  // 🎯 Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수
+  const convertRichTextToPlainText = useCallback((blocks: any[]): string => {
+    if (!blocks || !Array.isArray(blocks)) return '';
+    
+    return blocks
+      .map(block => {
+        if (block._type === 'block' && block.children) {
+          return block.children
+            .map((child: any) => child.text || '')
+            .join('');
+        }
+        return '';
+      })
+      .join(' '); // 블록 사이에 공백 추가
+  }, []);
 
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex === reviewsData.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 5000); // 5초마다 슬라이드
+  // 🎯 최신순으로 정렬 + 메인페이지에서 100자 이상 필터링
+  const sortedReviews = useMemo(() => {
+    let filtered = [...reviews].sort((a, b) => {
+      const aDate = new Date(a.date).getTime();
+      const bDate = new Date(b.date).getTime();
+      return bDate - aDate; // 내림차순 (최신순)
+    });
 
-    return () => clearInterval(timer);
-  }, [reviewsData]);
+    // 🎯 메인페이지에서만 100자 이상 필터링 적용
+    if (isMainPage) {
+      filtered = filtered.filter(review => {
+        const plainText = convertRichTextToPlainText(review.reviewContent);
+        return plainText.length >= 100;
+      });
+    }
 
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index);
-  };
+    return filtered;
+  }, [reviews, isMainPage, convertRichTextToPlainText]);
 
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === reviewsData.length - 1 ? 0 : prevIndex + 1
-    );
-  };
+  // 🎯 데스크탑용 최대 27개, 모바일 슬라이더용 10개 제한
+  const displayReviews = useMemo(() => {
+    return sortedReviews.slice(0, isMainPage ? 27 : 10);
+  }, [sortedReviews, isMainPage]);
 
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? reviewsData.length - 1 : prevIndex - 1
-    );
-  };
+
+  // 🎯 데이터가 없는 경우 처리 (Hook 사용 후 조건부 return)
+  if (!reviews || reviews.length === 0) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              고객 후기
+            </h2>
+            <p className="text-lg text-gray-600">
+              고객 후기를 불러오고 있습니다...
+            </p>
+          </div>
+          <div className="text-center">
+            <p className="text-gray-500">
+              Sanity Studio에서 리뷰를 추가해주세요!
+              <br />
+              <a href="https://bodytecture.sanity.studio/" target="_blank" rel="noopener noreferrer" className="text-red-600 underline">
+                Studio 바로가기
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="py-16 bg-gray-50">
@@ -48,97 +90,88 @@ const Reviews: React.FC = () => {
             고객 후기
           </h2>
           <p className="text-lg text-gray-600">
-            바디텍쳐를 이용하신 회원님들의 생생한 후기입니다
+            {COMPANY_INFO.name}를 이용하신 회원님들의 생생한 후기를 만나보세요
           </p>
         </div>
 
-        {/* 슬라이더 컨테이너 */}
-        <div className="relative max-w-4xl mx-auto">
-          <div className="overflow-hidden rounded-lg bg-white shadow-lg">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
-              {reviewsData.map((review: Review) => (
-                <div key={review.id} className="w-full flex-shrink-0">
-                  <div className="p-8 md:p-12">
-                    {/* 별점 */}
-                    <div className="flex justify-center mb-6">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className="w-6 h-6 text-yellow-400 fill-current"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                      ))}
+        {/* 🎯 데스크탑: 높이 제한된 3단 마손리 레이아웃 with 위로 이동 애니메이션 */}
+        <div className="hidden lg:block relative py-8">
+          <div className="max-w-7xl mx-auto px-4">
+            {/* 🎯 높이 제한된 컨테이너 with 그림자 효과 */}
+            <div className="relative max-h-[600px] overflow-hidden rounded-lg">
+              {/* 🎯 위쪽 그림자 (페이드 인 효과) */}
+              <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-gray-50 to-transparent z-10 pointer-events-none"></div>
+              
+              {/* 🎯 아래쪽 그림자 (페이드 아웃 효과) */}
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-gray-50 to-transparent z-10 pointer-events-none"></div>
+              
+              {/* 🎯 위로 이동하는 애니메이션 컨테이너 */}
+              <div className="animate-slide-up">
+                {/* 🎯 3단 마손리 레이아웃 - 무한 루프를 위해 2번 반복 */}
+                <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+                  {/* 첫 번째 세트 */}
+                  {displayReviews.map((review) => (
+                    <div key={`first-${review.id}`} className="break-inside-avoid mb-6 transform transition-all duration-300 hover:scale-105">
+                      <ReviewCard review={review} isMainPage={isMainPage} />
                     </div>
-
-                    {/* 후기 내용 */}
-                    <blockquote className="text-center mb-6">
-                      <p className="text-lg md:text-xl text-gray-700 italic leading-relaxed">
-                        &ldquo;{review.attributes?.content || review.content}&rdquo;
-                      </p>
-                    </blockquote>
-
-                    {/* 작성자 정보 */}
-                    <div className="text-center">
-                      <p className="font-semibold text-gray-900">{review.attributes?.author || review.author}</p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {new Date(review.attributes?.date || review.attributes?.createdAt || review.date).toLocaleDateString('ko-KR')}
-                        {review.attributes?.source && ` • ${review.attributes.source}`}
-                      </p>
+                  ))}
+                  {/* 두 번째 세트 (무한 루프용) */}
+                  {displayReviews.map((review) => (
+                    <div key={`second-${review.id}`} className="break-inside-avoid mb-6 transform transition-all duration-300 hover:scale-105">
+                      <ReviewCard review={review} isMainPage={isMainPage} />
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* 네비게이션 버튼 */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200"
-            aria-label="이전 후기"
-          >
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 shadow-lg transition-all duration-200"
-            aria-label="다음 후기"
-          >
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* 인디케이터 */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {reviewsData.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToSlide(index)}
-                className={`w-3 h-3 rounded-full transition-colors duration-200 ${
-                  index === currentIndex ? 'bg-red-600' : 'bg-gray-300'
-                }`}
-                aria-label={`후기 ${index + 1}번으로 이동`}
-              />
+        {/* 🎯 모바일: 왼쪽으로 흘러가는 자동 애니메이션 */}
+        <div className="lg:hidden relative overflow-hidden py-4">
+          {/* 그라디언트 페이드 효과 */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-gray-50 to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent z-10"></div>
+          
+          {/* 수평 스크롤 컨테이너 */}
+          <div className="animate-slide-left flex space-x-4 py-4">
+            {/* 첫 번째 세트 */}
+            {displayReviews.map((review) => (
+              <div 
+                key={`first-${review.id}`} 
+                className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
+              >
+                <ReviewCard review={review} isMainPage={isMainPage} />
+              </div>
+            ))}
+            {/* 두 번째 세트 (무한 루프용) */}
+            {displayReviews.map((review) => (
+              <div 
+                key={`second-${review.id}`} 
+                className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
+              >
+                <ReviewCard review={review} isMainPage={isMainPage} />
+              </div>
+            ))}
+            {/* 세 번째 세트 (매끄러운 무한 루프용) */}
+            {displayReviews.map((review) => (
+              <div 
+                key={`third-${review.id}`} 
+                className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
+              >
+                <ReviewCard review={review} isMainPage={isMainPage} />
+              </div>
             ))}
           </div>
         </div>
 
-        {/* 자세히 보기 버튼 */}
-        <div className="text-center mt-8">
+        {/* 전체 후기 보기 버튼 */}
+        <div className="text-center mt-12">
           <Link
             href="/reviews"
-            className="bg-red-600 text-white hover:bg-red-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-block"
+            className="text-xl bg-red-600 text-white hover:bg-red-700 font-semibold py-4 px-8 rounded-full transition-colors duration-200 inline-flex items-center shadow-lg hover:shadow-xl transform"
           >
-            자세히 보기
+            전체 후기 보기
           </Link>
         </div>
       </div>
