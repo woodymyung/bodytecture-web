@@ -1,68 +1,17 @@
-// 바디텍쳐 왕십리 청계점 메인 페이지
-// 정원제로 운영되는 쾌적한 헬스장 웹사이트 메인 페이지 구현
+// 센터 선택 페이지 - 다중 센터 지원을 위한 메인 랜딩 페이지
+// 사용자가 3개 센터(왕십리, 대치, 청담) 중 하나를 선택할 수 있는 인터페이스 제공
 
-import Header from '@/components/Header';
-import Hero from '@/components/Hero';
-import Reviews from '@/components/Reviews';
-import Services from '@/components/Services';
-import Trainers from '@/components/Trainers';
-import Facilities from '@/components/Facilities';
-// import Posts from '@/components/Posts'; // 사용하지 않으므로 주석 처리"
-import Location from '@/components/Location';
-import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
-import { getTrainers, getReviews } from '@/lib/sanityData';
-import { generateLocalBusinessStructuredData } from '@/lib/metadata';
+import CenterSelection from '@/components/CenterSelection';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export default async function Home() {
-  // Sanity에서 실제 데이터 가져오기
-  const trainers = await getTrainers();
-  const reviews = await getReviews();
-  
-  // SEO 최적화를 위한 구조화된 데이터 생성
-  const structuredData = generateLocalBusinessStructuredData();
-  
-  return (
-    <div className="min-h-screen">
-      {/* 구조화된 데이터 (JSON-LD) - Google 검색 최적화를 위한 비즈니스 정보 */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      
-      {/* 헤더 - 고정된 네비게이션 바 */}
-      <Header />
+// 센터 선택 페이지 메타데이터 설정
+export const metadata = generatePageMetadata({
+  title: '센터 선택',
+  description: '바디텍쳐와 최원준GYM의 지점을 선택하세요. 왕십리, 대치, 청담점에서 전문 트레이닝 서비스를 제공합니다.',
+  path: '/',
+  keywords: ['바디텍쳐', '최원준GYM', '헬스장', '피트니스센터', '왕십리', '대치', '청담', '센터선택'],
+});
 
-      {/* 메인 콘텐츠 */}
-      <main>
-        {/* 히어로 섹션 - 메인 타이틀과 CTA 버튼 */}
-        <Hero />
-
-        {/* 고객 후기 섹션 - 자동 슬라이드 되는 리뷰들 */}
-        <Reviews reviews={reviews} isMainPage={true} />
-
-        {/* 제공 서비스 섹션 - 멤버십과 PT 가격표 */}
-        <Services />
-
-        {/* 트레이너 섹션 - 4분할로 배치된 트레이너 정보 */}
-        <Trainers trainers={trainers} />
-
-        {/* 시설 정보 섹션 - 이미지 슬라이더와 설명 */}
-        <Facilities />
-
-        {/* 바디텍쳐 소식 섹션 - 블로그 포스트 미리보기 */}
-        {/* <Posts /> */}
-
-        {/* 찾아오는 길 섹션 - 주소, 교통, 주차 정보 */}
-        <Location />
-
-        {/* 문의하기 섹션 - 문의 폼 */}
-        <Contact />
-      </main>
-
-      {/* 푸터 - 회사 정보와 링크들 */}
-      <Footer />
-    </div>
-  );
+export default function Home() {
+  return <CenterSelection />;
 }
-// 테스트 주석 추가
