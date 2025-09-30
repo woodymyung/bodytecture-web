@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { isValidCenterId, getCenterById } from '@/constants/centers';
-import { generatePageMetadata } from '@/lib/metadata';
+import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 
 // 센터별 레이아웃 props 타입 정의
 interface CenterLayoutProps {
@@ -29,7 +29,8 @@ export async function generateMetadata({
   const centerInfo = getCenterById(center);
   
   // 센터별 메타데이터 생성
-  return generatePageMetadata({
+  return generateCenterMetadata({
+    centerId: center,
     title: centerInfo.name,
     description: centerInfo.description,
     path: `/${center}`,

@@ -91,9 +91,8 @@ export default async function CenterPage({ params }: CenterPageProps) {
   const trainers = await getTrainers();
   const reviews = await getReviews();
   
-  // SEO 최적화를 위한 구조화된 데이터 생성 
-  // TODO: 센터별로 다른 구조화된 데이터 생성 필요
-  const structuredData = generateLocalBusinessStructuredData();
+  // SEO 최적화를 위한 센터별 구조화된 데이터 생성
+  const structuredData = generateLocalBusinessStructuredData(center);
   
   return (
     <div className="min-h-screen">

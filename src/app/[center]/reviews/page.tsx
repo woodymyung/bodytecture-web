@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import ReviewsPageContent from '@/components/ReviewsPageContent';
 import { getTrainers } from '@/lib/sanityData';
 import { client } from '@/lib/sanity';
-import { generatePageMetadata } from '@/lib/metadata';
+import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { SanityReviewRaw } from '@/types';
 
@@ -42,11 +42,12 @@ export async function generateMetadata({
   const centerInfo = getCenterById(center);
   
   // 센터별 메타데이터 생성
-  return generatePageMetadata({
-    title: `고객 후기 - ${centerInfo.name}`,
+  return generateCenterMetadata({
+    centerId: center,
+    title: '고객 후기',
     description: `${centerInfo.name}을 이용하신 회원님들의 생생한 후기를 만나보세요. 실제 경험담과 변화 스토리를 통해 차별화된 서비스를 확인하실 수 있습니다.`,
     path: `/${center}/reviews`,
-    keywords: ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기', ...centerInfo.keywords.slice(0, 3)],
+    keywords: ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'],
   });
 }
 

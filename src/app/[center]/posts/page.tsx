@@ -7,7 +7,7 @@ import Link from 'next/link';
 import NewsletterForm from '@/components/NewsletterForm';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
-import { generatePageMetadata } from '@/lib/metadata';
+import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
 // 센터별 포스트 페이지 props 타입 정의
@@ -43,11 +43,12 @@ export async function generateMetadata({
   const centerInfo = getCenterById(center);
   
   // 센터별 메타데이터 생성
-  return generatePageMetadata({
-    title: `포스트 - ${centerInfo.name}`,
+  return generateCenterMetadata({
+    centerId: center,
+    title: '포스트',
     description: `${centerInfo.shortName}에서 건강과 운동에 대한 유용한 정보를 공유합니다. 전문 트레이너의 팁과 운동법을 만나보세요.`,
     path: `/${center}/posts`,
-    keywords: ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁', ...centerInfo.keywords.slice(0, 3)],
+    keywords: ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁'],
   });
 }
 

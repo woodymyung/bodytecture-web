@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Trainers from '@/components/Trainers';
 import { getTrainers } from '@/lib/sanityData';
-import { generatePageMetadata } from '@/lib/metadata';
+import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
 // 센터별 트레이너 페이지 props 타입 정의
@@ -40,11 +40,12 @@ export async function generateMetadata({
   const centerInfo = getCenterById(center);
   
   // 센터별 메타데이터 생성
-  return generatePageMetadata({
-    title: `전문 트레이너 - ${centerInfo.name}`,
+  return generateCenterMetadata({
+    centerId: center,
+    title: `전문 트레이너`,
     description: `${centerInfo.name}의 전문 트레이너들을 소개합니다. 경험이 풍부한 트레이너들이 회원님의 건강한 변화를 위해 최선을 다하겠습니다.`,
     path: `/${center}/trainers`,
-    keywords: ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너', ...centerInfo.keywords.slice(0, 3)],
+    keywords: ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'],
   });
 }
 

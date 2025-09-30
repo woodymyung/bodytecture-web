@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { facilities } from '@/data/mockData';
-import { generatePageMetadata } from '@/lib/metadata';
+import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
 // 센터별 시설 페이지 props 타입 정의
@@ -41,11 +41,12 @@ export async function generateMetadata({
   const centerInfo = getCenterById(center);
   
   // 센터별 메타데이터 생성
-  return generatePageMetadata({
-    title: `시설 안내 - ${centerInfo.name}`,
+  return generateCenterMetadata({
+    centerId: center,
+    title: '시설 안내',
     description: `${centerInfo.name}의 쾌적하고 최신식 시설을 만나보세요. 다양한 운동 기구와 편의시설을 이용하실 수 있습니다.`,
     path: `/${center}/facilities`,
-    keywords: ['헬스장시설', '운동시설', '피트니스시설', '헬스기구', '라커룸', '샤워실', '주차장', ...centerInfo.keywords.slice(0, 3)],
+    keywords: ['헬스장시설', '운동시설', '피트니스시설', '헬스기구', '라커룸', '샤워실', '주차장'],
   });
 }
 

@@ -65,16 +65,13 @@ export async function generateMetadata({
     };
   }
   
-  // 센터 정보 가져오기
-  const centerInfo = getCenterById(center);
-  
   // 센터별 트레이너 메타데이터 생성
   return generateTrainerMetadata({
-    name: `${trainer.name} - ${centerInfo.name}`,
-    description: `${trainer.description || `${trainer.name} 트레이너`} | ${centerInfo.name}의 전문 트레이너를 소개합니다.`,
-    slug: `${center}/trainers/${trainer.slug}`,
+    name: trainer.name,
+    description: trainer.description || `${trainer.name} 트레이너`,
+    slug: trainer.slug,
     images: trainer.images
-  });
+  }, center);
 }
 
 // 센터별 개별 트레이너 페이지 컴포넌트
@@ -98,13 +95,13 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
   // 해당 트레이너의 리뷰들 가져오기
   const trainerReviews = await getReviewsByTrainer(trainer.id);
 
-  // SEO 최적화를 위한 구조화된 데이터 생성
+  // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const personStructuredData = generatePersonStructuredData({
     name: trainer.name,
     description: trainer.description || `${trainer.name} 트레이너`,
-    slug: `${center}/trainers/${trainer.slug}`,
+    slug: trainer.slug,
     images: trainer.images
-  });
+  }, center);
 
   return (
     <div className="min-h-screen">
