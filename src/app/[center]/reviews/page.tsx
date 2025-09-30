@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ReviewsPageContent from '@/components/ReviewsPageContent';
-import { getTrainers } from '@/lib/sanityData';
+import { getTrainersByCenter } from '@/lib/sanityData';
 import { client } from '@/lib/sanity';
 import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
@@ -92,24 +92,26 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
   }
 
   try {
-    // 🎯 병렬로 모든 데이터 로딩 (모든 리뷰 + 트레이너)
+    // 🎯 병렬로 센터별 데이터 로딩 (센터별 리뷰 + 트레이너)
     const [allReviews, trainers] = await Promise.all([
-      // 모든 리뷰 (최신순)
-      client.fetch(`*[_type == "review" && isPublished == true] | order(createdAt desc) {
+      // 센터별 리뷰 (최신순)
+      client.fetch(`*[_type == "review" && isPublished == true && center == $center] | order(createdAt desc) {
         _id,
         author,
         reviewContent,
         rating,
         source,
         createdAt,
+        center,
         trainer->{
           _id,
           name,
-          slug
+          slug,
+          center
         }
-      }`),
-      // 트레이너 목록
-      getTrainers()
+      }`, { center }),
+      // 센터별 트레이너 목록
+      getTrainersByCenter(center)
     ]);
 
     // 리뷰 데이터 변환 - Sanity 데이터를 클라이언트 형식으로 변환

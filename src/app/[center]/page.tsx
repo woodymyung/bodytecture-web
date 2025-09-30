@@ -8,7 +8,7 @@ import Facilities from '@/components/Facilities';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import { getTrainers, getReviews } from '@/lib/sanityData';
+import { getTrainersByCenter, getReviewsByCenter } from '@/lib/sanityData';
 import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
@@ -87,9 +87,9 @@ export default async function CenterPage({ params }: CenterPageProps) {
     );
   }
   
-  // Sanity에서 실제 데이터 가져오기 (운영중인 센터만)
-  const trainers = await getTrainers();
-  const reviews = await getReviews();
+  // Sanity에서 센터별 데이터 가져오기 (운영중인 센터만)
+  const trainers = await getTrainersByCenter(center);
+  const reviews = await getReviewsByCenter(center);
   
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const structuredData = generateLocalBusinessStructuredData(center);

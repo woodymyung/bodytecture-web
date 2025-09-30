@@ -11,6 +11,7 @@ import type {
 } from '@/types'
 
 // 트레이너 데이터 가져오기 함수들
+// 모든 센터의 트레이너 가져오기 (전체용)
 export async function getTrainers(): Promise<Trainer[]> {
   try {
     const trainers = await client.fetch(queries.trainers)
@@ -26,10 +27,46 @@ export async function getTrainers(): Promise<Trainer[]> {
   }
 }
 
-export async function getTrainerBySlug(slug: string): Promise<Trainer | null> {
+// 센터별 트레이너 가져오기 (센터별 페이지용)
+export async function getTrainersByCenter(center: string): Promise<Trainer[]> {
   try {
-    const trainer = await client.fetch(queries.trainerBySlug, { slug })
-    return trainer ? transformTrainer(trainer) : null
+    const trainers = await client.fetch(queries.trainersByCenter, { center })
+    if (!Array.isArray(trainers)) {
+      console.warn(`트레이너 데이터가 배열이 아닙니다 (${center}):`, trainers)
+      return []
+    }
+    return trainers.map(transformTrainer)
+  } catch (error) {
+    console.error(`센터별 트레이너 데이터를 가져오는데 실패했습니다 (${center}):`, error)
+    return []
+  }
+}
+
+export async function getTrainerBySlug(slug: string, center?: string): Promise<Trainer | null> {
+  try {
+    if (center) {
+      // 센터가 지정된 경우 센터별 쿼리 사용
+      const trainer = await client.fetch(queries.trainerBySlug, { slug, center })
+      return trainer ? transformTrainer(trainer) : null
+    } else {
+      // 센터가 지정되지 않은 경우 전체에서 찾기 (후방 호환성)
+      const allTrainersQuery = `*[_type == "trainer" && slug.current == $slug][0] {
+        _id,
+        name,
+        slug,
+        profileImages,
+        summary,
+        careers,
+        educationalBackground,
+        certificates,
+        awards,
+        socialMedia,
+        bookingUrl,
+        center
+      }`
+      const trainer = await client.fetch(allTrainersQuery, { slug })
+      return trainer ? transformTrainer(trainer) : null
+    }
   } catch (error) {
     console.error(`트레이너 (${slug}) 데이터를 가져오는데 실패했습니다:`, error)
     return null
@@ -37,6 +74,7 @@ export async function getTrainerBySlug(slug: string): Promise<Trainer | null> {
 }
 
 // 리뷰 데이터 가져오기 함수들  
+// 모든 센터의 리뷰 가져오기 (전체용)
 export async function getReviews(): Promise<Review[]> {
   try {
     const reviews = await client.fetch(queries.reviews)
@@ -52,10 +90,40 @@ export async function getReviews(): Promise<Review[]> {
   }
 }
 
-export async function getReviewsByTrainer(trainerId: string): Promise<Review[]> {
+// 센터별 리뷰 가져오기 (센터별 페이지용)
+export async function getReviewsByCenter(center: string): Promise<Review[]> {
   try {
-    const reviews = await client.fetch(queries.reviewsByTrainer, { trainerId })
+    const reviews = await client.fetch(queries.reviewsByCenter, { center })
+    if (!Array.isArray(reviews)) {
+      console.warn(`리뷰 데이터가 배열이 아닙니다 (${center}):`, reviews)
+      return []
+    }
     return reviews.map(transformReview)
+  } catch (error) {
+    console.error(`센터별 리뷰 데이터를 가져오는데 실패했습니다 (${center}):`, error)
+    return []
+  }
+}
+
+export async function getReviewsByTrainer(trainerId: string, center?: string): Promise<Review[]> {
+  try {
+    if (center) {
+      const reviews = await client.fetch(queries.reviewsByTrainer, { trainerId, center })
+      return reviews.map(transformReview)
+    } else {
+      // 후방 호환성을 위해 센터 조건 없이 조회
+      const allReviewsQuery = `*[_type == "review" && isPublished == true && trainer._ref == $trainerId] | order(createdAt desc) {
+        _id,
+        author,
+        reviewContent,
+        rating,
+        source,
+        createdAt,
+        center
+      }`
+      const reviews = await client.fetch(allReviewsQuery, { trainerId })
+      return reviews.map(transformReview)
+    }
   } catch (error) {
     console.error(`트레이너 (${trainerId}) 리뷰를 가져오는데 실패했습니다:`, error)
     return []
@@ -63,6 +131,7 @@ export async function getReviewsByTrainer(trainerId: string): Promise<Review[]> 
 }
 
 // 운동기구 데이터 가져오기 함수들
+// 모든 센터의 운동기구 가져오기 (전체용)
 export async function getEquipment(): Promise<Facility[]> {
   try {
     const equipment = await client.fetch(queries.equipment)
@@ -73,10 +142,39 @@ export async function getEquipment(): Promise<Facility[]> {
   }
 }
 
-export async function getEquipmentByCategory(category: string): Promise<Facility[]> {
+// 센터별 운동기구 가져오기 (센터별 페이지용)
+export async function getEquipmentByCenter(center: string): Promise<Facility[]> {
   try {
-    const equipment = await client.fetch(queries.equipmentByCategory, { category })
+    const equipment = await client.fetch(queries.equipmentByCenter, { center })
     return equipment.map(transformEquipment)
+  } catch (error) {
+    console.error(`센터별 운동기구 데이터를 가져오는데 실패했습니다 (${center}):`, error)
+    return []
+  }
+}
+
+export async function getEquipmentByCategory(category: string, center?: string): Promise<Facility[]> {
+  try {
+    if (center) {
+      const equipment = await client.fetch(queries.equipmentByCategory, { category, center })
+      return equipment.map(transformEquipment)
+    } else {
+      // 후방 호환성을 위해 센터 조건 없이 조회
+      const allEquipmentQuery = `*[_type == "equipment" && isActive == true && category == $category] | order(name asc) {
+        _id,
+        name,
+        slug,
+        cover,
+        description,
+        usage,
+        category,
+        targetMuscles,
+        difficulty,
+        center
+      }`
+      const equipment = await client.fetch(allEquipmentQuery, { category })
+      return equipment.map(transformEquipment)
+    }
   } catch (error) {
     console.error(`카테고리 (${category}) 운동기구를 가져오는데 실패했습니다:`, error)
     return []
@@ -84,6 +182,7 @@ export async function getEquipmentByCategory(category: string): Promise<Facility
 }
 
 // 블로그 포스트 데이터 가져오기 함수들
+// 모든 센터의 블로그 포스트 가져오기 (전체용)
 export async function getBlogPosts(): Promise<BlogPost[]> {
   try {
     const posts = await client.fetch(queries.blogPosts)
@@ -94,20 +193,77 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
   }
 }
 
-export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+// 센터별 블로그 포스트 가져오기 (센터별 페이지용)
+export async function getBlogPostsByCenter(center: string): Promise<BlogPost[]> {
   try {
-    const post = await client.fetch(queries.blogPostBySlug, { slug })
-    return post ? transformBlogPost(post) : null
+    const posts = await client.fetch(queries.blogPostsByCenter, { center })
+    return posts.map(transformBlogPost)
+  } catch (error) {
+    console.error(`센터별 블로그 포스트 데이터를 가져오는데 실패했습니다 (${center}):`, error)
+    return []
+  }
+}
+
+export async function getBlogPostBySlug(slug: string, center?: string): Promise<BlogPost | null> {
+  try {
+    if (center) {
+      const post = await client.fetch(queries.blogPostBySlug, { slug, center })
+      return post ? transformBlogPost(post) : null
+    } else {
+      // 후방 호환성을 위해 센터 조건 없이 조회
+      const allPostsQuery = `*[_type == "blogPost" && slug.current == $slug && isPublished == true][0] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        coverImage,
+        content,
+        category,
+        tags,
+        publishedAt,
+        center,
+        author->{
+          _id,
+          name,
+          slug,
+          profileImage,
+          center
+        }
+      }`
+      const post = await client.fetch(allPostsQuery, { slug })
+      return post ? transformBlogPost(post) : null
+    }
   } catch (error) {
     console.error(`블로그 포스트 (${slug}) 데이터를 가져오는데 실패했습니다:`, error)
     return null
   }
 }
 
-export async function getFeaturedBlogPosts(): Promise<BlogPost[]> {
+export async function getFeaturedBlogPosts(center?: string): Promise<BlogPost[]> {
   try {
-    const posts = await client.fetch(queries.featuredBlogPosts)
-    return posts.map(transformBlogPost)
+    if (center) {
+      const posts = await client.fetch(queries.featuredBlogPosts, { center })
+      return posts.map(transformBlogPost)
+    } else {
+      // 후방 호환성을 위해 센터 조건 없이 조회
+      const allFeaturedQuery = `*[_type == "blogPost" && isPublished == true && featured == true] | order(publishedAt desc) [0...3] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        coverImage,
+        publishedAt,
+        center,
+        author->{
+          _id,
+          name,
+          slug,
+          center
+        }
+      }`
+      const posts = await client.fetch(allFeaturedQuery)
+      return posts.map(transformBlogPost)
+    }
   } catch (error) {
     console.error('추천 블로그 포스트를 가져오는데 실패했습니다:', error)
     return []

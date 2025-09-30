@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Trainers from '@/components/Trainers';
-import { getTrainers } from '@/lib/sanityData';
+import { getTrainersByCenter } from '@/lib/sanityData';
 import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
@@ -89,8 +89,8 @@ export default async function TrainersPage({ params }: TrainersPageProps) {
     );
   }
   
-  // Sanity에서 트레이너 데이터 가져오기
-  const trainers = await getTrainers();
+  // Sanity에서 센터별 트레이너 데이터 가져오기
+  const trainers = await getTrainersByCenter(center);
   
   return (
     <div className="min-h-screen">

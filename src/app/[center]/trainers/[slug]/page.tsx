@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { getTrainerBySlug, getTrainers, getReviewsByTrainer } from '@/lib/sanityData';
+import { getTrainerBySlug, getTrainersByCenter, getReviewsByTrainer } from '@/lib/sanityData';
 import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
@@ -15,20 +15,27 @@ interface TrainerPageProps {
   params: Promise<{ center: string; slug: string }>;
 }
 
-// 정적 파라미터 생성 함수 - 모든 센터와 트레이너 조합 생성
+// 정적 파라미터 생성 함수 - 모든 센터와 해당 센터의 트레이너 조합 생성
 export async function generateStaticParams() {
   const centers = getAllCenters();
-  const trainers = await getTrainers();
-  
   const params = [];
+  
+  // 각 센터별로 트레이너를 가져와서 조합 생성
   for (const center of centers) {
-    for (const trainer of trainers) {
-      params.push({
-        center: center.id,
-        slug: trainer.slug,
-      });
+    try {
+      const trainers = await getTrainersByCenter(center.id);
+      for (const trainer of trainers) {
+        params.push({
+          center: center.id,
+          slug: trainer.slug,
+        });
+      }
+    } catch (error) {
+      console.warn(`센터 ${center.id}의 트레이너를 가져오는데 실패했습니다:`, error);
+      // 에러 발생시에도 파라미터는 생성하되, 빈 배열로 처리
     }
   }
+  
   return params;
 }
 
@@ -52,8 +59,8 @@ export async function generateMetadata({
     };
   }
   
-  // 트레이너 정보 가져오기
-  const trainer = await getTrainerBySlug(slug);
+  // 트레이너 정보 가져오기 (센터별)
+  const trainer = await getTrainerBySlug(slug, center);
   if (!trainer) {
     return {
       title: '트레이너를 찾을 수 없습니다',
@@ -86,14 +93,14 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
-  // 트레이너 정보 가져오기
-  const trainer = await getTrainerBySlug(slug);
+  // 트레이너 정보 가져오기 (센터별)
+  const trainer = await getTrainerBySlug(slug, center);
   if (!trainer) {
     notFound();
   }
 
-  // 해당 트레이너의 리뷰들 가져오기
-  const trainerReviews = await getReviewsByTrainer(trainer.id);
+  // 해당 트레이너의 리뷰들 가져오기 (센터별)
+  const trainerReviews = await getReviewsByTrainer(trainer.id, center);
 
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const personStructuredData = generatePersonStructuredData({

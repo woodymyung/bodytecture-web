@@ -57,7 +57,7 @@ export function getResponsiveImageUrl(source: SanityImageSource, width: number, 
 
 // GROQ 쿼리들 - Sanity에서 데이터를 가져오는 쿼리문
 export const queries = {
-  // 모든 트레이너 가져오기
+  // 모든 트레이너 가져오기 (전체)
   trainers: `*[_type == "trainer"] | order(name asc) {
     _id,
     name,
@@ -69,11 +69,12 @@ export const queries = {
     certificates,
     awards,
     socialMedia,
-    bookingUrl
+    bookingUrl,
+    center
   }`,
   
-  // 특정 트레이너 가져오기 (slug로 조회)
-  trainerBySlug: `*[_type == "trainer" && slug.current == $slug][0] {
+  // 센터별 트레이너 가져오기
+  trainersByCenter: `*[_type == "trainer" && center == $center] | order(name asc) {
     _id,
     name,
     slug,
@@ -84,10 +85,27 @@ export const queries = {
     certificates,
     awards,
     socialMedia,
-    bookingUrl
+    bookingUrl,
+    center
   }`,
   
-  // 모든 리뷰 가져오기 (최신순)
+  // 특정 트레이너 가져오기 (slug로 조회) - 센터별
+  trainerBySlug: `*[_type == "trainer" && slug.current == $slug && center == $center][0] {
+    _id,
+    name,
+    slug,
+    profileImages,
+    summary,
+    careers,
+    educationalBackground,
+    certificates,
+    awards,
+    socialMedia,
+    bookingUrl,
+    center
+  }`,
+  
+  // 모든 리뷰 가져오기 (최신순, 전체)
   reviews: `*[_type == "review" && isPublished == true] | order(createdAt desc) {
     _id,
     author,
@@ -95,24 +113,44 @@ export const queries = {
     rating,
     source,
     createdAt,
+    center,
     trainer->{
       _id,
       name,
-      slug
+      slug,
+      center
     }
   }`,
   
-  // 특정 트레이너의 모든 리뷰 가져오기
-  reviewsByTrainer: `*[_type == "review" && isPublished == true && trainer._ref == $trainerId] | order(createdAt desc) {
+  // 센터별 리뷰 가져오기 (최신순)
+  reviewsByCenter: `*[_type == "review" && isPublished == true && center == $center] | order(createdAt desc) {
     _id,
     author,
     reviewContent,
     rating,
     source,
-    createdAt
+    createdAt,
+    center,
+    trainer->{
+      _id,
+      name,
+      slug,
+      center
+    }
   }`,
   
-  // 모든 운동기구 가져오기
+  // 특정 트레이너의 모든 리뷰 가져오기 (센터별)
+  reviewsByTrainer: `*[_type == "review" && isPublished == true && trainer._ref == $trainerId && center == $center] | order(createdAt desc) {
+    _id,
+    author,
+    reviewContent,
+    rating,
+    source,
+    createdAt,
+    center
+  }`,
+  
+  // 모든 운동기구 가져오기 (전체)
   equipment: `*[_type == "equipment" && isActive == true] | order(name asc) {
     _id,
     name,
@@ -122,11 +160,12 @@ export const queries = {
     usage,
     category,
     targetMuscles,
-    difficulty
+    difficulty,
+    center
   }`,
   
-  // 특정 카테고리의 운동기구 가져오기
-  equipmentByCategory: `*[_type == "equipment" && isActive == true && category == $category] | order(name asc) {
+  // 센터별 운동기구 가져오기
+  equipmentByCenter: `*[_type == "equipment" && isActive == true && center == $center] | order(name asc) {
     _id,
     name,
     slug,
@@ -135,10 +174,25 @@ export const queries = {
     usage,
     category,
     targetMuscles,
-    difficulty
+    difficulty,
+    center
   }`,
   
-  // 모든 블로그 포스트 가져오기 (발행된 것만, 최신순)
+  // 특정 카테고리의 운동기구 가져오기 (센터별)
+  equipmentByCategory: `*[_type == "equipment" && isActive == true && category == $category && center == $center] | order(name asc) {
+    _id,
+    name,
+    slug,
+    cover,
+    description,
+    usage,
+    category,
+    targetMuscles,
+    difficulty,
+    center
+  }`,
+  
+  // 모든 블로그 포스트 가져오기 (발행된 것만, 최신순, 전체)
   blogPosts: `*[_type == "blogPost" && isPublished == true] | order(publishedAt desc) {
     _id,
     title,
@@ -148,15 +202,36 @@ export const queries = {
     category,
     tags,
     publishedAt,
+    center,
     author->{
       _id,
       name,
-      slug
+      slug,
+      center
     }
   }`,
   
-  // 특정 블로그 포스트 가져오기 (전체 내용 포함)
-  blogPostBySlug: `*[_type == "blogPost" && slug.current == $slug && isPublished == true][0] {
+  // 센터별 블로그 포스트 가져오기 (발행된 것만, 최신순)
+  blogPostsByCenter: `*[_type == "blogPost" && isPublished == true && center == $center] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    coverImage,
+    category,
+    tags,
+    publishedAt,
+    center,
+    author->{
+      _id,
+      name,
+      slug,
+      center
+    }
+  }`,
+  
+  // 특정 블로그 포스트 가져오기 (전체 내용 포함, 센터별)
+  blogPostBySlug: `*[_type == "blogPost" && slug.current == $slug && isPublished == true && center == $center][0] {
     _id,
     title,
     slug,
@@ -166,26 +241,30 @@ export const queries = {
     category,
     tags,
     publishedAt,
+    center,
     author->{
       _id,
       name,
       slug,
-      profileImage
+      profileImage,
+      center
     }
   }`,
   
-  // 추천 블로그 포스트 가져오기
-  featuredBlogPosts: `*[_type == "blogPost" && isPublished == true && featured == true] | order(publishedAt desc) [0...3] {
+  // 추천 블로그 포스트 가져오기 (센터별)
+  featuredBlogPosts: `*[_type == "blogPost" && isPublished == true && featured == true && center == $center] | order(publishedAt desc) [0...3] {
     _id,
     title,
     slug,
     excerpt,
     coverImage,
     publishedAt,
+    center,
     author->{
       _id,
       name,
-      slug
+      slug,
+      center
     }
   }`
 }
