@@ -2,8 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import { CONTACT_INFO, COMPANY_INFO, SOCIAL_LINKS } from '@/constants/contact';
 
+// 푸터 컴포넌트 props 타입 정의
+interface FooterProps {
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
+}
+
 // 푸터 컴포넌트
-const Footer: React.FC = () => {
+const Footer: React.FC<FooterProps> = ({ currentCenter }) => {
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -26,9 +31,30 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">서비스 정보</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><Link href="/#services" className="hover:text-white transition-colors duration-200">제공 서비스</Link></li>
-              <li><Link href="/trainers" className="hover:text-white transition-colors duration-200">트레이너 소개</Link></li>
-              <li><Link href="/#facilities" className="hover:text-white transition-colors duration-200">시설 안내</Link></li>
+              <li>
+                <Link 
+                  href={currentCenter ? `/${currentCenter}#services` : "/#services"} 
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  제공 서비스
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href={currentCenter ? `/${currentCenter}/trainers` : "/trainers"} 
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  트레이너 소개
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  href={currentCenter ? `/${currentCenter}#facilities` : "/#facilities"} 
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  시설 안내
+                </Link>
+              </li>
             </ul>
           </div>
 

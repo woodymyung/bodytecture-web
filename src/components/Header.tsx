@@ -5,21 +5,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CONTACT_INFO } from '@/constants/contact';
 
+// 헤더 컴포넌트 props 타입 정의
+interface HeaderProps {
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
+}
+
 // 헤더 컴포넌트 - 바디텍쳐 로고와 네비게이션 메뉴를 포함
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ currentCenter }) => {
   // 모바일 메뉴 상태 관리
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 네비게이션 메뉴 아이템들 - 시설은 메인 페이지의 facilities 섹션으로 이동
-  const menuItems = [
-    { label: '오시는 길', href: '/#location' },
-    { label: '제공 서비스', href: '/#services' },
-    { label: '트레이너', href: '/trainers' },
-    { label: '시설', href: '/#facilities' }, // 메인 페이지의 facilities 섹션으로 변경
-    // { label: '블로그', href: '/posts' },
-    { label: '후기', href: '/reviews' },
-    { label: '문의하기', href: `tel:${CONTACT_INFO.phone}` }, // 클릭 시 바로 전화 연결
-  ];
+  // 센터별 동적 네비게이션 메뉴 생성
+  const getMenuItems = (centerId?: string) => {
+    const centerPrefix = centerId ? `/${centerId}` : '';
+    const locationHref = centerId ? `${centerPrefix}#location` : '/#location';
+    const servicesHref = centerId ? `${centerPrefix}#services` : '/#services';
+    const facilitiesHref = centerId ? `${centerPrefix}#facilities` : '/#facilities';
+    
+    return [
+      { label: '오시는 길', href: locationHref },
+      { label: '제공 서비스', href: servicesHref },
+      { label: '트레이너', href: `${centerPrefix}/trainers` },
+      { label: '시설', href: facilitiesHref },
+      // { label: '블로그', href: `${centerPrefix}/posts` },
+      { label: '후기', href: `${centerPrefix}/reviews` },
+      { label: '문의하기', href: `tel:${CONTACT_INFO.phone}` }, // 클릭 시 바로 전화 연결
+    ];
+  };
+
+  // 현재 센터에 맞는 메뉴 아이템들 생성
+  const menuItems = getMenuItems(currentCenter);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-red-600">

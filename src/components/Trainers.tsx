@@ -11,9 +11,10 @@ import { COMPANY_INFO } from '@/constants/contact';
 interface TrainersProps {
   trainers?: Trainer[];
   hideHeader?: boolean; // 🎯 헤더 숨김 옵션 추가
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
 }
 
-const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false }) => {
+const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, currentCenter }) => {
   // 데이터 로딩 상태 확인
   if (!trainers || trainers.length === 0) {
     return (
@@ -55,7 +56,7 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false }
           {trainers.map((trainer: Trainer) => (
             <Link
               key={trainer.id}
-              href={`/trainers/${trainer.slug}`}
+              href={currentCenter ? `/${currentCenter}/trainers/${trainer.slug}` : `/trainers/${trainer.slug}`}
               className="block bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] cursor-pointer"
             >
               {/* 트레이너 이미지 */}

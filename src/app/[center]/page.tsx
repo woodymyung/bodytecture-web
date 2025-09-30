@@ -41,7 +41,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
   if (centerInfo.status === 'preparing') {
     return (
       <div className="min-h-screen">
-        <Header />
+        <Header currentCenter={center} />
         
         <main className="pt-12 md:pt-16">
           {/* 준비중 안내 섹션 */}
@@ -82,7 +82,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
           </section>
         </main>
         
-        <Footer />
+        <Footer currentCenter={center} />
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
       />
       
       {/* 헤더 - 센터별 색상이 layout에서 적용됨 */}
-      <Header />
+      <Header currentCenter={center} />
 
       {/* 메인 콘텐츠 */}
       <main>
@@ -151,7 +151,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
         <Services />
 
         {/* 트레이너 섹션 - 4분할로 배치된 트레이너 정보 */}
-        <Trainers trainers={trainers} />
+        <Trainers trainers={trainers} currentCenter={center} />
 
         {/* 시설 정보 섹션 - 이미지 슬라이더와 설명 */}
         <Facilities />
@@ -164,7 +164,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
       </main>
 
       {/* 푸터 - 회사 정보와 링크들 */}
-      <Footer />
+      <Footer currentCenter={center} />
     </div>
   );
 }
