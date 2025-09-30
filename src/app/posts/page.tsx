@@ -104,12 +104,12 @@ export default function PostsPage() {
               >
                 트레이너 소개
               </Link>
-              <a
+              <Link
                 href="/reviews"
                 className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
               >
                 고객 후기
-              </a>
+              </Link>
             </div>
           </div>
         </section>
