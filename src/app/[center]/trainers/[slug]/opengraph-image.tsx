@@ -3,6 +3,7 @@
 
 import { ImageResponse } from 'next/og';
 import { getTrainerBySlug, getTrainers } from '@/lib/sanityData';
+import { getCenterHexColor } from '@/constants/colors';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 
 // Static export를 위한 설정
@@ -66,7 +67,7 @@ export default async function OpengraphImage({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: centerInfo.branding.primary,
+              background: getCenterHexColor(center),
               color: 'white',
               fontSize: '48px',
               fontWeight: 'bold',
@@ -87,7 +88,7 @@ export default async function OpengraphImage({
             height: '100%',
             width: '100%',
             display: 'flex',
-            background: `linear-gradient(135deg, ${centerInfo.branding.primary} 0%, ${centerInfo.branding.secondary} 100%)`,
+            background: `linear-gradient(135deg, ${getCenterHexColor(center)} 0%, #f3f4f6 100%)`,
             fontFamily: 'system-ui, -apple-system, sans-serif',
           }}
         >

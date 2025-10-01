@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { facilities } from '@/data/mockData';
 import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
+import { getCenterHexColor } from '@/constants/colors';
 
 // 센터별 시설 페이지 props 타입 정의
 interface FacilitiesPageProps {
@@ -188,11 +189,11 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${centerInfo.branding.primary}20` }}
+                  style={{ backgroundColor: `${getCenterHexColor(center)}20` }}
                 >
                   <svg 
                     className="w-6 h-6"
-                    style={{ color: centerInfo.branding.primary }}
+                    style={{ color: getCenterHexColor(center) }}
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -208,11 +209,11 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${centerInfo.branding.secondary}20` }}
+                  style={{ backgroundColor: '#f3f4f620' }}
                 >
                   <svg 
                     className="w-6 h-6"
-                    style={{ color: centerInfo.branding.secondary }}
+                    style={{ color: '#6b7280' }} // gray-500
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -232,11 +233,11 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
               <div className="bg-white rounded-lg p-6 shadow-md">
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                  style={{ backgroundColor: `${centerInfo.branding.primary}15` }}
+                  style={{ backgroundColor: `${getCenterHexColor(center)}15` }}
                 >
                   <svg 
                     className="w-6 h-6"
-                    style={{ color: centerInfo.branding.primary }}
+                    style={{ color: getCenterHexColor(center) }}
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"

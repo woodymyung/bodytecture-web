@@ -1,29 +1,37 @@
 import React from 'react';
 import Link from 'next/link';
 import { CONTACT_INFO, COMPANY_INFO, SOCIAL_LINKS } from '@/constants/contact';
+import { CenterInfo } from '@/types';
 
 // 푸터 컴포넌트 props 타입 정의
 interface FooterProps {
   currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
+  centerInfo?: CenterInfo; // 센터 정보 (Sanity에서 가져온 데이터)
 }
 
 // 푸터 컴포넌트
-const Footer: React.FC<FooterProps> = ({ currentCenter }) => {
+const Footer: React.FC<FooterProps> = ({ currentCenter, centerInfo }) => {
+  // 센터별 정보 가져오기 - Sanity 데이터 우선, 없으면 기본값 사용
+  const centerName = centerInfo?.name || COMPANY_INFO.name;
+  const centerDescription = centerInfo?.description || COMPANY_INFO.description;
+  const contactInfo = centerInfo?.contact || CONTACT_INFO;
+  const businessHours = centerInfo?.businessHours || CONTACT_INFO.businessHours;
+  
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* 회사 정보 */}
           <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold mb-4">{COMPANY_INFO.name}</h3>
+            <h3 className="text-2xl font-bold mb-4">{centerName}</h3>
             <p className="text-gray-300 mb-4 leading-relaxed">
-              {COMPANY_INFO.description}
+              {centerDescription}
             </p>
             <div className="space-y-2 text-sm text-gray-300">
-              <p>📍 {CONTACT_INFO.address}</p>
-              <p>📞 {CONTACT_INFO.phone}</p>
-              <p>🕒 평일: {CONTACT_INFO.businessHours.weekdays.display}</p>
-              <p>🕒 주말: {CONTACT_INFO.businessHours.weekends.display}</p>
+              <p>📍 {contactInfo.address}</p>
+              <p>📞 {contactInfo.phone}</p>
+              <p>🕒 평일: {businessHours.weekdays.display}</p>
+              <p>🕒 주말: {businessHours.weekends.display}</p>
             </div>
           </div>
 
@@ -62,7 +70,7 @@ const Footer: React.FC<FooterProps> = ({ currentCenter }) => {
           <div>
             <h4 className="text-lg font-semibold mb-4">고객 지원</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href={`tel:${CONTACT_INFO.phone}`} className="hover:text-white transition-colors duration-200">문의하기</a></li>
+              <li><a href={`tel:${contactInfo.phone}`} className="hover:text-white transition-colors duration-200">문의하기</a></li>
               <li><Link href="/#location" className="hover:text-white transition-colors duration-200">찾아오는 길</Link></li>
             </ul>
           </div>

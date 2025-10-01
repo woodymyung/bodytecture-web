@@ -4,14 +4,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { isValidCenterId, getCenterById, type CenterInfo } from '@/constants/centers';
+import { isValidCenterId, getCenterById, type LocalCenterInfo } from '@/constants/centers';
+import { getCenterHexColor } from '@/constants/colors';
 
 export default function NotFound() {
   const router = useRouter();
   const [pathInfo, setPathInfo] = useState<{
     isCenter: boolean;
     center: string | null;
-    centerInfo: CenterInfo | null;
+    centerInfo: LocalCenterInfo | null;
   }>({ isCenter: false, center: null, centerInfo: null });
 
   // 클라이언트에서만 경로 분석 (Hydration mismatch 방지)
@@ -58,8 +59,8 @@ export default function NotFound() {
       <div 
         className="min-h-screen flex items-center justify-center"
         style={{
-          '--center-primary': pathInfo.centerInfo.branding.primary,
-          '--center-secondary': pathInfo.centerInfo.branding.secondary,
+          '--center-primary': getCenterHexColor(pathInfo.center || 'wangsimni'),
+          '--center-secondary': '#f3f4f6', // 기본 보조 컬러
         } as React.CSSProperties}
       >
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -70,13 +71,13 @@ export default function NotFound() {
             {/* 센터 로고/이름 */}
             <div className="mb-8">
               <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                <span style={{ color: pathInfo.centerInfo.branding.primary }}>
+                <span style={{ color: getCenterHexColor(pathInfo.center || 'wangsimni') }}>
                   {pathInfo.centerInfo.shortName}
                 </span>
               </h1>
               <div 
                 className="w-24 h-1 mx-auto rounded-full"
-                style={{ backgroundColor: pathInfo.centerInfo.branding.primary }}
+                style={{ backgroundColor: getCenterHexColor(pathInfo.center || 'wangsimni') }}
               ></div>
             </div>
 
@@ -98,7 +99,7 @@ export default function NotFound() {
               <Link
                 href={`/${pathInfo.center}`}
                 className="text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-all duration-200"
-                style={{ backgroundColor: pathInfo.centerInfo.branding.primary }}
+                style={{ backgroundColor: getCenterHexColor(pathInfo.center || 'wangsimni') }}
               >
                 홈으로 가기
               </Link>

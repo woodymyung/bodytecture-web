@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { getAllCenters, type CenterInfo } from '@/constants/centers';
+import { getAllCenters, type LocalCenterInfo } from '@/constants/centers';
+import { getCenterHexColor } from '@/constants/colors';
 
 // 센터 선택 페이지 컴포넌트
 // 3개 센터 중 하나를 선택할 수 있는 카드형 인터페이스 제공
@@ -11,7 +12,7 @@ const CenterSelection: React.FC = () => {
   const centers = getAllCenters();
 
   // 센터 카드 컴포넌트
-  const CenterCard: React.FC<{ center: CenterInfo }> = ({ center }) => {
+  const CenterCard: React.FC<{ center: LocalCenterInfo }> = ({ center }) => {
     const isActive = center.status === 'active';
     const href = isActive ? `/${center.id}` : '#';
 
@@ -24,7 +25,7 @@ const CenterSelection: React.FC = () => {
               <div className="flex items-center justify-between mb-6">
                 <div 
                   className="px-4 py-2 rounded-full text-sm font-bold text-white"
-                  style={{ backgroundColor: center.branding.primary }}
+                  style={{ backgroundColor: getCenterHexColor(center.id) }}
                 >
                   운영중
                 </div>
@@ -63,7 +64,7 @@ const CenterSelection: React.FC = () => {
               <div 
                 className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-5 transition-opacity duration-300"
                 style={{ 
-                  background: `linear-gradient(135deg, ${center.branding.primary} 0%, ${center.branding.secondary} 100%)`
+                  background: `linear-gradient(135deg, ${getCenterHexColor(center.id)} 0%, #f3f4f6 100%)`
                 }}
               />
             </div>

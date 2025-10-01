@@ -197,3 +197,151 @@ export interface Facility {
   description: string;
   image: string;
 }
+
+// 센터 정보 관련 타입 정의 (Sanity info 스키마와 매칭)
+export interface SanityCenterInfoRaw {
+  _id: string;
+  centerId: string;
+  name: string;
+  description: string;
+  status: 'active' | 'preparing';
+  contact: {
+    phone: string;
+    address: string;
+    fullAddress: string;
+  };
+  businessHours: {
+    weekdays: {
+      open: string;
+      close: string;
+      display: string;
+    };
+    weekends: {
+      open: string;
+      close: string;
+      display: string;
+    };
+  };
+  branding: {
+    logo?: SanityImageAsset;
+    heroImage?: SanityImageAsset;
+  };
+  directions: {
+    subway: Array<{
+      line: string;
+      exit: string;
+      description: string;
+    }>;
+    bus: Array<{
+      busNumber: string;
+      stop: string;
+      description: string;
+    }>;
+    car: {
+      address: string;
+      parking: string;
+    };
+  };
+  socialMedia: {
+    instagram?: {
+      url: string;
+      name: string;
+    };
+    naverMap?: {
+      url: string;
+      name: string;
+    };
+    naverBlog?: {
+      url: string;
+      name: string;
+    };
+  };
+  services: Array<{
+    name: string;
+    description?: string;
+    prices: Array<{
+      period: string;    // 기간 또는 회차 (예: "1개월", "10회")
+      amount: number;    // 가격 
+      note?: string;     // 부가 정보 (예: "회당 77,000원")
+    }>;
+  }>;
+  seo: {
+    keywords: string[];
+    metaTitle: string;
+    metaDescription: string;
+  };
+}
+
+// 애플리케이션에서 사용할 센터 정보 타입 (변환된 형태)
+export interface CenterInfo {
+  id: string;
+  centerId: string;
+  name: string;
+  description: string;
+  status: 'active' | 'preparing';
+  contact: {
+    phone: string;
+    address: string;
+    fullAddress: string;
+  };
+  businessHours: {
+    weekdays: {
+      open: string;
+      close: string;
+      display: string;
+    };
+    weekends: {
+      open: string;
+      close: string;
+      display: string;
+    };
+  };
+  branding: {
+    logo?: string;
+    heroImage?: string;
+  };
+  directions: {
+    subway: Array<{
+      line: string;
+      exit: string;
+      description: string;
+    }>;
+    bus: Array<{
+      busNumber: string;
+      stop: string;
+      description: string;
+    }>;
+    car: {
+      address: string;
+      parking: string;
+    };
+  };
+  socialMedia: {
+    instagram?: {
+      url: string;
+      name: string;
+    };
+    naverMap?: {
+      url: string;
+      name: string;
+    };
+    naverBlog?: {
+      url: string;
+      name: string;
+    };
+  };
+  services: Array<{
+    name: string;
+    description?: string;
+    prices: Array<{
+      period: string;    // 기간 또는 회차 (예: "1개월", "10회")  
+      amount: number;    // 가격
+      note?: string;     // 부가 정보 (예: "회당 77,000원")
+    }>;
+  }>;
+  seo: {
+    keywords: string[];
+    metaTitle: string;
+    metaDescription: string;
+  };
+}

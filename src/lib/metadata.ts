@@ -4,7 +4,7 @@
 import type { Metadata } from 'next';
 import { urlFor } from './sanity';
 import type { TrainerImage } from '@/types';
-import { getCenterById, type CenterId, type CenterInfo } from '@/constants/centers';
+import { getCenterById, type CenterId, type LocalCenterInfo } from '@/constants/centers';
 
 // 공통 사이트 정보 (센터 독립적)
 const SITE_CONFIG = {
@@ -268,7 +268,7 @@ export function generateLocalBusinessStructuredData(centerId: CenterId) {
   const centerSiteConfig = getCenterSiteConfig(centerId);
   
   // 센터별 운영시간을 Schema.org 형식으로 변환
-  const getOpeningHours = (centerInfo: CenterInfo) => {
+  const getOpeningHours = (centerInfo: LocalCenterInfo) => {
     if (centerInfo.status === 'preparing') {
       return []; // 준비중인 센터는 운영시간 없음
     }

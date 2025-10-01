@@ -9,6 +9,7 @@ import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
 import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
+import { getCenterHexColor } from '@/constants/colors';
 
 // 센터별 포스트 페이지 props 타입 정의
 interface PostsPageProps {
@@ -134,12 +135,12 @@ export default async function PostsPage({ params }: PostsPageProps) {
                     <div 
                       className="w-full h-full flex items-center justify-center"
                       style={{
-                        background: `linear-gradient(135deg, ${centerInfo.branding.primary}20, ${centerInfo.branding.secondary}20)`
+                        background: `linear-gradient(135deg, ${getCenterHexColor(center)}20, #f3f4f620)`
                       }}
                     >
                       <svg 
                         className="w-12 h-12" 
-                        style={{ color: centerInfo.branding.primary }}
+                        style={{ color: getCenterHexColor(center) }}
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"

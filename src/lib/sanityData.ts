@@ -4,10 +4,12 @@ import type {
   Review, 
   BlogPost, 
   Facility,
+  CenterInfo,
   SanityTrainerRaw,
   SanityReviewRaw,
   SanityBlogPostRaw,
-  SanityEquipmentRaw
+  SanityEquipmentRaw,
+  SanityCenterInfoRaw
 } from '@/types'
 
 // 트레이너 데이터 가져오기 함수들
@@ -325,5 +327,70 @@ function transformBlogPost(sanityPost: SanityBlogPostRaw): BlogPost {
     slug: sanityPost.slug?.current || '',
     publishedAt: sanityPost.publishedAt,
     content: sanityPost.content
+  }
+}
+
+// === 센터 정보 관련 함수들 ===
+
+// 모든 센터 정보 가져오기
+export async function getAllCenterInfo(): Promise<CenterInfo[]> {
+  try {
+    const centerInfos = await client.fetch(queries.centerInfoAll)
+    if (!Array.isArray(centerInfos)) {
+      console.warn('센터 정보 데이터가 배열이 아닙니다:', centerInfos)
+      return []
+    }
+    return centerInfos.map(transformCenterInfo)
+  } catch (error) {
+    console.error('센터 정보 데이터를 가져오는데 실패했습니다:', error)
+    return []
+  }
+}
+
+// 활성화된 센터 정보만 가져오기
+export async function getActiveCenterInfo(): Promise<CenterInfo[]> {
+  try {
+    const centerInfos = await client.fetch(queries.activeCenterInfo)
+    if (!Array.isArray(centerInfos)) {
+      console.warn('활성 센터 정보 데이터가 배열이 아닙니다:', centerInfos)
+      return []
+    }
+    return centerInfos.map(transformCenterInfo)
+  } catch (error) {
+    console.error('활성 센터 정보 데이터를 가져오는데 실패했습니다:', error)
+    return []
+  }
+}
+
+// 특정 센터 정보 가져오기 (centerId로 조회)
+export async function getCenterInfoByCenterId(centerId: string): Promise<CenterInfo | null> {
+  try {
+    const centerInfo = await client.fetch(queries.centerInfoByCenterId, { centerId })
+    return centerInfo ? transformCenterInfo(centerInfo) : null
+  } catch (error) {
+    console.error(`센터 정보 (${centerId})를 가져오는데 실패했습니다:`, error)
+    return null
+  }
+}
+
+// 센터 정보 데이터 변환 함수 - Sanity 센터 데이터를 애플리케이션 타입으로 변환
+function transformCenterInfo(sanityCenterInfo: SanityCenterInfoRaw): CenterInfo {
+  return {
+    id: sanityCenterInfo._id,
+    centerId: sanityCenterInfo.centerId,
+    name: sanityCenterInfo.name,
+    description: sanityCenterInfo.description,
+    status: sanityCenterInfo.status,
+    contact: sanityCenterInfo.contact,
+    businessHours: sanityCenterInfo.businessHours,
+    branding: {
+      // primary, secondary는 로컬 컬러 상수에서 관리
+      logo: sanityCenterInfo.branding.logo?._ref,
+      heroImage: sanityCenterInfo.branding.heroImage?._ref
+    },
+    directions: sanityCenterInfo.directions,
+    socialMedia: sanityCenterInfo.socialMedia,
+    services: sanityCenterInfo.services,
+    seo: sanityCenterInfo.seo
   }
 }

@@ -4,8 +4,8 @@
 // 센터 타입 정의
 export type CenterId = 'wangsimni' | 'daechi' | 'cheongdam';
 
-// 센터별 정보 인터페이스
-export interface CenterInfo {
+// 센터별 정보 인터페이스 (로컬 상수용 - Sanity CenterInfo와 구분)
+export interface LocalCenterInfo {
   id: CenterId;
   name: string;
   shortName: string;
@@ -33,18 +33,12 @@ export interface CenterInfo {
     };
   };
   
-  // 브랜딩 (센터별 미세 조정을 위한 색상 정보)
-  branding: {
-    primary: string; // 메인 색상
-    secondary: string; // 보조 색상
-  };
-  
   // SEO용 키워드
   keywords: string[];
 }
 
 // 센터별 상세 정보
-export const CENTERS: Record<CenterId, CenterInfo> = {
+export const CENTERS: Record<CenterId, LocalCenterInfo> = {
   // 왕십리점 - 기존 정보 유지
   wangsimni: {
     id: 'wangsimni',
@@ -72,10 +66,6 @@ export const CENTERS: Record<CenterId, CenterInfo> = {
       }
     },
     
-    branding: {
-      primary: '#dc2626', // 빨간색 (기존 색상)
-      secondary: '#ea580c' // 오렌지색
-    },
     
     keywords: [
       '바디텍쳐', '왕십리', '청계', '헬스장', '피트니스',
@@ -111,10 +101,6 @@ export const CENTERS: Record<CenterId, CenterInfo> = {
       }
     },
     
-    branding: {
-      primary: '#1d4ed8', // 파란색 (차별화)
-      secondary: '#2563eb'
-    },
     
     keywords: [
       '최원준짐', '대치', '대치동', '헬스장', '피트니스',
@@ -150,10 +136,6 @@ export const CENTERS: Record<CenterId, CenterInfo> = {
       }
     },
     
-    branding: {
-      primary: '#059669', // 초록색 (차별화)
-      secondary: '#10b981'
-    },
     
     keywords: [
       '바디텍쳐', '청담', '청담동', '헬스장', '피트니스',
@@ -164,15 +146,15 @@ export const CENTERS: Record<CenterId, CenterInfo> = {
 } as const;
 
 // 헬퍼 함수들
-export const getCenterById = (centerId: CenterId): CenterInfo => {
+export const getCenterById = (centerId: CenterId): LocalCenterInfo => {
   return CENTERS[centerId];
 };
 
-export const getAllCenters = (): CenterInfo[] => {
+export const getAllCenters = (): LocalCenterInfo[] => {
   return Object.values(CENTERS);
 };
 
-export const getActiveCenters = (): CenterInfo[] => {
+export const getActiveCenters = (): LocalCenterInfo[] => {
   return Object.values(CENTERS).filter(center => center.status === 'active');
 };
 

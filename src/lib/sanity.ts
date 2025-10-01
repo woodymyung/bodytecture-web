@@ -266,5 +266,55 @@ export const queries = {
       slug,
       center
     }
+  }`,
+
+  // === 센터 정보 관련 쿼리들 ===
+  
+  // 모든 센터 정보 가져오기
+  centerInfoAll: `*[_type == "info"] | order(centerId asc) {
+    _id,
+    centerId,
+    name,
+    description,
+    status,
+    contact,
+    businessHours,
+    branding,
+    directions,
+    socialMedia,
+    services,
+    seo
+  }`,
+
+  // 특정 센터 정보 가져오기 (centerId로 조회)
+  centerInfoByCenterId: `*[_type == "info" && centerId == $centerId][0] {
+    _id,
+    centerId,
+    name,
+    description,
+    status,
+    contact,
+    businessHours,
+    branding,
+    directions,
+    socialMedia,
+    services,
+    seo
+  }`,
+
+  // 활성화된 센터들만 가져오기
+  activeCenterInfo: `*[_type == "info" && status == "active"] | order(centerId asc) {
+    _id,
+    centerId,
+    name,
+    description,
+    status,
+    contact,
+    businessHours,
+    branding,
+    directions,
+    socialMedia,
+    services,
+    seo
   }`
 }

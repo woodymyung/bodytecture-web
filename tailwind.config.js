@@ -42,5 +42,25 @@ module.exports = {
       },
     },
   },
+  // 센터별 동적 컬러 클래스들을 safelist에 추가 (PurgeCSS 방지)
+  safelist: [
+    // 왕십리점 (red-600)
+    'bg-red-600', 'bg-red-100', 'bg-red-700',
+    'text-red-600', 'text-red-100', 'text-red-700', 
+    'border-red-600', 'border-red-100', 'border-red-700',
+    'hover:bg-red-600', 'hover:text-red-600',
+    
+    // 대치점 (gray-800)
+    'bg-gray-800', 'bg-gray-100', 'bg-gray-900',
+    'text-gray-800', 'text-gray-100', 'text-gray-900',
+    'border-gray-800', 'border-gray-100', 'border-gray-900',
+    'hover:bg-gray-800', 'hover:text-gray-800',
+    
+    // 청담점 (blue-600)
+    'bg-blue-600', 'bg-blue-100', 'bg-blue-700',
+    'text-blue-600', 'text-blue-100', 'text-blue-700',
+    'border-blue-600', 'border-blue-100', 'border-blue-700',
+    'hover:bg-blue-600', 'hover:text-blue-600',
+  ],
   plugins: [], // Tailwind CSS v3.3+에서는 line-clamp가 기본 내장
 }

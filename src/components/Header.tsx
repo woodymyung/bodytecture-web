@@ -4,16 +4,25 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { CONTACT_INFO } from '@/constants/contact';
+import { CenterInfo } from '@/types';
+import { getCenterHexColor } from '@/constants/colors';
 
 // 헤더 컴포넌트 props 타입 정의
 interface HeaderProps {
   currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
+  centerInfo?: CenterInfo; // 센터 정보 (Sanity에서 가져온 데이터)
 }
 
 // 헤더 컴포넌트 - 바디텍쳐 로고와 네비게이션 메뉴를 포함
-const Header: React.FC<HeaderProps> = ({ currentCenter }) => {
+const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
   // 모바일 메뉴 상태 관리
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // 센터별 정보 가져오기 - Sanity 데이터 우선, 없으면 기본값 사용
+  const phoneNumber = centerInfo?.contact?.phone || CONTACT_INFO.phone;
+  const centerName = centerInfo?.name || '바디텍쳐';
+  // 센터별 브랜딩 컬러 - 로컬 상수에서 가져오기
+  const headerBgColor = getCenterHexColor(currentCenter || 'wangsimni');
 
   // 센터별 동적 네비게이션 메뉴 생성
   const getMenuItems = (centerId?: string) => {
@@ -29,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter }) => {
       { label: '시설', href: facilitiesHref },
       // { label: '블로그', href: `${centerPrefix}/posts` },
       { label: '후기', href: `${centerPrefix}/reviews` },
-      { label: '문의하기', href: `tel:${CONTACT_INFO.phone}` }, // 클릭 시 바로 전화 연결
+      { label: '문의하기', href: `tel:${phoneNumber}` }, // 센터별 전화번호 사용
     ];
   };
 
@@ -37,7 +46,10 @@ const Header: React.FC<HeaderProps> = ({ currentCenter }) => {
   const menuItems = getMenuItems(currentCenter);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-red-600">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50"
+      style={{ backgroundColor: headerBgColor }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-12 md:h-16">
           {/* 로고 섹션 */}
@@ -45,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter }) => {
             <Link href="/" className="flex items-center">
               <Image
                 src="/images/bodytecture-logo-white.svg"
-                alt="바디텍쳐 왕십리 청계점"
+                alt={centerName}
                 width={200}
                 height={40}
                 className="h-7 md:h-9 w-auto"
