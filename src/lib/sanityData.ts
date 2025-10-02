@@ -381,16 +381,33 @@ function transformCenterInfo(sanityCenterInfo: SanityCenterInfoRaw): CenterInfo 
     name: sanityCenterInfo.name,
     description: sanityCenterInfo.description,
     status: sanityCenterInfo.status,
-    contact: sanityCenterInfo.contact,
-    businessHours: sanityCenterInfo.businessHours,
+    // 각 객체 필드에 대해 안전한 접근 처리 - 준비중인 센터에서 데이터가 없을 수 있음
+    contact: sanityCenterInfo.contact || {
+      phone: '',
+      address: '',
+      fullAddress: ''
+    },
+    businessHours: sanityCenterInfo.businessHours || {
+      weekdays: { open: '', close: '', display: '' },
+      weekends: { open: '', close: '', display: '' }
+    },
     branding: {
       // primary, secondary는 로컬 컬러 상수에서 관리
-      logo: sanityCenterInfo.branding.logo?._ref,
-      heroImage: sanityCenterInfo.branding.heroImage?._ref
+      // branding 객체가 null/undefined일 수 있으므로 안전한 접근 처리
+      logo: sanityCenterInfo.branding?.logo?._ref,
+      heroImage: sanityCenterInfo.branding?.heroImage?._ref
     },
-    directions: sanityCenterInfo.directions,
-    socialMedia: sanityCenterInfo.socialMedia,
-    services: sanityCenterInfo.services,
-    seo: sanityCenterInfo.seo
+    directions: sanityCenterInfo.directions || {
+      subway: [],
+      bus: [],
+      car: { address: '', parking: '' }
+    },
+    socialMedia: sanityCenterInfo.socialMedia || {},
+    services: sanityCenterInfo.services || [],
+    seo: sanityCenterInfo.seo || {
+      keywords: [],
+      metaTitle: '',
+      metaDescription: ''
+    }
   }
 }

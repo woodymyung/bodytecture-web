@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import Posts from '@/components/Posts';
 import Link from 'next/link';
 import NewsletterForm from '@/components/NewsletterForm';
@@ -69,7 +67,6 @@ export default async function PostsPage({ params }: PostsPageProps) {
   if (centerInfo.status === 'preparing') {
     return (
       <div className="min-h-screen">
-        <Header currentCenter={center} />
         
         <main className="pt-12 md:pt-16">
           {/* 준비중 안내 */}
@@ -88,15 +85,12 @@ export default async function PostsPage({ params }: PostsPageProps) {
           </section>
         </main>
         
-        <Footer currentCenter={center} />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen">
-      <Header currentCenter={center} />
-
       <main className="pt-16">
         {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
         <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-16">
@@ -209,8 +203,6 @@ export default async function PostsPage({ params }: PostsPageProps) {
           </div>
         </section>
       </main>
-
-      <Footer currentCenter={center} />
     </div>
   );
 }

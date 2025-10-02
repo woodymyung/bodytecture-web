@@ -1,12 +1,31 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { isValidCenterId, getCenterById } from '@/constants/centers';
 import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
 import { getCenterInfoByCenterId } from '@/lib/sanityData';
-import { CenterInfo } from '@/types';
 import { CENTER_COLORS } from '@/constants/colors';
+import type { CenterId } from '@/constants/centers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
+// 정적 파라미터 생성 함수 - output: export 설정 시 필요  
+export async function generateStaticParams() {
+  // Sanity에서 활성화된 센터 정보를 가져와서 static params 생성
+  try {
+    const { getActiveCenterInfo } = await import('@/lib/sanityData');
+    const centers = await getActiveCenterInfo();
+    return centers.map((center) => ({
+      center: center.centerId,
+    }));
+  } catch (error) {
+    console.error('센터 정보를 가져오는데 실패했습니다:', error);
+    // 에러 발생 시 기본 센터들 반환 (fallback)
+    return [
+      { center: 'wangsimni' },
+      { center: 'daechi' }, 
+      { center: 'cheongdam' }
+    ];
+  }
+}
 
 // 센터별 레이아웃 props 타입 정의
 interface CenterLayoutProps {
@@ -22,24 +41,24 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { center } = await params;
   
-  // 센터 ID 유효성 검사
-  if (!isValidCenterId(center)) {
+  // Sanity에서 센터 정보 가져오기
+  const centerInfo = await getCenterInfoByCenterId(center);
+  
+  // 센터 정보가 없으면 404 메타데이터
+  if (!centerInfo) {
     return generatePageMetadata({
       title: '페이지를 찾을 수 없습니다',
       description: '요청하신 센터 페이지를 찾을 수 없습니다.',
     });
   }
   
-  // 센터 정보 가져오기
-  const centerInfo = getCenterById(center);
-  
   // 센터별 메타데이터 생성
   return generateCenterMetadata({
-    centerId: center,
+    centerId: centerInfo.centerId as CenterId,
     title: centerInfo.name,
     description: centerInfo.description,
     path: `/${center}`,
-    keywords: centerInfo.keywords,
+    keywords: centerInfo.seo.keywords,
   });
 }
 
@@ -50,46 +69,25 @@ export default async function CenterLayout({
 }: CenterLayoutProps) {
   const { center } = await params;
   
-  // 센터 ID 유효성 검사 - 잘못된 ID면 404 페이지로
-  if (!isValidCenterId(center)) {
-    notFound();
-  }
-  
-  // Sanity에서 센터 정보 가져오기 - 실제 센터별 데이터 사용
+  // Sanity에서 센터 정보 가져오기
   const centerInfo = await getCenterInfoByCenterId(center);
   
-  // Sanity 데이터가 없으면 기본 정보를 사용 (후방 호환성)
-  const fallbackInfo = getCenterById(center);
-  const finalCenterInfo = centerInfo || {
-    id: fallbackInfo.id,
-    centerId: fallbackInfo.id,
-    name: fallbackInfo.name,
-    description: fallbackInfo.description,
-    status: fallbackInfo.status,
-    contact: {
-      phone: fallbackInfo.contact.phone,
-      address: fallbackInfo.contact.address,
-      fullAddress: fallbackInfo.contact.fullAddress
-    },
-    businessHours: fallbackInfo.businessHours,
-    branding: { logo: undefined, heroImage: undefined }, // 브랜딩은 로컬 컬러 상수에서 관리
-    directions: { subway: [], bus: [], car: { address: '', parking: '' } },
-    socialMedia: {},
-    services: [],
-    seo: { keywords: fallbackInfo.keywords, metaTitle: '', metaDescription: '' }
-  } satisfies CenterInfo;
+  // 센터 정보가 없으면 404 페이지로 (유효하지 않은 센터 ID 또는 Sanity 오류)
+  if (!centerInfo) {
+    notFound();
+  }
   
   return (
     <div 
       className="min-h-screen"
       style={{
         // 센터별 CSS 커스텀 프로퍼티 설정 - Tailwind arbitrary values에서 사용
-        '--center-primary': CENTER_COLORS[center as keyof typeof CENTER_COLORS]?.primaryHex || CENTER_COLORS.wangsimni.primaryHex,
+        '--center-primary': CENTER_COLORS[centerInfo.centerId as keyof typeof CENTER_COLORS]?.primaryHex || CENTER_COLORS.wangsimni.primaryHex,
         '--center-secondary': '#f3f4f6', // 기본 보조 컬러 (gray-100)
       } as React.CSSProperties}
     >
       {/* 센터별 헤더 - Sanity 데이터 전달 */}
-      <Header currentCenter={center} centerInfo={finalCenterInfo} />
+      <Header currentCenter={center} centerInfo={centerInfo} />
       
       {/* 센터별 페이지 콘텐츠 렌더링 */}
       <main>
@@ -97,7 +95,7 @@ export default async function CenterLayout({
       </main>
       
       {/* 센터별 푸터 - Sanity 데이터 전달 */}
-      <Footer currentCenter={center} centerInfo={finalCenterInfo} />
+      <Footer currentCenter={center} centerInfo={centerInfo} />
     </div>
   );
 }

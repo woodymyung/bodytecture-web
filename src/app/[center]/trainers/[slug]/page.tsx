@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { getTrainerBySlug, getTrainersByCenter, getReviewsByTrainer } from '@/lib/sanityData';
 import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
 import TrainerReviews from '@/components/TrainerReviews';
@@ -273,7 +272,6 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
         />
       </main>
 
-      <Footer currentCenter={center} />
     </div>
   );
 }

@@ -7,4 +7,4 @@ alwaysApply: true
 3. npm run dev를 할 거라면 기존의 node를 중단하고 해 
 4. Sanity의 write token 은 .env.local을 확인해 
 5. 반드시 매 작업이 끝날 때마다 사용하지 않게 된 import 는 제거해줘 
-
+6. output: 'export' 설정이 있을 때 함수가 누락되지 않게 주의해줘 

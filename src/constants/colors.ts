@@ -9,7 +9,7 @@ export const CENTER_COLORS = {
     accent: 'red-700',          // 강조 컬러
   },
   daechi: {
-    primary: 'gray-800',         // #1f2937 - 대치점 메인 컬러  
+    primary: 'green-600',         // #1f2937 - 대치점 메인 컬러  
     primaryHex: '#1f2937',       // CSS-in-JS나 동적 스타일링용
     secondary: 'gray-100',       // 보조 컬러
     accent: 'gray-900',         // 강조 컬러

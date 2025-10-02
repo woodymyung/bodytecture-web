@@ -1,0 +1,2 @@
+- 전체 터미널 종료: pkill -f node 
+- 특정 포트의 터미널 종료: lsof -ti:3001 | xargs kill

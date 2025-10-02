@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ReviewsPageContent from '@/components/ReviewsPageContent';
 import { getTrainersByCenter } from '@/lib/sanityData';
 import { client } from '@/lib/sanity';
@@ -67,8 +65,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
   if (centerInfo.status === 'preparing') {
     return (
       <div className="min-h-screen">
-        <Header currentCenter={center} />
-        
         <main className="pt-12 md:pt-16">
           {/* 준비중 안내 */}
           <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-24 md:py-32">
@@ -85,8 +81,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
             </div>
           </section>
         </main>
-        
-        <Footer currentCenter={center} />
       </div>
     );
   }
@@ -127,8 +121,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
 
     return (
       <div className="min-h-screen">
-        <Header currentCenter={center} />
-
         <main className="pt-12 md:pt-16">
           {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
           <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-16">
@@ -149,8 +141,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
           />
 
         </main>
-
-        <Footer currentCenter={center} />
       </div>
     );
 
@@ -160,8 +150,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
     // 🎯 오류 발생시 기본 페이지 렌더링
     return (
       <div className="min-h-screen">
-        <Header currentCenter={center} />
-        
         <main className="pt-12 md:pt-16">
           <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -196,8 +184,6 @@ export default async function ReviewsPage({ params }: ReviewsPageProps) {
             </div>
           </section>
         </main>
-        
-        <Footer currentCenter={center} />
       </div>
     );
   }
