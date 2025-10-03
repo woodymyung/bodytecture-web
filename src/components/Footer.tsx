@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { CONTACT_INFO, COMPANY_INFO, SOCIAL_LINKS } from '@/constants/contact';
 import { CenterInfo } from '@/types';
 
@@ -16,6 +17,8 @@ const Footer: React.FC<FooterProps> = ({ currentCenter, centerInfo }) => {
   const centerDescription = centerInfo?.description || COMPANY_INFO.description;
   const contactInfo = centerInfo?.contact || CONTACT_INFO;
   const businessHours = centerInfo?.businessHours || CONTACT_INFO.businessHours;
+  // 센터별 브랜딩 로고 - Sanity branding logo 우선, 없으면 기본 로고 사용 (흰색 버전 사용)
+  const logoUrl = centerInfo?.branding?.logo || '/images/bodytecture-logo-white.svg';
   
   return (
     <footer className="bg-gray-900 text-white">
@@ -23,7 +26,17 @@ const Footer: React.FC<FooterProps> = ({ currentCenter, centerInfo }) => {
         <div className="grid md:grid-cols-4 gap-8">
           {/* 회사 정보 */}
           <div className="md:col-span-2">
-            <h3 className="text-2xl font-bold mb-4">{centerName}</h3>
+            {/* 로고와 회사명 */}
+            <div className="flex items-center mb-4">
+              <Image
+                src={logoUrl}
+                alt={centerName}
+                width={160}
+                height={32}
+                className="h-6 w-auto mr-3"
+              />
+              <h3 className="text-2xl font-bold">{centerName}</h3>
+            </div>
             <p className="text-gray-300 mb-4 leading-relaxed">
               {centerDescription}
             </p>

@@ -21,6 +21,8 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
   // 센터별 정보 가져오기 - Sanity 데이터 우선, 없으면 기본값 사용
   const phoneNumber = centerInfo?.contact?.phone || CONTACT_INFO.phone;
   const centerName = centerInfo?.name || '바디텍쳐';
+  // 센터별 브랜딩 로고 - Sanity branding logo 우선, 없으면 기본 로고 사용
+  const logoUrl = centerInfo?.branding?.logo || '/images/bodytecture-logo-white.svg';
   // 센터별 브랜딩 컬러 클래스 - Tailwind 방식 사용
   const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
 
@@ -55,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
               <Image
-                src="/images/bodytecture-logo-white.svg"
+                src={logoUrl}
                 alt={centerName}
                 width={200}
                 height={40}

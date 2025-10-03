@@ -1,4 +1,4 @@
-import { client, queries } from './sanity'
+import { client, queries, urlFor } from './sanity'
 import type { 
   Trainer, 
   Review, 
@@ -394,8 +394,9 @@ function transformCenterInfo(sanityCenterInfo: SanityCenterInfoRaw): CenterInfo 
     branding: {
       // primary, secondary는 로컬 컬러 상수에서 관리
       // branding 객체가 null/undefined일 수 있으므로 안전한 접근 처리
-      logo: sanityCenterInfo.branding?.logo?._ref,
-      heroImage: sanityCenterInfo.branding?.heroImage?._ref
+      // Sanity 이미지 참조를 실제 URL로 변환하여 저장
+      logo: sanityCenterInfo.branding?.logo ? urlFor(sanityCenterInfo.branding.logo).url() : undefined,
+      heroImage: sanityCenterInfo.branding?.heroImage ? urlFor(sanityCenterInfo.branding.heroImage).url() : undefined
     },
     directions: sanityCenterInfo.directions || {
       subway: [],
