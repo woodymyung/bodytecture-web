@@ -87,13 +87,13 @@ const ReviewFilter: React.FC<ReviewFilterProps> = ({
                         onClick={() => handleReviewTypeChange(option.value as ReviewFilterState['reviewType'])}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           filter.reviewType === option.value
-                            ? 'bg-red-100 text-red-900 font-medium'
+                            ? 'bg-blue-100 text-blue-900 font-medium'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
                         {option.label}
                         {filter.reviewType === option.value && (
-                          <svg className="w-4 h-4 inline ml-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 inline ml-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         )}
@@ -124,13 +124,13 @@ const ReviewFilter: React.FC<ReviewFilterProps> = ({
                         onClick={() => handleTrainerChange('all')}
                         className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                           filter.trainerId === 'all'
-                            ? 'bg-red-100 text-red-900 font-medium'
+                            ? 'bg-blue-100 text-blue-900 font-medium'
                             : 'text-gray-700 hover:bg-gray-100'
                         }`}
                       >
                         전체 트레이너
                         {filter.trainerId === 'all' && (
-                          <svg className="w-4 h-4 inline ml-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-4 h-4 inline ml-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>
                         )}
@@ -141,13 +141,13 @@ const ReviewFilter: React.FC<ReviewFilterProps> = ({
                           onClick={() => handleTrainerChange(trainer.id)}
                           className={`block w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
                             filter.trainerId === trainer.id
-                              ? 'bg-red-100 text-red-900 font-medium'
+                              ? 'bg-blue-100 text-blue-900 font-medium'
                               : 'text-gray-700 hover:bg-gray-100'
                           }`}
                         >
                           {trainer.name} 트레이너
                           {filter.trainerId === trainer.id && (
-                            <svg className="w-4 h-4 inline ml-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-4 h-4 inline ml-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           )}

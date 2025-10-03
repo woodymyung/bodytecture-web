@@ -75,8 +75,8 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, 
                     quality={88}
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-                    <span className="text-4xl font-bold text-red-600">
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-gray-600">
                       {trainer.name.charAt(0)}
                     </span>
                   </div>
