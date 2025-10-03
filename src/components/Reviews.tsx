@@ -5,15 +5,19 @@ import Link from 'next/link';
 import { Review, SanityRichTextBlock, SanityRichTextSpan } from '@/types';
 import ReviewCard from './ReviewCard';
 import { COMPANY_INFO } from '@/constants/contact';
+import { getCenterColorClasses } from '@/constants/colors';
 // InfiniteSwipeSlider 제거하고 직접 구현
 
 // 고객 후기 슬라이더 컴포넌트
 interface ReviewsProps {
   reviews?: Review[];
   isMainPage?: boolean; // 메인 페이지에서 사용 시 모바일에서 텍스트 제한 적용
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
 }
 
-const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false }) => {
+const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, currentCenter }) => {
+  // 센터별 버튼 컬러 클래스 가져오기
+  const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
   // 🎯 Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수
   // Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수 - Sanity Rich Text 블록 배열을 처리
   const convertRichTextToPlainText = useCallback((blocks: SanityRichTextBlock[]): string => {
@@ -166,11 +170,11 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false }) =
           </div>
         </div>
 
-        {/* 전체 후기 보기 버튼 */}
+        {/* 전체 후기 보기 버튼 - 센터별 동적 컬러 적용 */}
         <div className="text-center mt-12">
           <Link
-            href="/reviews"
-            className="text-xl bg-red-600 text-white hover:bg-red-700 font-semibold py-4 px-8 rounded-full transition-colors duration-200 inline-flex items-center shadow-lg hover:shadow-xl transform"
+            href={currentCenter ? `/${currentCenter}/reviews` : "/reviews"}
+            className={`text-xl ${colorClasses.bgPrimary} text-white hover:${colorClasses.bgAccent} font-semibold py-4 px-8 rounded-full transition-colors duration-200 inline-flex items-center shadow-lg hover:shadow-xl transform`}
           >
             전체 후기 보기
           </Link>

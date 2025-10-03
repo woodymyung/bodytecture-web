@@ -1,14 +1,16 @@
 import React from 'react';
 import { CenterInfo } from '@/types';
 import { CONTACT_INFO, COMPANY_INFO } from '@/constants/contact';
+import { getCenterColorClasses } from '@/constants/colors';
 
 // 문의하기 컴포넌트 props 타입 정의
 interface ContactProps {
   centerInfo?: CenterInfo; // 센터 정보 (Sanity에서 가져온 데이터)
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
 }
 
 // 문의하기 컴포넌트 - 전화번호 중심의 간단한 연락처 정보
-const Contact: React.FC<ContactProps> = ({ centerInfo }) => {
+const Contact: React.FC<ContactProps> = ({ centerInfo, currentCenter }) => {
   // 센터별 정보 가져오기 - Sanity 데이터 우선, 없으면 하드코딩된 데이터 사용 (fallback)
   // 안전한 접근 처리: 빈 문자열이나 undefined 체크
   const centerName = (centerInfo?.name && centerInfo.name.trim()) 
@@ -17,6 +19,9 @@ const Contact: React.FC<ContactProps> = ({ centerInfo }) => {
   const contactPhone = (centerInfo?.contact?.phone && centerInfo.contact.phone.trim()) 
     ? centerInfo.contact.phone 
     : CONTACT_INFO.phone;
+  
+  // 센터별 버튼 컬러 클래스 가져오기
+  const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
 
   return (
     <section id="contact" className="py-16 bg-white">
@@ -38,10 +43,10 @@ const Contact: React.FC<ContactProps> = ({ centerInfo }) => {
           <p className="text-4xl font-bold text-black mb-6">
             {contactPhone}
           </p>
-          {/* 문의하기 버튼 */}
+          {/* 문의하기 버튼 - 센터별 동적 컬러 적용 */}
           <a
             href={`tel:${contactPhone}`}
-            className="rounded-full inline-flex items-center px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors duration-200 shadow-md hover:shadow-lg"
+            className={`rounded-full inline-flex items-center px-8 py-4 ${colorClasses.bgPrimary} hover:${colorClasses.bgAccent} text-white font-semibold transition-colors duration-200 shadow-md hover:shadow-lg`}
           >
             <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

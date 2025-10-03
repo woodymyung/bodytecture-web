@@ -56,7 +56,7 @@ const Services: React.FC<ServicesProps> = ({ centerInfo }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            제공 서비스
+            서비스 가격
           </h2>
         </div>
 
@@ -71,9 +71,6 @@ const Services: React.FC<ServicesProps> = ({ centerInfo }) => {
             <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
               일반 멤버십
             </h3>
-            <p className="text-gray-600 mb-6 text-center">
-              최대 200명 정원제로 쾌적한 시설을 이용하실 수 있어요
-            </p>
             <div className="overflow-x-auto">
               <table className="w-full bg-white rounded-lg shadow-sm">
                 <thead className="bg-gray-100">
@@ -116,9 +113,6 @@ const Services: React.FC<ServicesProps> = ({ centerInfo }) => {
             <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">
               1:1 PT
             </h3>
-            <p className="text-gray-600 mb-6 text-center">
-              맞춤 트레이닝을 합리적인 가격에 받아보세요
-            </p>
             <div className="overflow-x-auto">
               <table className="w-full bg-white rounded-lg shadow-sm">
                 <thead className="bg-gray-100">

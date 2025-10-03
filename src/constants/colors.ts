@@ -4,19 +4,19 @@
 export const CENTER_COLORS = {
   wangsimni: {
     primary: 'red-600',          // #dc2626 - 왕십리점 메인 컬러
-    primaryHex: '#dc2626',       // CSS-in-JS나 동적 스타일링용
+    primaryHex: '#dc2626',       // Tailwind red-600 정확한 값
     secondary: 'red-100',        // 보조 컬러
     accent: 'red-700',          // 강조 컬러
   },
   daechi: {
-    primary: 'green-600',         // #1f2937 - 대치점 메인 컬러  
-    primaryHex: '#1f2937',       // CSS-in-JS나 동적 스타일링용
-    secondary: 'gray-100',       // 보조 컬러
-    accent: 'gray-900',         // 강조 컬러
+    primary: 'green-600',        // #16a34a - 대치점 메인 컬러 (Tailwind 정확한 값으로 수정)
+    primaryHex: '#16a34a',       // Tailwind green-600 정확한 값
+    secondary: 'green-100',      // 보조 컬러
+    accent: 'green-700',        // 강조 컬러
   },
   cheongdam: {
     primary: 'blue-600',         // #2563eb - 청담점 임시 컬러
-    primaryHex: '#2563eb',       // CSS-in-JS나 동적 스타일링용
+    primaryHex: '#2563eb',       // Tailwind blue-600 정확한 값
     secondary: 'blue-100',       // 보조 컬러
     accent: 'blue-700',         // 강조 컬러
   },

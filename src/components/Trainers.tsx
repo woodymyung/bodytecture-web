@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Trainer } from '@/types';
 import { getHighQualityImageUrl } from '@/lib/sanity';
 import { COMPANY_INFO } from '@/constants/contact';
+import { getCenterColorClasses } from '@/constants/colors';
 
 // 트레이너 정보 컴포넌트 - 4분할 그리드 레이아웃
 interface TrainersProps {
@@ -15,6 +16,9 @@ interface TrainersProps {
 }
 
 const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, currentCenter }) => {
+  // 센터별 버튼 컬러 클래스 가져오기
+  const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
+  
   // 데이터 로딩 상태 확인
   if (!trainers || trainers.length === 0) {
     return (
@@ -130,7 +134,7 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, 
 
                 {/* 버튼 그룹 */}
                 <div className="space-y-2">
-                  {/* OT예약 버튼 (Primary) - 버튼으로 변경하여 중첩 링크 방지 */}
+                  {/* OT예약 버튼 (Primary) - 센터별 동적 컬러 적용 */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -146,7 +150,7 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, 
                         }
                       }
                     }}
-                    className="w-full inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white hover:bg-red-700 font-medium rounded-full transition-all duration-200 relative z-10"
+                    className={`w-full inline-flex items-center justify-center px-4 py-2 ${colorClasses.bgPrimary} text-white hover:${colorClasses.bgAccent} font-medium rounded-full transition-all duration-200 relative z-10`}
                   >
                      상담 예약하기
                   </button>

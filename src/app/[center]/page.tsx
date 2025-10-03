@@ -148,7 +148,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
         </section>
 
         {/* 고객 후기 섹션 - 자동 슬라이드 되는 리뷰들 */}
-        <Reviews reviews={reviews} isMainPage={true} />
+        <Reviews reviews={reviews} isMainPage={true} currentCenter={center} />
 
         {/* 제공 서비스 섹션 - Sanity 센터별 서비스 가격 정보 */}
         <Services centerInfo={centerInfo} />
@@ -163,7 +163,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
         <Location centerInfo={centerInfo} />
 
         {/* 문의하기 섹션 - Sanity 센터별 연락처 정보 */}
-        <Contact centerInfo={centerInfo} />
+        <Contact centerInfo={centerInfo} currentCenter={center} />
       </main>
     </div>
   );

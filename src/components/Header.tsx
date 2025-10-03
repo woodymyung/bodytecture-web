@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { CONTACT_INFO } from '@/constants/contact';
 import { CenterInfo } from '@/types';
-import { getCenterHexColor } from '@/constants/colors';
+import { getCenterColorClasses } from '@/constants/colors';
 
 // 헤더 컴포넌트 props 타입 정의
 interface HeaderProps {
@@ -21,8 +21,8 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
   // 센터별 정보 가져오기 - Sanity 데이터 우선, 없으면 기본값 사용
   const phoneNumber = centerInfo?.contact?.phone || CONTACT_INFO.phone;
   const centerName = centerInfo?.name || '바디텍쳐';
-  // 센터별 브랜딩 컬러 - 로컬 상수에서 가져오기
-  const headerBgColor = getCenterHexColor(currentCenter || 'wangsimni');
+  // 센터별 브랜딩 컬러 클래스 - Tailwind 방식 사용
+  const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
 
   // 센터별 동적 네비게이션 메뉴 생성
   const getMenuItems = (centerId?: string) => {
@@ -47,8 +47,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
 
   return (
     <header 
-      className="fixed top-0 left-0 right-0 z-50"
-      style={{ backgroundColor: headerBgColor }}
+      className="fixed top-0 left-0 right-0 z-50 bg-[var(--center-primary)]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-12 md:h-16">
@@ -94,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-red-200 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-300"
+              className={`inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white/80 hover:${colorClasses.bgAccent} focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white/30`}
               aria-expanded="false"
             >
               <span className="sr-only">메뉴 열기</span>
@@ -135,9 +134,9 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
         </div>
       </div>
 
-      {/* 모바일 메뉴 */}
+      {/* 모바일 메뉴 - 센터별 동적 배경색 적용 */}
       <div className={`${isMobileMenuOpen ? 'block' : 'hidden'} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-red-600 border-t border-red-500">
+        <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 ${colorClasses.bgPrimary} border-t border-white/20`}>
           {menuItems.map((item) => (
             item.href.startsWith('/#') ? (
               <Link

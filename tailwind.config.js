@@ -50,11 +50,11 @@ module.exports = {
     'border-red-600', 'border-red-100', 'border-red-700',
     'hover:bg-red-600', 'hover:text-red-600',
     
-    // 대치점 (gray-800)
-    'bg-gray-800', 'bg-gray-100', 'bg-gray-900',
-    'text-gray-800', 'text-gray-100', 'text-gray-900',
-    'border-gray-800', 'border-gray-100', 'border-gray-900',
-    'hover:bg-gray-800', 'hover:text-gray-800',
+    // 대치점 (green-600)
+    'bg-green-600', 'bg-green-100', 'bg-green-700',
+    'text-green-600', 'text-green-100', 'text-green-700',
+    'border-green-600', 'border-green-100', 'border-green-700',
+    'hover:bg-green-600', 'hover:text-green-600',
     
     // 청담점 (blue-600)
     'bg-blue-600', 'bg-blue-100', 'bg-blue-700',
