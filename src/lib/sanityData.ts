@@ -12,6 +12,53 @@ import type {
   SanityCenterInfoRaw
 } from '@/types'
 
+// 제대로 된 SEOSettings 타입 정의 
+interface SEOPageData {
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
+}
+
+interface SEORootPage extends SEOPageData {
+  ogImage?: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    alt?: string;
+  };
+}
+
+interface SEOCenterPages {
+  centerId: string;
+  mainPage?: SEOPageData;
+  trainersPage?: SEOPageData;
+  reviewsPage?: SEOPageData;
+  postsPage?: SEOPageData;
+  facilitiesPage?: SEOPageData;
+}
+
+interface SEOTrainer extends SEOPageData {
+  slug: string;
+  centerId: string;
+  specialties?: string[];
+  ogImage?: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    alt?: string;
+  };
+}
+
+interface SEOSettings {
+  _id: string;
+  _type: 'seoSettings';
+  rootPage: SEORootPage;
+  centers: SEOCenterPages[];
+  trainers: SEOTrainer[];
+}
+
 // 트레이너 데이터 가져오기 함수들
 // 모든 센터의 트레이너 가져오기 (전체용)
 export async function getTrainers(): Promise<Trainer[]> {
@@ -410,5 +457,108 @@ function transformCenterInfo(sanityCenterInfo: SanityCenterInfoRaw): CenterInfo 
       metaTitle: '',
       metaDescription: ''
     }
+  }
+}
+
+// === SEO Settings 관련 함수들 ===
+
+// SEO Settings 가져오기 (단일 문서)
+export async function getSEOSettings(): Promise<SEOSettings | null> {
+  try {
+    const seoSettings = await client.fetch(`
+      *[_type == "seoSettings"][0] {
+        _id,
+        _type,
+        rootPage {
+          metaTitle,
+          metaDescription,
+          keywords,
+          ogImage {
+            asset,
+            alt
+          }
+        },
+        centers[] {
+          centerId,
+          mainPage {
+            metaTitle,
+            metaDescription,
+            keywords
+          },
+          trainersPage {
+            metaTitle,
+            metaDescription,
+            keywords
+          },
+          reviewsPage {
+            metaTitle,
+            metaDescription,
+            keywords
+          },
+          postsPage {
+            metaTitle,
+            metaDescription,
+            keywords
+          },
+          facilitiesPage {
+            metaTitle,
+            metaDescription,
+            keywords
+          }
+        },
+        trainers[] {
+          slug,
+          centerId,
+          metaTitle,
+          metaDescription,
+          keywords,
+          specialties,
+          ogImage {
+            asset,
+            alt
+          }
+        }
+      }
+    `);
+    
+    return seoSettings || null;
+  } catch (error) {
+    console.error('SEO Settings 데이터를 가져오는데 실패했습니다:', error);
+    return null;
+  }
+}
+
+// 루트 페이지 SEO 데이터만 가져오기
+export async function getRootPageSEO() {
+  try {
+    const seoSettings = await getSEOSettings();
+    return seoSettings?.rootPage || null;
+  } catch (error) {
+    console.error('루트 페이지 SEO 데이터를 가져오는데 실패했습니다:', error);
+    return null;
+  }
+}
+
+// 센터별 페이지 SEO 데이터 가져오기
+export async function getCenterPageSEO(centerId: string, pageType: 'mainPage' | 'trainersPage' | 'reviewsPage' | 'postsPage' | 'facilitiesPage') {
+  try {
+    const seoSettings = await getSEOSettings();
+    const centerSEO = seoSettings?.centers?.find((c: SEOCenterPages) => c.centerId === centerId);
+    return centerSEO?.[pageType] || null;
+  } catch (error) {
+    console.error(`센터(${centerId}) ${pageType} SEO 데이터를 가져오는데 실패했습니다:`, error);
+    return null;
+  }
+}
+
+// 트레이너별 SEO 데이터 가져오기
+export async function getTrainerSEO(slug: string, centerId: string) {
+  try {
+    const seoSettings = await getSEOSettings();
+    const trainerSEO = seoSettings?.trainers?.find((t: SEOTrainer) => t.slug === slug && t.centerId === centerId);
+    return trainerSEO || null;
+  } catch (error) {
+    console.error(`트레이너(${slug}) SEO 데이터를 가져오는데 실패했습니다:`, error);
+    return null;
   }
 }
