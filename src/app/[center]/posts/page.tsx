@@ -34,10 +34,14 @@ export async function generateMetadata({
   
   // 센터 ID 유효성 검사
   if (!isValidCenterId(center)) {
-    return generatePageMetadata({
+    return {
       title: '페이지를 찾을 수 없습니다',
       description: '요청하신 포스트 페이지를 찾을 수 없습니다.',
-    });
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   
   // 센터 정보 가져오기

@@ -47,10 +47,14 @@ export async function generateMetadata({
   
   // 센터 정보가 없으면 404 메타데이터
   if (!centerInfo) {
-    return generatePageMetadata({
+    return {
       title: '페이지를 찾을 수 없습니다',
       description: '요청하신 센터 페이지를 찾을 수 없습니다.',
-    });
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   
   // Sanity SEO Settings에서 센터 메인 페이지 데이터 가져오기
@@ -85,7 +89,7 @@ export async function generateMetadata({
     title: centerMainSEO?.metaTitle || centerInfo.name,
     description: centerMainSEO?.metaDescription || centerInfo.description,
     path: `/${center}`,
-    keywords: centerMainSEO?.keywords || centerInfo.seo.keywords || [],
+    keywords: centerMainSEO?.keywords || [],
     images: ogImages,
   });
 }

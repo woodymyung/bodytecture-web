@@ -31,10 +31,14 @@ export async function generateMetadata({
   
   // 센터 ID 유효성 검사
   if (!isValidCenterId(center)) {
-    return generatePageMetadata({
+    return {
       title: '페이지를 찾을 수 없습니다',
       description: '요청하신 후기 페이지를 찾을 수 없습니다.',
-    });
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   
   // 센터 정보 가져오기
@@ -49,7 +53,7 @@ export async function generateMetadata({
   const description = reviewsSEO?.metaDescription || `${centerInfo.name}을 이용하신 회원님들의 생생한 후기를 만나보세요. 실제 경험담과 변화 스토리를 통해 차별화된 서비스를 확인하실 수 있습니다.`;
   
   // 키워드 합치기: 센터 메인 키워드 + 리뷰 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || centerInfo.seo.keywords || [];
+  const centerKeywords = centerMainSEO?.keywords || [];
   const reviewsKeywords = reviewsSEO?.keywords || ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'];
   const keywords = [...new Set([...centerKeywords, ...reviewsKeywords])];
   

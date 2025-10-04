@@ -6,7 +6,7 @@ import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRende
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
 import Link from 'next/link';
-import { generatePersonStructuredData, generateCenterMetadata } from '@/lib/metadata';
+import { generatePersonStructuredData, generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { urlFor } from '@/lib/sanity';
 
@@ -107,9 +107,9 @@ export async function generateMetadata({
     }
 
     // SEO Settings 기반 메타데이터 생성 (트레이너 프로필 이미지 사용)
-    return generateCenterMetadata({
-      centerId: center,
-      title: trainerSEO.metaTitle,
+    // 트레이너 SEO title에 이미 센터명이 포함되어 있으므로 generatePageMetadata 사용
+    return generatePageMetadata({
+      title: trainerSEO.metaTitle, // 센터명이 이미 포함된 완전한 제목
       description: trainerSEO.metaDescription,
       path: `/${center}/trainers/${slug}`,
       keywords: combinedKeywords,
@@ -117,13 +117,39 @@ export async function generateMetadata({
       type: 'profile'
     });
   } else {
-    // Fallback: 기본 센터 메타데이터 생성 (SEO Settings에 트레이너 데이터가 없는 경우)
-    return generateCenterMetadata({
-      centerId: center,
-      title: `${trainer.name} - 전문 트레이너`,
+    // Fallback: 기본 메타데이터 생성 (SEO Settings에 트레이너 데이터가 없는 경우)
+    // 센터 이름을 수동으로 추가하여 완전한 제목 구성
+    const centerInfo = getCenterById(center);
+    
+    // 트레이너 프로필 이미지 처리 (Fallback에서도)
+    let ogImages = undefined;
+    if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
+      try {
+        const trainerOGImageUrl = urlFor(trainer.images[0])
+          .width(1200)
+          .height(630)
+          .quality(90)
+          .format('webp')
+          .fit('crop')
+          .url();
+          
+        ogImages = [{
+          url: trainerOGImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${trainer.name} - 전문 트레이너`
+        }];
+      } catch (error) {
+        console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
+      }
+    }
+    
+    return generatePageMetadata({
+      title: `${trainer.name} - 전문 트레이너 | ${centerInfo.name}`,
       description: trainer.description || `${trainer.name} 트레이너를 소개합니다.`,
       path: `/${center}/trainers/${slug}`,
       keywords: [trainer.name, '전문트레이너', 'PT', '개인트레이닝'],
+      images: ogImages,
       type: 'profile'
     });
   }

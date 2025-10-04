@@ -42,10 +42,14 @@ export async function generateMetadata({
   
   // 센터 정보가 없으면 404 메타데이터
   if (!centerInfo) {
-    return generatePageMetadata({
+    return {
       title: '페이지를 찾을 수 없습니다',
       description: '요청하신 트레이너 페이지를 찾을 수 없습니다.',
-    });
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
   
   // Sanity SEO Settings에서 트레이너 페이지 SEO 데이터 가져오기
@@ -57,7 +61,7 @@ export async function generateMetadata({
   const description = trainersSEO?.metaDescription || `${centerInfo.name}의 전문 트레이너들을 소개합니다. 경험이 풍부한 트레이너들이 회원님의 건강한 변화를 위해 최선을 다하겠습니다.`;
   
   // 키워드 합치기: 센터 메인 키워드 + 트레이너 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || centerInfo.seo.keywords || [];
+  const centerKeywords = centerMainSEO?.keywords || [];
   const trainersKeywords = trainersSEO?.keywords || ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'];
   const keywords = [...new Set([...centerKeywords, ...trainersKeywords])];
   
