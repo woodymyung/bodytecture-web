@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import ReviewsPageContent from '@/components/ReviewsPageContent';
-import { getTrainersByCenter } from '@/lib/sanityData';
+import { getTrainersByCenter, getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
 import { client } from '@/lib/sanity';
-import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
+import { generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { SanityReviewRaw } from '@/types';
 
@@ -39,13 +40,50 @@ export async function generateMetadata({
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
-  // 센터별 메타데이터 생성
+  // Sanity SEO Settings에서 리뷰 페이지 SEO 데이터 가져오기
+  const reviewsSEO = await getCenterPageSEO(center, 'reviewsPage');
+  const centerMainSEO = await getCenterPageSEO(center, 'mainPage');
+  
+  // Sanity 데이터가 있으면 사용, 없으면 fallback 데이터 사용
+  const title = reviewsSEO?.metaTitle || '고객 후기';
+  const description = reviewsSEO?.metaDescription || `${centerInfo.name}을 이용하신 회원님들의 생생한 후기를 만나보세요. 실제 경험담과 변화 스토리를 통해 차별화된 서비스를 확인하실 수 있습니다.`;
+  
+  // 키워드 합치기: 센터 메인 키워드 + 리뷰 페이지 키워드 (중복 제거)
+  const centerKeywords = centerMainSEO?.keywords || centerInfo.seo.keywords || [];
+  const reviewsKeywords = reviewsSEO?.keywords || ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'];
+  const keywords = [...new Set([...centerKeywords, ...reviewsKeywords])];
+  
+  // 센터 메인 페이지의 OG 이미지 상속받기
+  let ogImages = undefined;
+  if (centerMainSEO?.ogImage?.asset) {
+    try {
+      const centerOGImageUrl = urlFor(centerMainSEO.ogImage)
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+        
+      ogImages = [{
+        url: centerOGImageUrl,
+        width: 1200,
+        height: 630,
+        alt: title
+      }];
+    } catch (error) {
+      console.warn('센터 OG 이미지 변환 실패:', error);
+    }
+  }
+  
+  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
   return generateCenterMetadata({
     centerId: center,
-    title: '고객 후기',
-    description: `${centerInfo.name}을 이용하신 회원님들의 생생한 후기를 만나보세요. 실제 경험담과 변화 스토리를 통해 차별화된 서비스를 확인하실 수 있습니다.`,
+    title,
+    description,
     path: `/${center}/reviews`,
-    keywords: ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'],
+    keywords,
+    images: ogImages,
   });
 }
 

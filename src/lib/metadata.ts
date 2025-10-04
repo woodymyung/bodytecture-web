@@ -9,11 +9,7 @@ import { getCenterById, type CenterId, type LocalCenterInfo } from '@/constants/
 // 공통 사이트 정보 (센터 독립적)
 const SITE_CONFIG = {
   url: 'https://bodytecture.fit',
-  ogImage: '/images/opengraphimage.png',
-  commonKeywords: [
-    '헬스장', '피트니스', '개인트레이닝', 'PT', '그룹클래스', 
-    '정원제', '프리미엄 헬스장'
-  ]
+  ogImage: '/images/opengraphimage.png'
 };
 
 // 센터별 사이트 설정 생성 함수
@@ -25,7 +21,7 @@ function getCenterSiteConfig(centerId: CenterId) {
     description: centerInfo.description,
     url: `${SITE_CONFIG.url}/${centerId}`,
     ogImage: SITE_CONFIG.ogImage,
-    keywords: [...SITE_CONFIG.commonKeywords, ...centerInfo.keywords]
+    keywords: centerInfo.keywords
   };
 }
 
@@ -60,8 +56,8 @@ export function generatePageMetadata({
   // 최종 URL 생성
   const url = `${SITE_CONFIG.url}${path}`;
   
-  // 키워드 통합 (공통 키워드 + 페이지별 키워드)
-  const allKeywords = [...SITE_CONFIG.commonKeywords, ...keywords];
+  // 키워드 설정 (페이지별 키워드만 사용)
+  const allKeywords = keywords;
   
   // 기본 이미지 설정 (전달된 이미지가 없으면 기본 이미지 사용)
   const ogImages = images || [{
@@ -140,7 +136,8 @@ export function generateCenterMetadata({
   // 키워드 통합 (센터별 키워드 포함)
   const allKeywords = [...centerSiteConfig.keywords, ...keywords];
   
-  // 기본 이미지 설정
+  // 이미지 설정: 전달된 이미지가 있으면 사용, 없으면 기본 이미지 
+  // (센터별 Sanity OG 이미지는 각 페이지에서 직접 처리)
   const ogImages = images || [{
     url: SITE_CONFIG.ogImage,
     width: 1200,
@@ -198,69 +195,7 @@ export function generateCenterMetadata({
   };
 }
 
-// 센터별 트레이너 페이지용 특별 메타데이터 생성 - Sanity 이미지 reference를 URL로 변환
-export function generateTrainerMetadata(
-  trainer: {
-    name: string;
-    description: string;
-    slug: string;
-    images?: TrainerImage[];
-  },
-  centerId?: CenterId // 센터 ID가 없으면 기본 메타데이터 생성 (하위 호환성)
-): Metadata {
-  // 트레이너 이미지가 있으면 Sanity URL로 변환하여 사용, 없으면 기본 이미지
-  let trainerImage = SITE_CONFIG.ogImage;
-  
-  if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
-    try {
-      // Sanity 이미지를 오픈그래프용 고품질 URL로 변환 (1200x630px)
-      trainerImage = urlFor(trainer.images[0])
-        .width(1200)
-        .height(630)
-        .quality(90)
-        .format('webp')
-        .fit('crop')
-        .url();
-    } catch (error) {
-      console.warn('트레이너 이미지 URL 생성 실패:', error);
-      // 실패하면 기본 이미지 사용
-    }
-  }
-  
-  // 센터별 또는 기본 메타데이터 생성
-  if (centerId) {
-    const centerInfo = getCenterById(centerId);
-    return generateCenterMetadata({
-      centerId,
-      title: `${trainer.name} - 전문 트레이너`,
-      description: `${trainer.description} | ${centerInfo.name}의 전문 트레이너 ${trainer.name}을 소개합니다.`,
-      path: `/${centerId}/trainers/${trainer.slug}`,
-      keywords: ['전문트레이너', trainer.name, 'PT', '개인트레이닝'],
-      images: [{
-        url: trainerImage,
-        width: 1200,
-        height: 630,
-        alt: `${trainer.name} - ${centerInfo.name} 전문 트레이너`
-      }],
-      type: 'profile'
-    });
-  } else {
-    // 하위 호환성을 위한 기본 메타데이터 (센터 정보 없이)
-    return generatePageMetadata({
-      title: `${trainer.name} - 전문 트레이너`,
-      description: `${trainer.description} | 전문 트레이너 ${trainer.name}을 소개합니다.`,
-      path: `/trainers/${trainer.slug}`,
-      keywords: ['전문트레이너', trainer.name, 'PT', '개인트레이닝'],
-      images: [{
-        url: trainerImage,
-        width: 1200,
-        height: 630,
-        alt: `${trainer.name} - 전문 트레이너`
-      }],
-      type: 'profile'
-    });
-  }
-}
+// 참고: generateTrainerMetadata는 제거됨 - SEO Settings 기반 시스템으로 대체
 
 // 센터별 JSON-LD 구조화된 데이터 생성 (LocalBusiness 스키마)
 export function generateLocalBusinessStructuredData(centerId: CenterId) {

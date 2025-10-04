@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Trainers from '@/components/Trainers';
-import { getTrainersByCenter, getCenterInfoByCenterId, getActiveCenterInfo } from '@/lib/sanityData';
-import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
+import { getTrainersByCenter, getCenterInfoByCenterId, getActiveCenterInfo, getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
+import { generateCenterMetadata } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
 
 // 센터별 트레이너 페이지 props 타입 정의
@@ -47,13 +48,50 @@ export async function generateMetadata({
     });
   }
   
-  // 센터별 메타데이터 생성
+  // Sanity SEO Settings에서 트레이너 페이지 SEO 데이터 가져오기
+  const trainersSEO = await getCenterPageSEO(centerInfo.centerId, 'trainersPage');
+  const centerMainSEO = await getCenterPageSEO(centerInfo.centerId, 'mainPage');
+  
+  // Sanity 데이터가 있으면 사용, 없으면 fallback 데이터 사용
+  const title = trainersSEO?.metaTitle || `전문 트레이너`;
+  const description = trainersSEO?.metaDescription || `${centerInfo.name}의 전문 트레이너들을 소개합니다. 경험이 풍부한 트레이너들이 회원님의 건강한 변화를 위해 최선을 다하겠습니다.`;
+  
+  // 키워드 합치기: 센터 메인 키워드 + 트레이너 페이지 키워드 (중복 제거)
+  const centerKeywords = centerMainSEO?.keywords || centerInfo.seo.keywords || [];
+  const trainersKeywords = trainersSEO?.keywords || ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'];
+  const keywords = [...new Set([...centerKeywords, ...trainersKeywords])];
+  
+  // 센터 메인 페이지의 OG 이미지 상속받기
+  let ogImages = undefined;
+  if (centerMainSEO?.ogImage?.asset) {
+    try {
+      const centerOGImageUrl = urlFor(centerMainSEO.ogImage)
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+        
+      ogImages = [{
+        url: centerOGImageUrl,
+        width: 1200,
+        height: 630,
+        alt: title
+      }];
+    } catch (error) {
+      console.warn('센터 OG 이미지 변환 실패:', error);
+    }
+  }
+  
+  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
   return generateCenterMetadata({
     centerId: centerInfo.centerId as CenterId,
-    title: `전문 트레이너`,
-    description: `${centerInfo.name}의 전문 트레이너들을 소개합니다. 경험이 풍부한 트레이너들이 회원님의 건강한 변화를 위해 최선을 다하겠습니다.`,
+    title,
+    description,
     path: `/${center}/trainers`,
-    keywords: ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'],
+    keywords,
+    images: ogImages,
   });
 }
 

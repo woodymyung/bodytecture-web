@@ -1,8 +1,9 @@
 // 임시 디버그 페이지 - Sanity SEO 데이터 확인용
-import { getAllCenterInfo } from '@/lib/sanityData';
+import { getAllCenterInfo, getSEOSettings } from '@/lib/sanityData';
 
 export default async function DebugSEO() {
   const centerInfos = await getAllCenterInfo();
+  const seoSettings = await getSEOSettings();
   
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -98,6 +99,82 @@ export default async function DebugSEO() {
             </pre>
           </div>
         </div>
+      </div>
+
+      {/* SEO Settings 현재 적용 상태 */}
+      <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded">
+        <h3 className="font-bold text-green-800 mb-2">🎯 현재 적용된 SEO Settings</h3>
+        
+        {seoSettings ? (
+          <div className="space-y-6">
+            {/* 루트 페이지 */}
+            <div>
+              <h4 className="font-semibold text-green-700 mb-2">🏠 루트 페이지 (센터 선택)</h4>
+              <div className="bg-white p-3 rounded border text-sm">
+                <p><span className="font-medium">제목:</span> {seoSettings.rootPage?.metaTitle || '없음'}</p>
+                <p><span className="font-medium">키워드:</span> {seoSettings.rootPage?.keywords?.join(', ') || '없음'}</p>
+              </div>
+            </div>
+
+            {/* 센터별 페이지 */}
+            {seoSettings.centers?.map((center) => (
+              <div key={center.centerId}>
+                <h4 className="font-semibold text-green-700 mb-2">
+                  🏢 {center.centerId === 'wangsimni' ? '왕십리점' : center.centerId === 'daechi' ? '대치점' : '청담점'}
+                </h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* 트레이너 페이지 키워드 */}
+                  <div className="bg-white p-3 rounded border">
+                    <p className="font-medium text-blue-700 mb-1">👥 트레이너 페이지</p>
+                    <p className="text-sm"><span className="font-medium">제목:</span> {center.trainersPage?.metaTitle || '없음'}</p>
+                    <p className="text-sm"><span className="font-medium">키워드:</span> {center.trainersPage?.keywords?.join(', ') || '없음'}</p>
+                  </div>
+
+                  {/* 리뷰 페이지 키워드 */}
+                  <div className="bg-white p-3 rounded border">
+                    <p className="font-medium text-purple-700 mb-1">⭐ 리뷰 페이지</p>
+                    <p className="text-sm"><span className="font-medium">제목:</span> {center.reviewsPage?.metaTitle || '없음'}</p>
+                    <p className="text-sm"><span className="font-medium">키워드:</span> {center.reviewsPage?.keywords?.join(', ') || '없음'}</p>
+                  </div>
+
+                  {/* 포스트 페이지 키워드 */}
+                  <div className="bg-white p-3 rounded border">
+                    <p className="font-medium text-orange-700 mb-1">📝 포스트 페이지</p>
+                    <p className="text-sm"><span className="font-medium">제목:</span> {center.postsPage?.metaTitle || '없음'}</p>
+                    <p className="text-sm"><span className="font-medium">키워드:</span> {center.postsPage?.keywords?.join(', ') || '없음'}</p>
+                  </div>
+
+                  {/* 시설 페이지 키워드 */}
+                  <div className="bg-white p-3 rounded border">
+                    <p className="font-medium text-green-700 mb-1">🏗️ 시설 페이지</p>
+                    <p className="text-sm"><span className="font-medium">제목:</span> {center.facilitiesPage?.metaTitle || '없음'}</p>
+                    <p className="text-sm"><span className="font-medium">키워드:</span> {center.facilitiesPage?.keywords?.join(', ') || '없음'}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* 트레이너별 SEO */}
+            {seoSettings.trainers && seoSettings.trainers.length > 0 && (
+              <div>
+                <h4 className="font-semibold text-green-700 mb-2">👤 트레이너별 SEO</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {seoSettings.trainers.map((trainer) => (
+                    <div key={`${trainer.centerId}-${trainer.slug}`} className="bg-white p-3 rounded border">
+                      <p className="font-medium text-indigo-700 mb-1">👤 {trainer.slug} ({trainer.centerId})</p>
+                      <p className="text-sm"><span className="font-medium">제목:</span> {trainer.metaTitle}</p>
+                      <p className="text-sm"><span className="font-medium">설명:</span> {trainer.metaDescription?.substring(0, 60)}...</p>
+                      <p className="text-sm"><span className="font-medium">키워드:</span> {trainer.keywords?.join(', ') || '없음'}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <p className="text-red-600">SEO Settings 데이터를 불러올 수 없습니다.</p>
+        )}
       </div>
     </div>
   );

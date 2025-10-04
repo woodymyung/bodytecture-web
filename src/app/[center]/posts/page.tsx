@@ -5,7 +5,9 @@ import Link from 'next/link';
 import NewsletterForm from '@/components/NewsletterForm';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
-import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
+import { generateCenterMetadata } from '@/lib/metadata';
+import { getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { getCenterHexColor } from '@/constants/colors';
 
@@ -41,13 +43,50 @@ export async function generateMetadata({
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
-  // 센터별 메타데이터 생성
+  // Sanity SEO Settings에서 포스트 페이지 SEO 데이터 가져오기
+  const postsSEO = await getCenterPageSEO(center, 'postsPage');
+  const centerMainSEO = await getCenterPageSEO(center, 'mainPage');
+  
+  // Sanity 데이터가 있으면 사용, 없으면 fallback 데이터 사용
+  const title = postsSEO?.metaTitle || '포스트';
+  const description = postsSEO?.metaDescription || `${centerInfo.shortName}에서 건강과 운동에 대한 유용한 정보를 공유합니다. 전문 트레이너의 팁과 운동법을 만나보세요.`;
+  
+  // 키워드 합치기: 센터 메인 키워드 + 포스트 페이지 키워드 (중복 제거)
+  const centerKeywords = centerMainSEO?.keywords || [];
+  const postsKeywords = postsSEO?.keywords || ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁'];
+  const keywords = [...new Set([...centerKeywords, ...postsKeywords])];
+  
+  // 센터 메인 페이지의 OG 이미지 상속받기
+  let ogImages = undefined;
+  if (centerMainSEO?.ogImage?.asset) {
+    try {
+      const centerOGImageUrl = urlFor(centerMainSEO.ogImage)
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+        
+      ogImages = [{
+        url: centerOGImageUrl,
+        width: 1200,
+        height: 630,
+        alt: title
+      }];
+    } catch (error) {
+      console.warn('센터 OG 이미지 변환 실패:', error);
+    }
+  }
+  
+  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
   return generateCenterMetadata({
     centerId: center,
-    title: '포스트',
-    description: `${centerInfo.shortName}에서 건강과 운동에 대한 유용한 정보를 공유합니다. 전문 트레이너의 팁과 운동법을 만나보세요.`,
+    title,
+    description,
     path: `/${center}/posts`,
-    keywords: ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁'],
+    keywords,
+    images: ogImages,
   });
 }
 

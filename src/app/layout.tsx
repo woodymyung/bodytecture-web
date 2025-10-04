@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getRootPageSEO } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,6 +23,22 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = rootPageSEO?.metaTitle || '바디텍쳐 & 최원준GYM - 서울 프리미엄 피트니스 센터';
   const description = rootPageSEO?.metaDescription || '왕십리·대치·청담 3개 지점 운영. 전문 PT와 그룹클래스를 제공하는 프리미엄 헬스장입니다.';
   const keywords = rootPageSEO?.keywords?.join(', ') || '바디텍쳐, 최원준GYM, 헬스장, PT, 센터선택, 왕십리, 대치, 청담, 피트니스';
+
+  // Sanity OG 이미지 처리
+  let ogImageUrl = '/images/opengraphimage.png';
+  if (rootPageSEO?.ogImage?.asset) {
+    try {
+      ogImageUrl = urlFor(rootPageSEO.ogImage)
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+    } catch (error) {
+      console.warn('루트 페이지 OG 이미지 변환 실패:', error);
+    }
+  }
 
   return {
     // 기본 URL 설정 - Open Graph 및 Twitter 이미지의 절대 URL 생성을 위해 필요
@@ -59,8 +76,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: "https://bodytecture.fit/",
       images: [
         {
-          // TODO: rootPageSEO.ogImage 활용 (나중에 Sanity 이미지 설정시)
-          url: "/images/opengraphimage.png",
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: title
@@ -73,7 +89,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["/images/opengraphimage.png"],
+      images: [ogImageUrl],
     },
     
     // 검색엔진 크롤링 설정

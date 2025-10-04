@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { generatePageMetadata, generateCenterMetadata } from '@/lib/metadata';
-import { getCenterInfoByCenterId } from '@/lib/sanityData';
+import { generateCenterMetadata } from '@/lib/metadata';
+import { getCenterInfoByCenterId, getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
 import { CENTER_COLORS } from '@/constants/colors';
 import type { CenterId } from '@/constants/centers';
 import Header from '@/components/Header';
@@ -52,13 +53,40 @@ export async function generateMetadata({
     });
   }
   
-  // 센터별 메타데이터 생성
+  // Sanity SEO Settings에서 센터 메인 페이지 데이터 가져오기
+  const centerMainSEO = await getCenterPageSEO(centerInfo.centerId, 'mainPage');
+  
+  // 센터별 OG 이미지 처리
+  let ogImages = undefined;
+  if (centerMainSEO?.ogImage?.asset) {
+    try {
+      const centerOGImageUrl = urlFor(centerMainSEO.ogImage)
+        .width(1200)
+        .height(630)
+        .quality(90)
+        .format('webp')
+        .fit('crop')
+        .url();
+        
+      ogImages = [{
+        url: centerOGImageUrl,
+        width: 1200,
+        height: 630,
+        alt: centerMainSEO.metaTitle || centerInfo.name
+      }];
+    } catch (error) {
+      console.warn('센터 OG 이미지 변환 실패:', error);
+    }
+  }
+
+  // 센터별 메타데이터 생성 (SEO Settings 데이터 활용)
   return generateCenterMetadata({
     centerId: centerInfo.centerId as CenterId,
-    title: centerInfo.name,
-    description: centerInfo.description,
+    title: centerMainSEO?.metaTitle || centerInfo.name,
+    description: centerMainSEO?.metaDescription || centerInfo.description,
     path: `/${center}`,
-    keywords: centerInfo.seo.keywords,
+    keywords: centerMainSEO?.keywords || centerInfo.seo.keywords || [],
+    images: ogImages,
   });
 }
 

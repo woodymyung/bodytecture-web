@@ -7,6 +7,8 @@
 - 루트 페이지 화면 개선
 - 센터별 favicon 분리 가능한지 확인  
 - 메타데이터 관리 방법 개선 (SEO) 
+- 모바일에서 트레이너 프로필 안 뜸 (/slug)
+TrainerImageGallery.tsx:26 Image with src "https://cdn.sanity.io/images/yvgbicuy/prod/7048853c3a2bc7b6587a62954366b528b5b75d1a-4000x5000.jpg?rect=0,500,4000,4000&w=600&h=600&fm=webp&q=92&fit=crop" has "fill" and a height value of 0. This is likely because the parent element of the image has not been styled to have a set height.
 
 2순위:  
 - Amplitude 연결 

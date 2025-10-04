@@ -1,13 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Header from '@/components/Header';
-import { getTrainerBySlug, getTrainersByCenter, getReviewsByTrainer } from '@/lib/sanityData';
+import { getTrainerBySlug, getTrainersByCenter, getReviewsByTrainer, getTrainerSEO, getCenterPageSEO } from '@/lib/sanityData';
 import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
 import Link from 'next/link';
-import { generateTrainerMetadata, generatePersonStructuredData } from '@/lib/metadata';
+import { generatePersonStructuredData, generateCenterMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
+import { urlFor } from '@/lib/sanity';
 
 // 센터별 개별 트레이너 페이지 props 타입 정의
 interface TrainerPageProps {
@@ -71,13 +72,61 @@ export async function generateMetadata({
     };
   }
   
-  // 센터별 트레이너 메타데이터 생성
-  return generateTrainerMetadata({
-    name: trainer.name,
-    description: trainer.description || `${trainer.name} 트레이너`,
-    slug: trainer.slug,
-    images: trainer.images
-  }, center);
+  // Sanity SEO Settings에서 트레이너별 SEO 데이터 가져오기
+  const trainerSEO = await getTrainerSEO(slug, center);
+  const centerMainSEO = await getCenterPageSEO(center, 'mainPage');
+  
+  // 트레이너별 SEO 데이터가 있으면 최적화된 SEO 사용, 없으면 기본 메타데이터 사용
+  if (trainerSEO) {
+    // 키워드 합치기: 센터 메인 키워드 + 트레이너 개별 키워드 (중복 제거)
+    const centerKeywords = centerMainSEO?.keywords || [];
+    const trainerKeywords = trainerSEO.keywords || [];
+    const combinedKeywords = [...new Set([...centerKeywords, ...trainerKeywords])];
+    
+    // 트레이너 프로필 이미지를 OG 이미지로 사용
+    let ogImages = undefined;
+    if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
+      try {
+        const trainerOGImageUrl = urlFor(trainer.images[0])
+          .width(1200)
+          .height(630)
+          .quality(90)
+          .format('webp')
+          .fit('crop')
+          .url();
+          
+        ogImages = [{
+          url: trainerOGImageUrl,
+          width: 1200,
+          height: 630,
+          alt: trainerSEO.metaTitle
+        }];
+      } catch (error) {
+        console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
+      }
+    }
+
+    // SEO Settings 기반 메타데이터 생성 (트레이너 프로필 이미지 사용)
+    return generateCenterMetadata({
+      centerId: center,
+      title: trainerSEO.metaTitle,
+      description: trainerSEO.metaDescription,
+      path: `/${center}/trainers/${slug}`,
+      keywords: combinedKeywords,
+      images: ogImages,
+      type: 'profile'
+    });
+  } else {
+    // Fallback: 기본 센터 메타데이터 생성 (SEO Settings에 트레이너 데이터가 없는 경우)
+    return generateCenterMetadata({
+      centerId: center,
+      title: `${trainer.name} - 전문 트레이너`,
+      description: trainer.description || `${trainer.name} 트레이너를 소개합니다.`,
+      path: `/${center}/trainers/${slug}`,
+      keywords: [trainer.name, '전문트레이너', 'PT', '개인트레이닝'],
+      type: 'profile'
+    });
+  }
 }
 
 // 센터별 개별 트레이너 페이지 컴포넌트

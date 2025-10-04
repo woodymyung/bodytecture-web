@@ -17,6 +17,13 @@ interface SEOPageData {
   metaTitle: string;
   metaDescription: string;
   keywords: string[];
+  ogImage?: {
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+    alt?: string;
+  };
 }
 
 interface SEORootPage extends SEOPageData {
@@ -41,14 +48,7 @@ interface SEOCenterPages {
 interface SEOTrainer extends SEOPageData {
   slug: string;
   centerId: string;
-  specialties?: string[];
-  ogImage?: {
-    asset: {
-      _ref: string;
-      _type: 'reference';
-    };
-    alt?: string;
-  };
+  // 참고: specialties, OG 이미지는 모두 Trainer 문서에서 자동 가져옴
 }
 
 interface SEOSettings {
@@ -483,7 +483,11 @@ export async function getSEOSettings(): Promise<SEOSettings | null> {
           mainPage {
             metaTitle,
             metaDescription,
-            keywords
+            keywords,
+            ogImage {
+              asset,
+              alt
+            }
           },
           trainersPage {
             metaTitle,
@@ -511,12 +515,7 @@ export async function getSEOSettings(): Promise<SEOSettings | null> {
           centerId,
           metaTitle,
           metaDescription,
-          keywords,
-          specialties,
-          ogImage {
-            asset,
-            alt
-          }
+          keywords
         }
       }
     `);
@@ -559,6 +558,17 @@ export async function getTrainerSEO(slug: string, centerId: string) {
     return trainerSEO || null;
   } catch (error) {
     console.error(`트레이너(${slug}) SEO 데이터를 가져오는데 실패했습니다:`, error);
+    return null;
+  }
+}
+
+// 센터별 OG 이미지 가져오기 (센터 메인 + 하위 페이지 공용)
+export async function getCenterOGImage(centerId: string) {
+  try {
+    const centerMainSEO = await getCenterPageSEO(centerId, 'mainPage');
+    return centerMainSEO?.ogImage || null;
+  } catch (error) {
+    console.error(`센터(${centerId}) OG 이미지를 가져오는데 실패했습니다:`, error);
     return null;
   }
 }
