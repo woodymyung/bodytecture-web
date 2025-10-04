@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { generateCenterMetadata } from '@/lib/metadata';
+import { generatePageMetadata } from '@/lib/metadata';
 import { getCenterInfoByCenterId, getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { CENTER_COLORS } from '@/constants/colors';
@@ -83,9 +83,8 @@ export async function generateMetadata({
     }
   }
 
-  // 센터별 메타데이터 생성 (SEO Settings 데이터 활용)
-  return generateCenterMetadata({
-    centerId: centerInfo.centerId as CenterId,
+  // 센터별 메타데이터 생성 (SEO Settings 그대로 사용, 센터명 자동 추가 없음)
+  return generatePageMetadata({
     title: centerMainSEO?.metaTitle || centerInfo.name,
     description: centerMainSEO?.metaDescription || centerInfo.description,
     path: `/${center}`,

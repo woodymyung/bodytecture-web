@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Trainers from '@/components/Trainers';
 import { getTrainersByCenter, getCenterInfoByCenterId, getActiveCenterInfo, getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
-import { generateCenterMetadata } from '@/lib/metadata';
+import { generatePageMetadata } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
 
 // 센터별 트레이너 페이지 props 타입 정의
@@ -60,10 +60,17 @@ export async function generateMetadata({
   const title = trainersSEO?.metaTitle || `전문 트레이너`;
   const description = trainersSEO?.metaDescription || `${centerInfo.name}의 전문 트레이너들을 소개합니다. 경험이 풍부한 트레이너들이 회원님의 건강한 변화를 위해 최선을 다하겠습니다.`;
   
-  // 키워드 합치기: 센터 메인 키워드 + 트레이너 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || [];
-  const trainersKeywords = trainersSEO?.keywords || ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'];
-  const keywords = [...new Set([...centerKeywords, ...trainersKeywords])];
+  // 키워드 합치기: 센터 메인 키워드 + 트레이너 페이지 키워드 (강화된 중복 제거)
+  const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+  const trainersKeywords = Array.isArray(trainersSEO?.keywords) ? trainersSEO.keywords : ['전문트레이너', '피트니스트레이너', 'PT', '개인트레이닝', '헬스트레이너'];
+  
+  // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+  const allKeywords = [...centerKeywords, ...trainersKeywords]
+    .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+    .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+    .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+  
+  const keywords = [...new Set(allKeywords)];
   
   // 센터 메인 페이지의 OG 이미지 상속받기
   let ogImages = undefined;
@@ -88,9 +95,8 @@ export async function generateMetadata({
     }
   }
   
-  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
-  return generateCenterMetadata({
-    centerId: centerInfo.centerId as CenterId,
+  // 센터별 메타데이터 생성 (SEO Settings 그대로 사용, 센터명 자동 추가 없음)
+  return generatePageMetadata({
     title,
     description,
     path: `/${center}/trainers`,

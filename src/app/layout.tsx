@@ -45,10 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL('https://bodytecture.fit/'),
     
     // 기본 메타데이터 - Sanity SEO Settings에서 가져온 데이터 사용
-    title: {
-      template: `%s | ${title}`,
-      default: title
-    },
+    // template 제거: 각 페이지의 SEO Settings title을 그대로 사용
+    title: title,
     description,
     keywords,
     

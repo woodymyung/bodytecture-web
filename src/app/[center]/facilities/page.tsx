@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { facilities } from '@/data/mockData';
-import { generateCenterMetadata } from '@/lib/metadata';
+import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
@@ -53,10 +53,17 @@ export async function generateMetadata({
   const title = facilitiesSEO?.metaTitle || '시설 안내';
   const description = facilitiesSEO?.metaDescription || `${centerInfo.name}의 쾌적하고 최신식 시설을 만나보세요. 다양한 운동 기구와 편의시설을 이용하실 수 있습니다.`;
   
-  // 키워드 합치기: 센터 메인 키워드 + 시설 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || [];
-  const facilitiesKeywords = facilitiesSEO?.keywords || ['헬스장시설', '운동시설', '피트니스시설', '헬스기구', '라커룸', '샤워실', '주차장'];
-  const keywords = [...new Set([...centerKeywords, ...facilitiesKeywords])];
+  // 키워드 합치기: 센터 메인 키워드 + 시설 페이지 키워드 (강화된 중복 제거)
+  const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+  const facilitiesKeywords = Array.isArray(facilitiesSEO?.keywords) ? facilitiesSEO.keywords : ['헬스장시설', '운동시설', '피트니스시설', '헬스기구', '라커룸', '샤워실', '주차장'];
+  
+  // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+  const allKeywords = [...centerKeywords, ...facilitiesKeywords]
+    .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+    .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+    .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+  
+  const keywords = [...new Set(allKeywords)];
   
   // 센터 메인 페이지의 OG 이미지 상속받기
   let ogImages = undefined;
@@ -81,9 +88,8 @@ export async function generateMetadata({
     }
   }
   
-  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
-  return generateCenterMetadata({
-    centerId: center,
+  // 센터별 메타데이터 생성 (SEO Settings 그대로 사용, 센터명 자동 추가 없음)
+  return generatePageMetadata({
     title,
     description,
     path: `/${center}/facilities`,

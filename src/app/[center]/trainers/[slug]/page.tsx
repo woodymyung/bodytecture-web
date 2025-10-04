@@ -78,10 +78,17 @@ export async function generateMetadata({
   
   // 트레이너별 SEO 데이터가 있으면 최적화된 SEO 사용, 없으면 기본 메타데이터 사용
   if (trainerSEO) {
-    // 키워드 합치기: 센터 메인 키워드 + 트레이너 개별 키워드 (중복 제거)
-    const centerKeywords = centerMainSEO?.keywords || [];
-    const trainerKeywords = trainerSEO.keywords || [];
-    const combinedKeywords = [...new Set([...centerKeywords, ...trainerKeywords])];
+    // 키워드 합치기: 센터 메인 키워드 + 트레이너 개별 키워드 (강화된 중복 제거)
+    const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+    const trainerKeywords = Array.isArray(trainerSEO.keywords) ? trainerSEO.keywords : [];
+    
+    // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+    const allKeywords = [...centerKeywords, ...trainerKeywords]
+      .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+      .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+      .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+    
+    const combinedKeywords = [...new Set(allKeywords)];
     
     // 트레이너 프로필 이미지를 OG 이미지로 사용
     let ogImages = undefined;

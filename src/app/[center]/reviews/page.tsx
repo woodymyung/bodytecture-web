@@ -4,7 +4,7 @@ import ReviewsPageContent from '@/components/ReviewsPageContent';
 import { getTrainersByCenter, getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { client } from '@/lib/sanity';
-import { generateCenterMetadata } from '@/lib/metadata';
+import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { SanityReviewRaw } from '@/types';
 
@@ -52,10 +52,17 @@ export async function generateMetadata({
   const title = reviewsSEO?.metaTitle || '고객 후기';
   const description = reviewsSEO?.metaDescription || `${centerInfo.name}을 이용하신 회원님들의 생생한 후기를 만나보세요. 실제 경험담과 변화 스토리를 통해 차별화된 서비스를 확인하실 수 있습니다.`;
   
-  // 키워드 합치기: 센터 메인 키워드 + 리뷰 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || [];
-  const reviewsKeywords = reviewsSEO?.keywords || ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'];
-  const keywords = [...new Set([...centerKeywords, ...reviewsKeywords])];
+  // 키워드 합치기: 센터 메인 키워드 + 리뷰 페이지 키워드 (강화된 중복 제거)
+  const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+  const reviewsKeywords = Array.isArray(reviewsSEO?.keywords) ? reviewsSEO.keywords : ['고객후기', '헬스장후기', 'PT후기', '회원리뷰', '운동후기', '피트니스후기'];
+  
+  // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+  const allKeywords = [...centerKeywords, ...reviewsKeywords]
+    .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+    .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+    .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+  
+  const keywords = [...new Set(allKeywords)];
   
   // 센터 메인 페이지의 OG 이미지 상속받기
   let ogImages = undefined;
@@ -80,9 +87,8 @@ export async function generateMetadata({
     }
   }
   
-  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
-  return generateCenterMetadata({
-    centerId: center,
+  // 센터별 메타데이터 생성 (SEO Settings 그대로 사용, 센터명 자동 추가 없음)
+  return generatePageMetadata({
     title,
     description,
     path: `/${center}/reviews`,

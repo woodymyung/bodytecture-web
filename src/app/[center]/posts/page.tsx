@@ -5,7 +5,7 @@ import Link from 'next/link';
 import NewsletterForm from '@/components/NewsletterForm';
 import { blogPosts } from '@/data/mockData';
 import { BlogPost } from '@/types';
-import { generateCenterMetadata } from '@/lib/metadata';
+import { generatePageMetadata } from '@/lib/metadata';
 import { getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
@@ -55,10 +55,17 @@ export async function generateMetadata({
   const title = postsSEO?.metaTitle || '포스트';
   const description = postsSEO?.metaDescription || `${centerInfo.shortName}에서 건강과 운동에 대한 유용한 정보를 공유합니다. 전문 트레이너의 팁과 운동법을 만나보세요.`;
   
-  // 키워드 합치기: 센터 메인 키워드 + 포스트 페이지 키워드 (중복 제거)
-  const centerKeywords = centerMainSEO?.keywords || [];
-  const postsKeywords = postsSEO?.keywords || ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁'];
-  const keywords = [...new Set([...centerKeywords, ...postsKeywords])];
+  // 키워드 합치기: 센터 메인 키워드 + 포스트 페이지 키워드 (강화된 중복 제거)
+  const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+  const postsKeywords = Array.isArray(postsSEO?.keywords) ? postsSEO.keywords : ['운동정보', '건강정보', '피트니스팁', '운동법', '헬스정보', '트레이닝팁'];
+  
+  // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+  const allKeywords = [...centerKeywords, ...postsKeywords]
+    .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+    .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+    .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+  
+  const keywords = [...new Set(allKeywords)];
   
   // 센터 메인 페이지의 OG 이미지 상속받기
   let ogImages = undefined;
@@ -83,9 +90,8 @@ export async function generateMetadata({
     }
   }
   
-  // 센터별 메타데이터 생성 (Sanity SEO Settings 데이터 + 센터 OG 이미지 상속)
-  return generateCenterMetadata({
-    centerId: center,
+  // 센터별 메타데이터 생성 (SEO Settings 그대로 사용, 센터명 자동 추가 없음)
+  return generatePageMetadata({
     title,
     description,
     path: `/${center}/posts`,
