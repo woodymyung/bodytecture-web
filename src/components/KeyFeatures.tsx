@@ -83,15 +83,8 @@ const KeyFeatures: React.FC<KeyFeaturesProps> = ({ keyFeatures, currentCenter })
         {/* 섹션 헤더 */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            핵심 특징
+            센터 특징
           </h2>
-          <div 
-            className="w-24 h-1 mx-auto rounded-full mb-6"
-            style={{ backgroundColor: 'var(--center-primary)' }}
-          ></div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            차별화된 시설과 서비스로 최고의 운동 환경을 제공합니다
-          </p>
         </div>
 
         {/* 반응형 3단 그리드 - 모바일 1단, 태블릿 2단, 데스크탑 3단 */}
@@ -99,19 +92,17 @@ const KeyFeatures: React.FC<KeyFeaturesProps> = ({ keyFeatures, currentCenter })
           {activeFeatures.map((feature) => (
             <div 
               key={feature.id}
-              className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
             >
               {/* 아이콘 영역 */}
-              <div className="mb-4">
-                <div 
-                  className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
-                  style={{ 
-                    backgroundColor: `var(--center-primary)`, 
-                    color: 'white' 
-                  }}
-                >
-                  {getIcon(feature.icon)}
-                </div>
+              <div 
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                style={{ 
+                  backgroundColor: `var(--center-primary)`, 
+                  color: 'white' 
+                }}
+              >
+                {getIcon(feature.icon)}
               </div>
 
               {/* 제목 */}
@@ -127,20 +118,6 @@ const KeyFeatures: React.FC<KeyFeaturesProps> = ({ keyFeatures, currentCenter })
           ))}
         </div>
 
-        {/* 추가 정보 또는 CTA 버튼 (선택사항) */}
-        {currentCenter && (
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-6">
-              더 자세한 시설 정보가 궁금하시다면?
-            </p>
-            <a
-              href={`/${currentCenter}/facilities`}
-              className="inline-block bg-[var(--center-primary)] text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity duration-200"
-            >
-              시설 안내 보기
-            </a>
-          </div>
-        )}
       </div>
     </section>
   );
