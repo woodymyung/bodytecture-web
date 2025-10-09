@@ -359,9 +359,21 @@ function transformReview(sanityReview: SanityReviewRaw): Review {
 function transformEquipment(sanityEquipment: SanityEquipmentRaw): Facility {
   return {
     id: sanityEquipment._id,
-    name: sanityEquipment.name,
+    title: sanityEquipment.name,
+    slug: sanityEquipment.slug?.current || sanityEquipment.name.toLowerCase().replace(/\s+/g, '-'),
+    type: 'equipment' as const,
+    cover: {
+      url: sanityEquipment.cover ? `/images/equipment/${sanityEquipment.name}.jpg` : '/images/default-equipment.jpg',
+      alt: sanityEquipment.name
+    },
     description: sanityEquipment.description,
-    image: sanityEquipment.cover ? sanityEquipment.cover._ref : ''
+    order: 0,
+    isActive: true,
+    center: 'wangsimni', // 기본값으로 설정 (운동기구는 모든 센터에서 공통 사용)
+    features: sanityEquipment.targetMuscles || [],
+    // 기존 호환성을 위한 필드들 (deprecated)
+    name: sanityEquipment.name,
+    image: sanityEquipment.cover ? `/images/equipment/${sanityEquipment.name}.jpg` : '/images/default-equipment.jpg'
   }
 }
 

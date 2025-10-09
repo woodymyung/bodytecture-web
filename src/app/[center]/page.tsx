@@ -132,7 +132,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
         </section>
 
         {/* 핵심 특징 섹션 - Sanity에서 센터별 핵심 특징 가져오기 */}
-        <KeyFeatures keyFeatures={keyFeatures} currentCenter={center} />
+        <KeyFeatures keyFeatures={keyFeatures} />
 
         {/* 고객 후기 섹션 - 자동 슬라이드 되는 리뷰들 */}
         <Reviews reviews={reviews} isMainPage={true} currentCenter={center} />
@@ -143,8 +143,8 @@ export default async function CenterPage({ params }: CenterPageProps) {
         {/* 트레이너 섹션 - 4분할로 배치된 트레이너 정보 */}
         <Trainers trainers={trainers} currentCenter={center} />
 
-        {/* 시설 정보 섹션 - 이미지 슬라이더와 설명 */}
-        <Facilities />
+        {/* 시설 정보 섹션 - 센터별 Sanity 데이터 기반 이미지 슬라이더와 설명 */}
+        <Facilities currentCenter={center} />
 
         {/* 찾아오는 길 섹션 - Sanity 센터별 위치, 교통, 주차 정보 */}
         <Location centerInfo={centerInfo} />

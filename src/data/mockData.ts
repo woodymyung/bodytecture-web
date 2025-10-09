@@ -1,6 +1,6 @@
 // 목 데이터 - 실제로는 Sanity에서 가져올 예정
 
-import { MembershipPlan, PTPlan, BlogPost, Facility } from '@/types';
+import { MembershipPlan, PTPlan, BlogPost } from '@/types';
 
 // trainers는 실제로 Sanity에서 가져오므로 제거
 
@@ -49,23 +49,5 @@ export const blogPosts: BlogPost[] = [
   }
 ];
 
-export const facilities: Facility[] = [
-  {
-    id: '1',
-    name: '헬스장 메인존',
-    description: '최신식 운동 기구와 넓은 공간으로 쾌적한 운동 환경을 제공합니다.',
-    image: '/facilities/main-gym.jpg'
-  },
-  {
-    id: '2',
-    name: 'PT 전용룸',
-    description: '개인 PT를 위한 프라이빗한 공간으로 1:1 맞춤 트레이닝이 가능합니다.',
-    image: '/facilities/pt-room.jpg'
-  },
-  {
-    id: '3',
-    name: '락커룸',
-    description: '깨끗하고 편안한 락커룸으로 운동 전후 편안한 환경을 제공합니다.',
-    image: '/facilities/locker-room.jpg'
-  }
-];
+// facilities 데이터는 이제 Sanity CMS에서 관리하며, 
+// Facilities 컴포넌트에서 fallback 데이터를 제공하므로 mock data 불필요

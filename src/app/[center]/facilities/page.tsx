@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Facilities from '@/components/Facilities';
 import Link from 'next/link';
-import { facilities } from '@/data/mockData';
 import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { getCenterPageSEO } from '@/lib/sanityData';
@@ -155,9 +154,9 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12">
-              {/* 메인 시설 이미지 슬라이더 */}
+              {/* 메인 시설 이미지 슬라이더 - 센터별 데이터 전달 */}
               <div>
-                <Facilities />
+                <Facilities currentCenter={center} />
               </div>
 
               {/* 시설 특징 상세 설명 */}
@@ -167,16 +166,14 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
                     최적의 운동 환경
                   </h2>
                   <div className="space-y-6">
-                    {facilities.map((facility) => (
-                      <div key={facility.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                          {facility.name}
-                        </h3>
-                        <p className="text-gray-600 leading-relaxed">
-                          {facility.description}
-                        </p>
-                      </div>
-                    ))}
+                    <p className="text-gray-600 leading-relaxed">
+                      전문적인 운동기구와 최신식 시설을 갖춘 {centerInfo.name}에서 효과적이고 안전한 운동을 경험하세요. 
+                      개인의 운동 목표에 맞는 다양한 기구들이 준비되어 있습니다.
+                    </p>
+                    <p className="text-gray-600 leading-relaxed">
+                      쾌적하고 청결한 환경에서 운동할 수 있도록 정기적인 시설 관리와 소독을 실시하고 있으며, 
+                      전문 트레이너가 안전한 기구 사용법을 안내해드립니다.
+                    </p>
                   </div>
                 </div>
 

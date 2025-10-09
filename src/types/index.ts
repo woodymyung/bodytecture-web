@@ -191,11 +191,56 @@ export interface BlogPost {
   content?: SanityRichTextBlock[]; // Sanity Rich Text로 변경
 }
 
+// === 시설 정보 관련 타입 정의 ===
+
+// Sanity Facility 원시 데이터 타입 (API 응답에서 사용)
+export interface SanityFacilityRaw {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
+  };
+  type: 'landscape' | 'equipment' | 'shower';
+  cover: SanityImageAsset & {
+    alt?: string;
+    caption?: string;
+  };
+  description: string;
+  additionalImages?: Array<SanityImageAsset & {
+    alt?: string;
+    caption?: string;
+  }>;
+  order: number;
+  isActive: boolean;
+  center: string;
+  features?: string[];
+}
+
+// 애플리케이션에서 사용할 시설 정보 타입 (변환된 형태)
 export interface Facility {
   id: string;
-  name: string;
+  title: string;
+  slug: string;
+  type: 'landscape' | 'equipment' | 'shower';
+  cover: {
+    url: string;
+    alt?: string;
+    caption?: string;
+  };
   description: string;
-  image: string;
+  additionalImages?: Array<{
+    url: string;
+    alt?: string;
+    caption?: string;
+  }>;
+  order: number;
+  isActive: boolean;
+  center: string;
+  features?: string[];
+  
+  // 기존 호환성을 위한 필드들 (deprecated, 제거 예정)
+  name?: string;  // title과 동일
+  image?: string; // cover.url과 동일
 }
 
 // 센터 정보 관련 타입 정의 (Sanity info 스키마와 매칭)
