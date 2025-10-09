@@ -106,7 +106,7 @@ const KeyFeatures: React.FC<KeyFeaturesProps> = ({ keyFeatures, currentCenter })
               </div>
 
               {/* 제목 */}
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-3">
                 {feature.title}
               </h3>
 
