@@ -54,9 +54,14 @@ const iconMap: Record<string, React.JSX.Element> = {
   )
 };
 
-// 아이콘 가져오기 함수 - 아이콘 이름에 따라 적절한 SVG 반환
+// 아이콘 가져오기 함수 - 모든 특징에 체크 아이콘 사용
 const getIcon = (iconName: string): React.JSX.Element => {
-  return iconMap[iconName] || iconMap.default;
+  // 모든 특징에 통일된 체크 아이콘 사용
+  return (
+    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    </svg>
+  );
 };
 
 // KeyFeatures 컴포넌트 props 타입 정의
@@ -92,11 +97,11 @@ const KeyFeatures: React.FC<KeyFeaturesProps> = ({ keyFeatures, currentCenter })
           {activeFeatures.map((feature) => (
             <div 
               key={feature.id}
-              className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
+              className="bg-white rounded-lg p-8 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center text-center"
             >
               {/* 아이콘 영역 */}
               <div 
-                className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
                 style={{ 
                   backgroundColor: `var(--center-primary)`, 
                   color: 'white' 

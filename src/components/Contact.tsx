@@ -32,7 +32,7 @@ const Contact: React.FC<ContactProps> = ({ centerInfo, currentCenter }) => {
             문의하기
           </h2>
           <p className="text-lg text-gray-600">
-            {centerName}에 대해 궁금하신 점이 있으시면 언제든 문자/전화로 연락주세요
+            {centerName}에 대해 궁금하신 점이 있으시면 언제든 연락주세요
           </p>
         </div>
 

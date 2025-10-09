@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Trainer } from '@/types';
 import { getHighQualityImageUrl } from '@/lib/sanity';
-import { COMPANY_INFO } from '@/constants/contact';
 import { getCenterColorClasses } from '@/constants/colors';
 
 // 트레이너 정보 컴포넌트 - 4분할 그리드 레이아웃
@@ -28,11 +27,8 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, 
           {!hideHeader && (
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                전문 트레이너
+                트레이너
               </h2>
-              <p className="text-lg text-gray-600">
-                트레이너 정보를 불러오고 있습니다...
-              </p>
             </div>
           )}
         </div>
@@ -47,11 +43,8 @@ const Trainers: React.FC<TrainersProps> = ({ trainers = [], hideHeader = false, 
         {!hideHeader && (
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              전문 트레이너
+              트레이너
             </h2>
-            <p className="text-lg text-gray-600">
-              {COMPANY_INFO.name}의 전문 트레이너들을 소개합니다
-            </p>
           </div>
         )}
 

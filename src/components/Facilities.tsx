@@ -94,9 +94,6 @@ const Facilities: React.FC = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             시설 정보
           </h2>
-          <p className="text-lg text-gray-600">
-            지상 1층부터 지하 1층 100평 규모의 시설을 확인해보세요
-          </p>
         </div>
 
         <div className="flex flex-col gap-12 items-center">

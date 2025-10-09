@@ -4,9 +4,7 @@ import React, { useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { Review, SanityRichTextBlock, SanityRichTextSpan } from '@/types';
 import ReviewCard from './ReviewCard';
-import { COMPANY_INFO } from '@/constants/contact';
 import { getCenterColorClasses } from '@/constants/colors';
-// InfiniteSwipeSlider 제거하고 직접 구현
 
 // 고객 후기 슬라이더 컴포넌트
 interface ReviewsProps {
@@ -18,6 +16,7 @@ interface ReviewsProps {
 const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, currentCenter }) => {
   // 센터별 버튼 컬러 클래스 가져오기
   const colorClasses = getCenterColorClasses(currentCenter || 'wangsimni');
+  
   // 🎯 Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수
   // Rich Text를 일반 텍스트로 변환하여 글자 수 확인하는 함수 - Sanity Rich Text 블록 배열을 처리
   const convertRichTextToPlainText = useCallback((blocks: SanityRichTextBlock[]): string => {
@@ -67,7 +66,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              고객 후기
+              실제 고객 후기
             </h2>
             <p className="text-lg text-gray-600">
               고객 후기를 불러오고 있습니다...
@@ -92,11 +91,8 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            고객 후기
+            실제 고객 후기
           </h2>
-          <p className="text-lg text-gray-600">
-            {COMPANY_INFO.name}를 이용하신 회원님들의 생생한 후기를 만나보세요
-          </p>
         </div>
 
         {/* 🎯 데스크탑: 높이 제한된 3단 마손리 레이아웃 with 위로 이동 애니메이션 */}
