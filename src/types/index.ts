@@ -345,3 +345,27 @@ export interface CenterInfo {
     metaDescription: string;
   };
 }
+
+// === Key Features 타입 정의 ===
+
+// Sanity Key Features 원시 데이터 타입 (API 응답)
+export interface SanityKeyFeaturesRaw {
+  _id: string;
+  center: string;
+  icon: string;
+  title: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+}
+
+// 애플리케이션에서 사용할 Key Features 타입 (변환된 형태)
+export interface KeyFeatures {
+  id: string;
+  center: string;
+  icon: string;
+  title: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+}

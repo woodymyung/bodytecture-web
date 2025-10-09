@@ -4,7 +4,6 @@ import Trainers from '@/components/Trainers';
 import { getTrainersByCenter, getCenterInfoByCenterId, getActiveCenterInfo, getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { generatePageMetadata } from '@/lib/metadata';
-import type { CenterId } from '@/constants/centers';
 
 // 센터별 트레이너 페이지 props 타입 정의
 interface TrainersPageProps {

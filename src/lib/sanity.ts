@@ -316,5 +316,29 @@ export const queries = {
     socialMedia,
     services,
     seo
+  }`,
+
+  // === Key Features 관련 쿼리들 ===
+  
+  // 모든 센터의 핵심 특징 가져오기 (전체)
+  keyFeatures: `*[_type == "keyFeatures" && isActive == true] | order(center asc, order asc) {
+    _id,
+    center,
+    icon,
+    title,
+    description,
+    order,
+    isActive
+  }`,
+  
+  // 센터별 핵심 특징 가져오기
+  keyFeaturesByCenter: `*[_type == "keyFeatures" && isActive == true && center == $center] | order(order asc) {
+    _id,
+    center,
+    icon,
+    title,
+    description,
+    order,
+    isActive
   }`
 }

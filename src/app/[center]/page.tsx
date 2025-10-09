@@ -6,7 +6,8 @@ import Trainers from '@/components/Trainers';
 import Facilities from '@/components/Facilities';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
-import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId } from '@/lib/sanityData';
+import KeyFeatures from '@/components/KeyFeatures';
+import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId, getKeyFeaturesByCenter } from '@/lib/sanityData';
 import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
 
@@ -97,6 +98,7 @@ export default async function CenterPage({ params }: CenterPageProps) {
   // Sanity에서 센터별 데이터 가져오기 (운영중인 센터만)
   const trainers = await getTrainersByCenter(centerInfo.centerId);
   const reviews = await getReviewsByCenter(centerInfo.centerId);
+  const keyFeatures = await getKeyFeaturesByCenter(centerInfo.centerId);
   
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const structuredData = generateLocalBusinessStructuredData(centerInfo.centerId as CenterId);
@@ -146,6 +148,9 @@ export default async function CenterPage({ params }: CenterPageProps) {
             </div>
           </div>
         </section>
+
+        {/* 핵심 특징 섹션 - Sanity에서 센터별 핵심 특징 가져오기 */}
+        <KeyFeatures keyFeatures={keyFeatures} currentCenter={center} />
 
         {/* 고객 후기 섹션 - 자동 슬라이드 되는 리뷰들 */}
         <Reviews reviews={reviews} isMainPage={true} currentCenter={center} />

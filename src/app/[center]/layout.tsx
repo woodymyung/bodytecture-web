@@ -4,7 +4,6 @@ import { generatePageMetadata } from '@/lib/metadata';
 import { getCenterInfoByCenterId, getCenterPageSEO } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { CENTER_COLORS } from '@/constants/colors';
-import type { CenterId } from '@/constants/centers';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 

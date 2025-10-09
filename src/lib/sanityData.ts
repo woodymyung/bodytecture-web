@@ -5,11 +5,13 @@ import type {
   BlogPost, 
   Facility,
   CenterInfo,
+  KeyFeatures,
   SanityTrainerRaw,
   SanityReviewRaw,
   SanityBlogPostRaw,
   SanityEquipmentRaw,
-  SanityCenterInfoRaw
+  SanityCenterInfoRaw,
+  SanityKeyFeaturesRaw
 } from '@/types'
 
 // 제대로 된 SEOSettings 타입 정의 
@@ -570,5 +572,50 @@ export async function getCenterOGImage(centerId: string) {
   } catch (error) {
     console.error(`센터(${centerId}) OG 이미지를 가져오는데 실패했습니다:`, error);
     return null;
+  }
+}
+
+// === Key Features 데이터 가져오기 함수들 ===
+
+// KeyFeatures 데이터 변환 함수 - Sanity 원시 데이터를 앱용 타입으로 변환
+function transformKeyFeatures(raw: SanityKeyFeaturesRaw): KeyFeatures {
+  return {
+    id: raw._id,
+    center: raw.center,
+    icon: raw.icon,
+    title: raw.title,
+    description: raw.description,
+    order: raw.order,
+    isActive: raw.isActive,
+  };
+}
+
+// 모든 센터의 핵심 특징 가져오기 (전체용)
+export async function getKeyFeatures(): Promise<KeyFeatures[]> {
+  try {
+    const keyFeatures = await client.fetch(queries.keyFeatures);
+    if (!Array.isArray(keyFeatures)) {
+      console.warn('핵심 특징 데이터가 배열이 아닙니다:', keyFeatures);
+      return [];
+    }
+    return keyFeatures.map(transformKeyFeatures);
+  } catch (error) {
+    console.error('핵심 특징 데이터를 가져오는데 실패했습니다:', error);
+    return [];
+  }
+}
+
+// 센터별 핵심 특징 가져오기 (센터별 페이지용)
+export async function getKeyFeaturesByCenter(center: string): Promise<KeyFeatures[]> {
+  try {
+    const keyFeatures = await client.fetch(queries.keyFeaturesByCenter, { center });
+    if (!Array.isArray(keyFeatures)) {
+      console.warn(`핵심 특징 데이터가 배열이 아닙니다 (${center}):`, keyFeatures);
+      return [];
+    }
+    return keyFeatures.map(transformKeyFeatures);
+  } catch (error) {
+    console.error(`센터별 핵심 특징 데이터를 가져오는데 실패했습니다 (${center}):`, error);
+    return [];
   }
 }
