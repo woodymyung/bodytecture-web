@@ -93,9 +93,6 @@ const Facilities: React.FC<FacilitiesProps> = ({
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               시설 안내
           </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              쾌적하고 최신식 시설에서 안전하고 효과적인 운동을 경험하세요
-            </p>
           </div>
 
           {/* 시설 카드 그리드 */}
@@ -111,17 +108,6 @@ const Facilities: React.FC<FacilitiesProps> = ({
                     className="object-cover transition-transform duration-300 hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  {/* 타입 뱃지 */}
-                  <div className="absolute top-4 left-4">
-                    <span className={`inline-block px-3 py-1 text-xs font-medium rounded-full text-white ${
-                      facility.type === 'landscape' ? 'bg-blue-500' :
-                      facility.type === 'equipment' ? 'bg-green-500' : 'bg-purple-500'
-                    }`}>
-                      {facility.type === 'landscape' && '센터 전경'}
-                      {facility.type === 'equipment' && '운동 기구'}
-                      {facility.type === 'shower' && '샤워 시설'}
-                    </span>
-                  </div>
                 </div>
 
                 {/* 카드 내용 */}
