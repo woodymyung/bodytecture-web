@@ -637,23 +637,37 @@ export async function getKeyFeaturesByCenter(center: string): Promise<KeyFeature
 
 // Facility 데이터 변환 함수 - Sanity 원시 데이터를 앱용 타입으로 변환
 function transformFacility(raw: SanityFacilityRaw): Facility {
+  // Sanity 이미지 URL 생성 - 다양한 구조 지원
+  const getImageUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
+    // asset._ref가 있는 경우 (새 구조)
+    if (imageData?.asset?._ref) {
+      return urlFor(imageData.asset).width(800).height(600).quality(85).format('webp').url();
+    }
+    // 직접 _ref가 있는 경우 (기존 구조)  
+    else if (imageData?._ref) {
+      return urlFor(imageData).width(800).height(600).quality(85).format('webp').url();
+    }
+    // 둘 다 없으면 fallback
+    else {
+      return '/images/1f_1.jpg';
+    }
+  };
+
+  const coverUrl = getImageUrl(raw.cover);
+
   return {
     id: raw._id,
     title: raw.title,
     slug: raw.slug.current,
     type: raw.type,
     cover: {
-      url: raw.cover?._ref 
-        ? urlFor(raw.cover).width(800).height(600).quality(85).format('webp').url()
-        : '/images/1f_1.jpg',
+      url: coverUrl,
       alt: raw.cover?.alt || raw.title,
       caption: raw.cover?.caption
     },
     description: raw.description,
     additionalImages: raw.additionalImages?.map(img => ({
-      url: img._ref 
-        ? urlFor(img).width(800).height(600).quality(85).format('webp').url()
-        : '/images/1f_1.jpg',
+      url: getImageUrl(img),
       alt: img.alt || raw.title,
       caption: img.caption
     })),
@@ -663,9 +677,7 @@ function transformFacility(raw: SanityFacilityRaw): Facility {
     features: raw.features,
     // 기존 호환성 유지
     name: raw.title,
-    image: raw.cover?._ref 
-      ? urlFor(raw.cover).width(800).height(600).quality(85).format('webp').url()
-      : '/images/1f_1.jpg'
+    image: coverUrl
   };
 }
 

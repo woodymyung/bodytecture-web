@@ -99,8 +99,8 @@ const Facilities: React.FC<FacilitiesProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {facilities.map((facility) => (
               <div key={facility.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                {/* 시설 이미지 */}
-                <div className="relative h-48 overflow-hidden">
+                {/* 시설 이미지 - 반응형 높이: 모바일 52, 태블릿 64, 데스크탑 72 */}
+                <div className="relative h-52 md:h-64 lg:h-72 overflow-hidden">
                   <Image
                     src={facility.cover.url}
                     alt={facility.cover.alt || facility.title}
