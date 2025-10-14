@@ -2,11 +2,29 @@ import { createClient } from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
 
-// Sanity client 설정
+// Sanity client 설정 - 환경변수 디버깅
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'yvgbicuy';
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'prod';
+const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-05-03';
+
+// 개발 환경에서 환경변수 확인
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔧 Sanity 설정 확인:', {
+    projectId,
+    dataset,
+    apiVersion,
+    envVars: {
+      NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
+      NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION
+    }
+  });
+}
+
 export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'yvgbicuy',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'prod', 
-  apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-05-03',
+  projectId,
+  dataset,
+  apiVersion,
   useCdn: true, // 프로덕션에서 CDN 사용으로 속도 향상
 })
 

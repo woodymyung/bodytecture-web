@@ -10,6 +10,7 @@ import type {
   SanityReviewRaw,
   SanityBlogPostRaw,
   SanityEquipmentRaw,
+  SanityFacilityRaw,
   SanityCenterInfoRaw,
   SanityKeyFeaturesRaw
 } from '@/types'
@@ -629,5 +630,113 @@ export async function getKeyFeaturesByCenter(center: string): Promise<KeyFeature
   } catch (error) {
     console.error(`센터별 핵심 특징 데이터를 가져오는데 실패했습니다 (${center}):`, error);
     return [];
+  }
+}
+
+// === Facility (시설 정보) 데이터 가져오기 함수들 ===
+
+// Facility 데이터 변환 함수 - Sanity 원시 데이터를 앱용 타입으로 변환
+function transformFacility(raw: SanityFacilityRaw): Facility {
+  return {
+    id: raw._id,
+    title: raw.title,
+    slug: raw.slug.current,
+    type: raw.type,
+    cover: {
+      url: raw.cover?._ref 
+        ? urlFor(raw.cover).width(800).height(600).quality(85).format('webp').url()
+        : '/images/1f_1.jpg',
+      alt: raw.cover?.alt || raw.title,
+      caption: raw.cover?.caption
+    },
+    description: raw.description,
+    additionalImages: raw.additionalImages?.map(img => ({
+      url: img._ref 
+        ? urlFor(img).width(800).height(600).quality(85).format('webp').url()
+        : '/images/1f_1.jpg',
+      alt: img.alt || raw.title,
+      caption: img.caption
+    })),
+    order: raw.order,
+    isActive: raw.isActive,
+    center: raw.center,
+    features: raw.features,
+    // 기존 호환성 유지
+    name: raw.title,
+    image: raw.cover?._ref 
+      ? urlFor(raw.cover).width(800).height(600).quality(85).format('webp').url()
+      : '/images/1f_1.jpg'
+  };
+}
+
+// 모든 센터의 시설 정보 가져오기 (전체용)
+export async function getFacilities(): Promise<Facility[]> {
+  try {
+    const facilities = await client.fetch(queries.facilities);
+    if (!Array.isArray(facilities)) {
+      console.warn('시설 정보 데이터가 배열이 아닙니다:', facilities);
+      return [];
+    }
+    return facilities.map(transformFacility);
+  } catch (error) {
+    console.error('시설 정보 데이터를 가져오는데 실패했습니다:', error);
+    return [];
+  }
+}
+
+// 센터별 시설 정보 가져오기 (센터별 페이지용)
+export async function getFacilitiesByCenter(center: string): Promise<Facility[]> {
+  try {
+    const facilities = await client.fetch(queries.facilitiesByCenter, { center });
+    if (!Array.isArray(facilities)) {
+      console.warn(`시설 정보 데이터가 배열이 아닙니다 (${center}):`, facilities);
+      return [];
+    }
+    return facilities.map(transformFacility);
+  } catch (error) {
+    console.error(`센터별 시설 정보 데이터를 가져오는데 실패했습니다 (${center}):`, error);
+    return [];
+  }
+}
+
+// 센터별 + 타입별 시설 정보 가져오기
+export async function getFacilitiesByCenterAndType(center: string, type: 'landscape' | 'equipment' | 'shower'): Promise<Facility[]> {
+  try {
+    const facilities = await client.fetch(queries.facilitiesByCenterAndType, { center, type });
+    if (!Array.isArray(facilities)) {
+      console.warn(`시설 정보 데이터가 배열이 아닙니다 (${center}, ${type}):`, facilities);
+      return [];
+    }
+    return facilities.map(transformFacility);
+  } catch (error) {
+    console.error(`센터별 타입별 시설 정보 데이터를 가져오는데 실패했습니다 (${center}, ${type}):`, error);
+    return [];
+  }
+}
+
+// 특정 시설 상세 정보 가져오기 (slug로 조회)
+export async function getFacilityBySlug(slug: string, center: string): Promise<Facility | null> {
+  try {
+    const facility = await client.fetch(queries.facilityBySlug, { slug, center });
+    return facility ? transformFacility(facility) : null;
+  } catch (error) {
+    console.error(`시설 정보 (${slug})를 가져오는데 실패했습니다:`, error);
+    return null;
+  }
+}
+
+// 시설 타입별 개수 통계 (센터별)
+export async function getFacilityStats(center: string): Promise<{
+  landscape: number;
+  equipment: number;
+  shower: number;
+  total: number;
+}> {
+  try {
+    const stats = await client.fetch(queries.facilityStats, { center });
+    return stats || { landscape: 0, equipment: 0, shower: 0, total: 0 };
+  } catch (error) {
+    console.error(`센터별 시설 통계를 가져오는데 실패했습니다 (${center}):`, error);
+    return { landscape: 0, equipment: 0, shower: 0, total: 0 };
   }
 }

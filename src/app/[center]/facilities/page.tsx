@@ -4,7 +4,7 @@ import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
-import { getCenterPageSEO } from '@/lib/sanityData';
+import { getCenterPageSEO, getFacilitiesByCenter } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { getCenterHexColor } from '@/constants/colors';
 
@@ -109,6 +109,9 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
+  // 서버 사이드에서 시설 데이터 가져오기 - CORS 에러 방지
+  const facilitiesData = await getFacilitiesByCenter(center);
+  
   // 센터가 준비중인 경우 준비중 메시지
   if (centerInfo.status === 'preparing') {
     return (
@@ -153,12 +156,10 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
         {/* 시설 상세 정보 */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12">
-              {/* 메인 시설 이미지 슬라이더 - 센터별 데이터 전달 */}
-              <div>
-                <Facilities currentCenter={center} />
-              </div>
+            {/* 메인 시설 정보 - 서버에서 가져온 데이터 전달 */}
+            <Facilities facilities={facilitiesData} />
 
+            <div className="mt-16 grid lg:grid-cols-2 gap-12">
               {/* 시설 특징 상세 설명 */}
               <div className="space-y-8">
                 <div>

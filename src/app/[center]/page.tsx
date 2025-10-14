@@ -7,9 +7,10 @@ import Facilities from '@/components/Facilities';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
 import KeyFeatures from '@/components/KeyFeatures';
-import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId, getKeyFeaturesByCenter } from '@/lib/sanityData';
+import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId, getKeyFeaturesByCenter, getFacilitiesByCenter } from '@/lib/sanityData';
 import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
+import type { Facility } from '@/types';
 
 // 정적 파라미터 생성 함수 - output: export 설정 시 필요  
 export async function generateStaticParams() {
@@ -99,6 +100,14 @@ export default async function CenterPage({ params }: CenterPageProps) {
   const trainers = await getTrainersByCenter(centerInfo.centerId);
   const reviews = await getReviewsByCenter(centerInfo.centerId);
   const keyFeatures = await getKeyFeaturesByCenter(centerInfo.centerId);
+  const facilities = await getFacilitiesByCenter(centerInfo.centerId);
+  
+  // 타입별로 첫 번째 시설만 선택 (메인 페이지용)
+  const facilitiesPreview = [
+    facilities.find(f => f.type === 'landscape'),
+    facilities.find(f => f.type === 'equipment'), 
+    facilities.find(f => f.type === 'shower')
+  ].filter(facility => facility !== undefined) as typeof facilities; // undefined 제거 후 타입 단언
   
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const structuredData = generateLocalBusinessStructuredData(centerInfo.centerId as CenterId);
@@ -143,8 +152,13 @@ export default async function CenterPage({ params }: CenterPageProps) {
         {/* 트레이너 섹션 - 4분할로 배치된 트레이너 정보 */}
         <Trainers trainers={trainers} currentCenter={center} />
 
-        {/* 시설 정보 섹션 - 센터별 Sanity 데이터 기반 이미지 슬라이더와 설명 */}
-        <Facilities currentCenter={center} />
+        {/* 시설 정보 섹션 - 타입별 카드 형태로 미리보기 */}
+        <Facilities 
+          facilities={facilitiesPreview} 
+          cardMode={true}
+          showViewMore={true}
+          currentCenter={center}
+        />
 
         {/* 찾아오는 길 섹션 - Sanity 센터별 위치, 교통, 주차 정보 */}
         <Location centerInfo={centerInfo} />
