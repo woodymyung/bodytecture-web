@@ -95,8 +95,8 @@ const Facilities: React.FC<FacilitiesProps> = ({
           </h2>
           </div>
 
-          {/* 시설 카드 그리드 */}
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* 시설 카드 그리드 - 반응형: 모바일 1단, 태블릿 2단, 데스크탑 3단 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {facilities.map((facility) => (
               <div key={facility.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                 {/* 시설 이미지 */}
