@@ -363,70 +363,33 @@ export const queries = {
   // === 시설 정보 관련 쿼리들 ===
   
   // 모든 시설 정보 가져오기 (활성화된 것만, 전체)
-  facilities: `*[_type == "facility" && isActive == true] | order(center asc, type asc, order asc) {
+  facilities: `*[_type == "facility" && isActive == true] | order(center asc, order asc) {
     _id,
     title,
-    slug,
-    type,
     cover,
     description,
     additionalImages,
     order,
     isActive,
-    center,
-    features
+    center
   }`,
   
   // 센터별 시설 정보 가져오기 (활성화된 것만)
-  facilitiesByCenter: `*[_type == "facility" && isActive == true && center == $center] | order(type asc, order asc) {
+  facilitiesByCenter: `*[_type == "facility" && isActive == true && center == $center] | order(order asc) {
     _id,
     title,
-    slug,
-    type,
     cover,
     description,
     additionalImages,
     order,
     isActive,
-    center,
-    features
+    center
   }`,
   
-  // 센터별 + 타입별 시설 정보 가져오기
-  facilitiesByCenterAndType: `*[_type == "facility" && isActive == true && center == $center && type == $type] | order(order asc) {
-    _id,
-    title,
-    slug,
-    type,
-    cover,
-    description,
-    additionalImages,
-    order,
-    isActive,
-    center,
-    features
-  }`,
   
-  // 특정 시설 상세 정보 가져오기 (slug로 조회)
-  facilityBySlug: `*[_type == "facility" && slug.current == $slug && isActive == true && center == $center][0] {
-    _id,
-    title,
-    slug,
-    type,
-    cover,
-    description,
-    additionalImages,
-    order,
-    isActive,
-    center,
-    features
-  }`,
   
-  // 시설 타입별 개수 통계 (센터별)
+  // 센터별 시설 총 개수 통계
   facilityStats: `{
-    "landscape": count(*[_type == "facility" && isActive == true && center == $center && type == "landscape"]),
-    "equipment": count(*[_type == "facility" && isActive == true && center == $center && type == "equipment"]),
-    "shower": count(*[_type == "facility" && isActive == true && center == $center && type == "shower"]),
     "total": count(*[_type == "facility" && isActive == true && center == $center])
   }`
 }

@@ -95,36 +95,39 @@ const Facilities: React.FC<FacilitiesProps> = ({
           </h2>
           </div>
 
-          {/* 시설 카드 그리드 - 반응형: 모바일 1단, 태블릿 2단, 데스크탑 3단 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* 시설 카드 리스트 - 한 열에 한 개씩 배치, 이미지 왼쪽 + 내용 오른쪽 */}
+          <div className="space-y-8">
             {facilities.map((facility) => (
-              <div key={facility.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                {/* 시설 이미지 - 반응형 높이: 모바일 52, 태블릿 64, 데스크탑 72 */}
-                <div className="relative h-52 md:h-64 lg:h-72 overflow-hidden">
-                  <Image
-                    src={facility.cover.url}
-                    alt={facility.cover.alt || facility.title}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                </div>
+              <div key={facility.id} className="bg-white overflow-hidden">
+                {/* 카드 내부 - Flex 레이아웃으로 이미지(왼쪽) + 내용(오른쪽) 배치 */}
+                <div className="flex flex-col md:flex-row">
+                  {/* 시설 이미지 - 왼쪽 배치, md/lg에서 훨씬 더 큰 크기 (세로도 확장) */}
+                  <div className="relative w-full md:w-[36rem] lg:w-[44rem] h-64 md:h-96 lg:h-[28rem] flex-shrink-0">
+                    <Image
+                      src={facility.cover.url}
+                      alt={facility.cover.alt || facility.title}
+                      fill
+                      className="rounded-lg"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 576px, 704px"
+                    />
+                  </div>
 
-                {/* 카드 내용 */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {facility.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {facility.description}
-                  </p>
+                  {/* 카드 내용 - 오른쪽 배치 */}
+                  <div className="flex-1 p-6 flex flex-col justify-center">
+                    <h3 className="text-2xl md:text-2xl font-bold text-gray-900 mb-4">
+                      {facility.title}
+                    </h3>
+                    <p className="text-gray-600 text-base leading-relaxed">
+                      {facility.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* 더 보기 버튼 */}
-          {showViewMore && currentCenter && (
+          {/* {showViewMore && currentCenter && (
             <div className="text-center mt-12">
               <Link
                 href={`/${currentCenter}/facilities`}
@@ -136,7 +139,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
                 </svg>
               </Link>
             </div>
-          )}
+          )} */}
         </div>
       </section>
     );
