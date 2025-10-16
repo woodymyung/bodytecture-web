@@ -6,11 +6,9 @@ import Trainers from '@/components/Trainers';
 import Facilities from '@/components/Facilities';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
-import KeyFeatures from '@/components/KeyFeatures';
 import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId, getKeyFeaturesByCenter, getFacilitiesByCenter } from '@/lib/sanityData';
 import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
-import type { Facility } from '@/types';
 
 // 정적 파라미터 생성 함수 - output: export 설정 시 필요  
 export async function generateStaticParams() {
@@ -99,7 +97,6 @@ export default async function CenterPage({ params }: CenterPageProps) {
   // Sanity에서 센터별 데이터 가져오기 (운영중인 센터만)
   const trainers = await getTrainersByCenter(centerInfo.centerId);
   const reviews = await getReviewsByCenter(centerInfo.centerId);
-  const keyFeatures = await getKeyFeaturesByCenter(centerInfo.centerId);
   const facilities = await getFacilitiesByCenter(centerInfo.centerId);
 
   // 메인 페이지용 시설 미리보기 (처음 3개 시설 선택)
@@ -135,9 +132,6 @@ export default async function CenterPage({ params }: CenterPageProps) {
             </p>
           </div>
         </section>
-
-        {/* 핵심 특징 섹션 - Sanity에서 센터별 핵심 특징 가져오기 */}
-        <KeyFeatures keyFeatures={keyFeatures} />
         
         {/* 시설 정보 섹션 - 타입별 카드 형태로 미리보기 */}
         <Facilities

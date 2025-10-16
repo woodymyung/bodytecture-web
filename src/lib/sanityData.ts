@@ -1,4 +1,4 @@
-import { client, queries, urlFor } from './sanity'
+import { client, queries, urlFor, getHighQualityImageUrl, getOriginalQualityImageUrl } from './sanity'
 import type { 
   Trainer, 
   Review, 
@@ -325,11 +325,18 @@ export async function getFeaturedBlogPosts(center?: string): Promise<BlogPost[]>
 // 데이터 변환 함수들 - Sanity 데이터를 기존 타입 형식에 맞게 변환
 // 트레이너 데이터 변환 함수 - Sanity 데이터를 애플리케이션 타입으로 변환
 function transformTrainer(sanityTrainer: SanityTrainerRaw): Trainer {
+  // 트레이너 이미지도 고화질로 처리 (프로필 이미지의 경우 더 높은 품질 필요)
+  const processedImages = sanityTrainer.profileImages?.map(img => ({
+    ...img,
+    // 기존 구조 유지하되, 실제 사용 시 고화질 URL로 변환됨
+    asset: img.asset
+  })) || [];
+
   return {
     id: sanityTrainer._id,
     name: sanityTrainer.name,
     slug: sanityTrainer.slug?.current || '',
-    images: sanityTrainer.profileImages || [], // 이미지 갤러리
+    images: processedImages, // 고화질 처리된 이미지 갤러리
     description: sanityTrainer.summary,
     experience: sanityTrainer.careers || [], // Rich Text 형태
     awards: sanityTrainer.awards || [], // Rich Text 형태
@@ -377,12 +384,17 @@ function transformEquipment(sanityEquipment: SanityEquipmentRaw): Facility {
 
 // 블로그 포스트 데이터 변환 함수 - Sanity 블로그 데이터를 애플리케이션 타입으로 변환
 function transformBlogPost(sanityPost: SanityBlogPostRaw): BlogPost {
+  // 블로그 커버 이미지도 고화질로 처리
+  const coverImageUrl = sanityPost.coverImage 
+    ? getHighQualityImageUrl(sanityPost.coverImage, 1200, 630, 95) // 블로그용 16:9 비율, 95% 품질
+    : '';
+
   return {
     id: sanityPost._id,
     title: sanityPost.title,
     excerpt: sanityPost.excerpt,
     date: sanityPost.publishedAt?.split('T')[0] || '',
-    image: sanityPost.coverImage ? sanityPost.coverImage._ref : '',
+    image: coverImageUrl, // 고화질 이미지 URL 사용
     slug: sanityPost.slug?.current || '',
     publishedAt: sanityPost.publishedAt,
     content: sanityPost.content
@@ -634,15 +646,15 @@ export async function getKeyFeaturesByCenter(center: string): Promise<KeyFeature
 
 // Facility 데이터 변환 함수 - Sanity 원시 데이터를 앱용 타입으로 변환
 function transformFacility(raw: SanityFacilityRaw): Facility {
-  // Sanity 이미지 URL 생성 - 다양한 구조 지원
-  const getImageUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
+  // 고화질 이미지 URL 생성 함수 - 화질 저하 방지를 위해 95% 품질과 더 큰 해상도 사용
+  const getHighQualityUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
     // asset._ref가 있는 경우 (새 구조)
     if (imageData?.asset?._ref) {
-      return urlFor(imageData.asset).width(800).height(600).quality(85).format('webp').url();
+      return getHighQualityImageUrl(imageData.asset, 1200, 800, 95); // 95% 고품질, 더 큰 해상도
     }
     // 직접 _ref가 있는 경우 (기존 구조)  
     else if (imageData?._ref) {
-      return urlFor(imageData).width(800).height(600).quality(85).format('webp').url();
+      return getHighQualityImageUrl(imageData, 1200, 800, 95); // 95% 고품질, 더 큰 해상도
     }
     // 둘 다 없으면 fallback
     else {
@@ -650,7 +662,7 @@ function transformFacility(raw: SanityFacilityRaw): Facility {
     }
   };
 
-  const coverUrl = getImageUrl(raw.cover);
+  const coverUrl = getHighQualityUrl(raw.cover);
 
   return {
     id: raw._id,
@@ -662,7 +674,7 @@ function transformFacility(raw: SanityFacilityRaw): Facility {
     },
     description: raw.description,
     additionalImages: raw.additionalImages?.map(img => ({
-      url: getImageUrl(img),
+      url: getHighQualityUrl(img),
       alt: img.alt || raw.title,
       caption: img.caption
     })),
