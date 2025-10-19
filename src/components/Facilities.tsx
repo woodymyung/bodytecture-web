@@ -108,7 +108,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
                   
                   {/* 텍스트 콘텐츠 - 하단에 배치 */}
                   <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
-                    <h3 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-lg">
+                    <h3 className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-2xl">
                       {facility.title}
                     </h3>
                     <p className="text-white/90 text-lg md:text-xl leading-relaxed max-w-4xl drop-shadow-md">
