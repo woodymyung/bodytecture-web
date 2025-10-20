@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({ currentCenter, centerInfo }) => {
         <div className="flex justify-between items-center h-12 md:h-16">
           {/* 로고 섹션 */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href={currentCenter ? `/${currentCenter}` : "/"} className="flex items-center">
               <Image
                 src={logoUrl}
                 alt={centerName}
