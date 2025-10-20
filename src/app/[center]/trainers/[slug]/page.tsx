@@ -10,6 +10,10 @@ import { generatePersonStructuredData, generatePageMetadata } from '@/lib/metada
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { urlFor } from '@/lib/sanity';
 
+// ISR 설정 - 60초마다 백그라운드에서 데이터 재검증
+// Sanity에서 트레이너 정보 수정 후 최대 60초 내에 자동으로 반영됨
+export const revalidate = 60;
+
 // 센터별 개별 트레이너 페이지 props 타입 정의
 interface TrainerPageProps {
   params: Promise<{ center: string; slug: string }>;

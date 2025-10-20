@@ -8,6 +8,9 @@ import { getCenterPageSEO, getFacilitiesByCenter } from '@/lib/sanityData';
 import { urlFor } from '@/lib/sanity';
 import { getCenterHexColor } from '@/constants/colors';
 
+// ISR 설정 - 60초마다 백그라운드에서 시설 데이터 재검증
+export const revalidate = 60;
+
 // 센터별 시설 페이지 props 타입 정의
 interface FacilitiesPageProps {
   params: Promise<{ center: string }>;

@@ -8,6 +8,9 @@ import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { SanityReviewRaw } from '@/types';
 
+// ISR 설정 - 60초마다 백그라운드에서 리뷰 데이터 재검증
+export const revalidate = 60;
+
 // 센터별 리뷰 페이지 props 타입 정의
 interface ReviewsPageProps {
   params: Promise<{ center: string }>;

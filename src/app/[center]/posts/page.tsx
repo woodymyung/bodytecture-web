@@ -11,6 +11,9 @@ import { urlFor } from '@/lib/sanity';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
 import { getCenterHexColor } from '@/constants/colors';
 
+// ISR 설정 - 60초마다 백그라운드에서 포스트 데이터 재검증
+export const revalidate = 60;
+
 // 센터별 포스트 페이지 props 타입 정의
 interface PostsPageProps {
   params: Promise<{ center: string }>;

@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',  // Static export 유지 - SEO 최적화를 위해
+  // ISR(Incremental Static Regeneration) 활성화 - Sanity 데이터 변경 시 자동 반영
+  // output: 'export' 제거하여 동적 렌더링 지원
   trailingSlash: false,  // trailing slash 비활성화로 라우팅 문제 방지
   images: {
     unoptimized: true,  // 정적 export에서 이미지 최적화 비활성화
