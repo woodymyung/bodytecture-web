@@ -219,8 +219,8 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
         <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-8 md:py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row items-center gap-6 md:gap-12">
-              {/* 트레이너 프로필 이미지 갤러리 */}
-              <div className="lg:w-1/3">
+              {/* 트레이너 프로필 이미지 갤러리 - 모든 해상도에서 적절한 너비 설정 */}
+              <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 mx-auto lg:mx-0">
                 <TrainerImageGallery
                   images={trainer.images || []}
                   trainerName={trainer.name}
