@@ -1,0 +1,16 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /private/
+
+User-Agent: Googlebot
+Allow: /
+Allow: /images/
+
+User-Agent: Yeti
+Allow: /
+Allow: /images/
+
+Sitemap: https://bodytecture.fit/sitemap.xml
