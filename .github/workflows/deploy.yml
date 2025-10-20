@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+  # Sanity 웹훅으로부터 자동 빌드 트리거
+  repository_dispatch:
+    types: [sanity-update, content-update, webhook]
 
 permissions:
   contents: read
@@ -35,6 +38,11 @@ jobs:
 
       - name: Build
         run: npm run build
+        
+      - name: Debug webhook payload (optional)
+        run: |
+          echo "Repository dispatch event: ${{ github.event.action }}"
+          echo "Client payload: ${{ toJson(github.event.client_payload) }}"
 
       - name: Add .nojekyll and CNAME files
         run: |

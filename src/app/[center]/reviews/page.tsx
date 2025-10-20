@@ -9,7 +9,7 @@ import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/cente
 import { SanityReviewRaw } from '@/types';
 
 // ISR 설정 - 60초마다 백그라운드에서 리뷰 데이터 재검증
-export const revalidate = 60;
+// export const revalidate = 60; // 정적 export에서는 사용하지 않음
 
 // 센터별 리뷰 페이지 props 타입 정의
 interface ReviewsPageProps {

@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ISR(Incremental Static Regeneration) 활성화 - Sanity 데이터 변경 시 자동 반영
-  // output: 'export' 제거하여 동적 렌더링 지원
+  // GitHub Pages 정적 배포를 위한 export 활성화
+  output: 'export',
   trailingSlash: false,  // trailing slash 비활성화로 라우팅 문제 방지
   images: {
     unoptimized: true,  // 정적 export에서 이미지 최적화 비활성화

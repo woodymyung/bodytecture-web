@@ -12,7 +12,7 @@ import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/cente
 import { getCenterHexColor } from '@/constants/colors';
 
 // ISR 설정 - 60초마다 백그라운드에서 포스트 데이터 재검증
-export const revalidate = 60;
+// export const revalidate = 60; // 정적 export에서는 사용하지 않음
 
 // 센터별 포스트 페이지 props 타입 정의
 interface PostsPageProps {

@@ -11,7 +11,7 @@ import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
 
 // ISR 설정 - 60초마다 백그라운드에서 센터 정보 및 관련 데이터 재검증
-export const revalidate = 60;
+// export const revalidate = 60; // 정적 export에서는 사용하지 않음
 
 // 정적 파라미터 생성 함수 - output: export 설정 시 필요  
 export async function generateStaticParams() {

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 // ISR 설정 - 60초마다 루트 레이아웃 데이터 재검증
-export const revalidate = 60;
+// export const revalidate = 60; // 정적 export에서는 사용하지 않음
 
 // 동적 메타데이터 생성 함수 - Sanity SEO Settings에서 루트 페이지 메타데이터 조회
 export async function generateMetadata(): Promise<Metadata> {
