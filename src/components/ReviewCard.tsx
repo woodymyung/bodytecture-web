@@ -5,9 +5,11 @@ import { Review, SanityRichTextBlock } from '@/types';
 interface ReviewCardProps {
   review: Review;
   isMainPage?: boolean; // 메인 페이지에서 사용 시 모바일에서 텍스트 제한 적용
+  currentCenter?: string; // 현재 센터 ID (센터별 페이지에서 전달)
+  clickable?: boolean; // 클릭 가능 여부 (기본값: true)
 }
 
-const ReviewCard: React.FC<ReviewCardProps> = ({ review, isMainPage = false }) => {
+const ReviewCard: React.FC<ReviewCardProps> = ({ review, isMainPage = false, currentCenter, clickable = true }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('ko-KR', {
@@ -33,9 +35,12 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, isMainPage = false }) =
       .join(' '); // 블록 사이에 공백 추가
   };
 
-  return (
-    <Link href="/reviews" className="block">
-      <div className="bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 text-center cursor-pointer transform hover:scale-[1.02]">
+  // 🎯 링크 경로 결정: 센터별 페이지인 경우 센터별 링크, 아니면 루트 링크
+  const linkHref = currentCenter ? `/${currentCenter}/reviews` : '/reviews';
+  
+  // 🎯 카드 내용 JSX
+  const cardContent = (
+    <div className={`bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 text-center ${clickable ? 'cursor-pointer transform hover:scale-[1.02]' : ''}`}>
       {/* 🎯 중앙 정렬 레이아웃 */}
       
       {/* 1️⃣ 작성자 (아바타 + 이름) */}
@@ -90,9 +95,16 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, isMainPage = false }) =
           </div>
         </div>
       </div>
-
-      </div>
+    </div>
+  );
+  
+  // 🎯 클릭 가능한 경우 Link로 감싸고, 아니면 그냥 카드 내용만 렌더링
+  return clickable ? (
+    <Link href={linkHref} className="block">
+      {cardContent}
     </Link>
+  ) : (
+    cardContent
   );
 };
 

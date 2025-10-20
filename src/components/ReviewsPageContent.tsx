@@ -117,7 +117,7 @@ const ReviewsPageContent: React.FC<ReviewsPageContentProps> = ({
               <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
                 {displayedReviews.map((review: Review) => (
                   <div key={review.id} className="break-inside-avoid mb-6">
-                    <ReviewCard review={review} />
+                    <ReviewCard review={review} clickable={false} />
                   </div>
                 ))}
               </div>

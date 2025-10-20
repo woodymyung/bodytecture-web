@@ -91,7 +91,7 @@ const TrainerReviews: React.FC<TrainerReviewsProps> = ({
                 <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
                     {displayedReviews.map((review, index) => (
                         <div key={`${review.id}-${index}`} className="break-inside-avoid mb-6">
-                            <ReviewCard review={review} />
+                            <ReviewCard review={review} clickable={false} />
                         </div>
                     ))}
                 </div>

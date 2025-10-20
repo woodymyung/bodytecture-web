@@ -113,13 +113,13 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
                   {/* 첫 번째 세트 */}
                   {displayReviews.map((review) => (
                     <div key={`first-${review.id}`} className="break-inside-avoid mb-6 transform transition-all duration-300 hover:scale-105">
-                      <ReviewCard review={review} isMainPage={isMainPage} />
+                      <ReviewCard review={review} isMainPage={isMainPage} currentCenter={currentCenter} />
                     </div>
                   ))}
                   {/* 두 번째 세트 (무한 루프용) */}
                   {displayReviews.map((review) => (
                     <div key={`second-${review.id}`} className="break-inside-avoid mb-6 transform transition-all duration-300 hover:scale-105">
-                      <ReviewCard review={review} isMainPage={isMainPage} />
+                      <ReviewCard review={review} isMainPage={isMainPage} currentCenter={currentCenter} />
                     </div>
                   ))}
                 </div>
@@ -142,7 +142,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
                 key={`first-${review.id}`} 
                 className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
               >
-                <ReviewCard review={review} isMainPage={isMainPage} />
+                <ReviewCard review={review} isMainPage={isMainPage} currentCenter={currentCenter} />
               </div>
             ))}
             {/* 두 번째 세트 (무한 루프용) */}
@@ -151,7 +151,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
                 key={`second-${review.id}`} 
                 className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
               >
-                <ReviewCard review={review} isMainPage={isMainPage} />
+                <ReviewCard review={review} isMainPage={isMainPage} currentCenter={currentCenter} />
               </div>
             ))}
             {/* 세 번째 세트 (매끄러운 무한 루프용) */}
@@ -160,7 +160,7 @@ const Reviews: React.FC<ReviewsProps> = ({ reviews = [], isMainPage = false, cur
                 key={`third-${review.id}`} 
                 className="flex-shrink-0 w-80" // 고정 너비로 카드 크기 통일
               >
-                <ReviewCard review={review} isMainPage={isMainPage} />
+                <ReviewCard review={review} isMainPage={isMainPage} currentCenter={currentCenter} />
               </div>
             ))}
           </div>
