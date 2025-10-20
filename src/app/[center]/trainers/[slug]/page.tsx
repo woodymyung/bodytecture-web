@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Header from '@/components/Header';
-import { getTrainerSEO, getCenterPageSEO } from '@/lib/sanityData';
+import { getTrainerSEO, getCenterPageSEO, getTrainersByCenter, getTrainerBySlug, getReviewsByTrainer } from '@/lib/sanityData';
 import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
 import Link from 'next/link';
 import { generatePersonStructuredData, generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
-import { urlFor, client, queries } from '@/lib/sanity';
+import { urlFor } from '@/lib/sanity';
 
 // 센터별 개별 트레이너 페이지 props 타입 정의
 interface TrainerPageProps {
@@ -23,11 +23,11 @@ export async function generateStaticParams() {
   // 각 센터별로 트레이너를 가져와서 조합 생성
   for (const center of centers) {
     try {
-      const trainers = await client.fetch(queries.trainersByCenter, { center: center.id });
+      const trainers = await getTrainersByCenter(center.id);
       for (const trainer of trainers) {
         params.push({
           center: center.id,
-          slug: trainer.slug.current,
+          slug: trainer.slug,
         });
       }
     } catch (error) {
@@ -61,7 +61,7 @@ export async function generateMetadata({
   
   // 🎯 Sanity에서 직접 트레이너 정보 가져오기
   try {
-    const trainer = await client.fetch(queries.trainerBySlug, { slug, center });
+    const trainer = await getTrainerBySlug(slug, center);
     if (!trainer) {
       return {
         title: '트레이너를 찾을 수 없습니다',
@@ -93,9 +93,9 @@ export async function generateMetadata({
       
       // 트레이너 프로필 이미지를 OG 이미지로 사용
       let ogImages = undefined;
-      if (trainer.profileImages && trainer.profileImages.length > 0 && trainer.profileImages[0].asset) {
+      if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
         try {
-          const trainerOGImageUrl = urlFor(trainer.profileImages[0])
+          const trainerOGImageUrl = urlFor(trainer.images[0])
             .width(1200)
             .height(630)
             .quality(90)
@@ -131,9 +131,9 @@ export async function generateMetadata({
       
       // 트레이너 프로필 이미지 처리 (Fallback에서도)
       let ogImages = undefined;
-      if (trainer.profileImages && trainer.profileImages.length > 0 && trainer.profileImages[0].asset) {
+      if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
         try {
-          const trainerOGImageUrl = urlFor(trainer.profileImages[0])
+          const trainerOGImageUrl = urlFor(trainer.images[0])
             .width(1200)
             .height(630)
             .quality(90)
@@ -184,20 +184,20 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
   const centerInfo = getCenterById(center);
   
   // 트레이너 정보 가져오기 (센터별)
-  const trainer = await client.fetch(queries.trainerBySlug, { slug, center });
+  const trainer = await getTrainerBySlug(slug, center);
   if (!trainer) {
     notFound();
   }
 
   // 해당 트레이너의 리뷰들 가져오기 (센터별)
-  const trainerReviews = await client.fetch(queries.reviewsByTrainer, { trainerId: trainer._id, center });
+  const trainerReviews = await getReviewsByTrainer(trainer.id, center);
 
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const personStructuredData = generatePersonStructuredData({
     name: trainer.name,
     description: trainer.description || `${trainer.name} 트레이너`,
     slug: trainer.slug,
-    images: trainer.profileImages
+    images: trainer.images
   }, center);
 
   return (
@@ -218,7 +218,7 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
               {/* 트레이너 프로필 이미지 갤러리 */}
               <div className="lg:w-1/3">
                 <TrainerImageGallery
-                  images={trainer.profileImages || []}
+                  images={trainer.images || []}
                   trainerName={trainer.name}
                 />
               </div>
