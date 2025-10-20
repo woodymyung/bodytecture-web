@@ -4,10 +4,9 @@ import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
-import { getCenterPageSEO } from '@/lib/sanityData';
-import { urlFor, client, queries, getHighQualityImageUrl } from '@/lib/sanity';
+import { getCenterPageSEO, getFacilitiesByCenter } from '@/lib/sanityData';
+import { urlFor } from '@/lib/sanity';
 import { getCenterHexColor } from '@/constants/colors';
-import type { SanityFacilityRaw } from '@/types';
 
 // 센터별 시설 페이지 props 타입 정의
 interface FacilitiesPageProps {
@@ -110,47 +109,9 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
-  // 🎯 Sanity에서 직접 센터별 시설 데이터 가져오기 (매번 새로운 데이터 반영)
+  // 🎯 Sanity에서 센터별 시설 데이터 가져오기 (이미 변환된 Facility 타입)
   try {
-    const facilitiesRaw = await client.fetch(queries.facilitiesByCenter, { center });
-    
-    // 시설 데이터 변환 함수
-    const transformFacility = (raw: SanityFacilityRaw) => {
-      const getHighQualityUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
-        if (imageData?.asset?._ref) {
-          return getHighQualityImageUrl(imageData.asset, 1200, 800, 95);
-        } else if (imageData?._ref) {
-          return getHighQualityImageUrl(imageData, 1200, 800, 95);
-        } else {
-          return '/images/1f_1.jpg';
-        }
-      };
-
-      const coverUrl = getHighQualityUrl(raw.cover);
-
-      return {
-        id: raw._id,
-        title: raw.title,
-        cover: {
-          url: coverUrl,
-          alt: raw.cover?.alt || raw.title,
-          caption: raw.cover?.caption
-        },
-        description: raw.description,
-        additionalImages: raw.additionalImages?.map(img => ({
-          url: getHighQualityUrl(img),
-          alt: img.alt || raw.title,
-          caption: img.caption
-        })),
-        order: raw.order,
-        isActive: raw.isActive,
-        center: raw.center,
-        name: raw.title,
-        image: coverUrl
-      };
-    };
-
-    const facilitiesData = facilitiesRaw.map(transformFacility);
+    const facilitiesData = await getFacilitiesByCenter(center);
     
     // 센터가 준비중인 경우 준비중 메시지
     if (centerInfo.status === 'preparing') {
