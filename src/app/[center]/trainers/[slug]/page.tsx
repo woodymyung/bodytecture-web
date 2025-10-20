@@ -1,14 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Header from '@/components/Header';
-import { getTrainerBySlug, getTrainersByCenter, getReviewsByTrainer, getTrainerSEO, getCenterPageSEO } from '@/lib/sanityData';
+import { getTrainerSEO, getCenterPageSEO } from '@/lib/sanityData';
 import { renderRichTextToHTML, isRichTextEmpty } from '@/lib/simpleRichTextRenderer';
 import TrainerReviews from '@/components/TrainerReviews';
 import TrainerImageGallery from '@/components/TrainerImageGallery';
 import Link from 'next/link';
 import { generatePersonStructuredData, generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
-import { urlFor } from '@/lib/sanity';
+import { urlFor, client, queries } from '@/lib/sanity';
 
 // 센터별 개별 트레이너 페이지 props 타입 정의
 interface TrainerPageProps {
@@ -23,11 +23,11 @@ export async function generateStaticParams() {
   // 각 센터별로 트레이너를 가져와서 조합 생성
   for (const center of centers) {
     try {
-      const trainers = await getTrainersByCenter(center.id);
+      const trainers = await client.fetch(queries.trainersByCenter, { center: center.id });
       for (const trainer of trainers) {
         params.push({
           center: center.id,
-          slug: trainer.slug,
+          slug: trainer.slug.current,
         });
       }
     } catch (error) {
@@ -59,106 +59,115 @@ export async function generateMetadata({
     };
   }
   
-  // 트레이너 정보 가져오기 (센터별)
-  const trainer = await getTrainerBySlug(slug, center);
-  if (!trainer) {
-    return {
-      title: '트레이너를 찾을 수 없습니다',
-      description: '요청하신 트레이너 정보를 찾을 수 없습니다.',
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-  
-  // Sanity SEO Settings에서 트레이너별 SEO 데이터 가져오기
-  const trainerSEO = await getTrainerSEO(slug, center);
-  const centerMainSEO = await getCenterPageSEO(center, 'mainPage');
-  
-  // 트레이너별 SEO 데이터가 있으면 최적화된 SEO 사용, 없으면 기본 메타데이터 사용
-  if (trainerSEO) {
-    // 키워드 합치기: 센터 메인 키워드 + 트레이너 개별 키워드 (강화된 중복 제거)
-    const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
-    const trainerKeywords = Array.isArray(trainerSEO.keywords) ? trainerSEO.keywords : [];
-    
-    // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
-    const allKeywords = [...centerKeywords, ...trainerKeywords]
-      .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
-      .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
-      .filter(keyword => keyword.length > 0); // 빈 문자열 제거
-    
-    const combinedKeywords = [...new Set(allKeywords)];
-    
-    // 트레이너 프로필 이미지를 OG 이미지로 사용
-    let ogImages = undefined;
-    if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
-      try {
-        const trainerOGImageUrl = urlFor(trainer.images[0])
-          .width(1200)
-          .height(630)
-          .quality(90)
-          .format('webp')
-          .fit('crop')
-          .url();
-          
-        ogImages = [{
-          url: trainerOGImageUrl,
-          width: 1200,
-          height: 630,
-          alt: trainerSEO.metaTitle
-        }];
-      } catch (error) {
-        console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
-      }
+  // 🎯 Sanity에서 직접 트레이너 정보 가져오기
+  try {
+    const trainer = await client.fetch(queries.trainerBySlug, { slug, center });
+    if (!trainer) {
+      return {
+        title: '트레이너를 찾을 수 없습니다',
+        description: '요청하신 트레이너 정보를 찾을 수 없습니다.',
+        robots: {
+          index: false,
+          follow: false,
+        },
+      };
     }
+  
+    // Sanity SEO Settings에서 트레이너별 SEO 데이터 가져오기
+    const trainerSEO = await getTrainerSEO(slug, center);
+    const centerMainSEO = await getCenterPageSEO(center, 'mainPage');
+    
+    // 트레이너별 SEO 데이터가 있으면 최적화된 SEO 사용, 없으면 기본 메타데이터 사용
+    if (trainerSEO) {
+      // 키워드 합치기: 센터 메인 키워드 + 트레이너 개별 키워드 (강화된 중복 제거)
+      const centerKeywords = Array.isArray(centerMainSEO?.keywords) ? centerMainSEO.keywords : [];
+      const trainerKeywords = Array.isArray(trainerSEO.keywords) ? trainerSEO.keywords : [];
+      
+      // 문자열 정규화 후 중복 제거 (대소문자 통일, 공백 제거)
+      const allKeywords = [...centerKeywords, ...trainerKeywords]
+        .filter(keyword => keyword && typeof keyword === 'string') // null/undefined 제거
+        .map(keyword => keyword.trim().toLowerCase()) // 공백 제거, 소문자 변환
+        .filter(keyword => keyword.length > 0); // 빈 문자열 제거
+      
+      const combinedKeywords = [...new Set(allKeywords)];
+      
+      // 트레이너 프로필 이미지를 OG 이미지로 사용
+      let ogImages = undefined;
+      if (trainer.profileImages && trainer.profileImages.length > 0 && trainer.profileImages[0].asset) {
+        try {
+          const trainerOGImageUrl = urlFor(trainer.profileImages[0])
+            .width(1200)
+            .height(630)
+            .quality(90)
+            .format('webp')
+            .fit('crop')
+            .url();
+            
+          ogImages = [{
+            url: trainerOGImageUrl,
+            width: 1200,
+            height: 630,
+            alt: trainerSEO.metaTitle
+          }];
+        } catch (error) {
+          console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
+        }
+      }
 
-    // SEO Settings 기반 메타데이터 생성 (트레이너 프로필 이미지 사용)
-    // 트레이너 SEO title에 이미 센터명이 포함되어 있으므로 generatePageMetadata 사용
-    return generatePageMetadata({
-      title: trainerSEO.metaTitle, // 센터명이 이미 포함된 완전한 제목
-      description: trainerSEO.metaDescription,
-      path: `/${center}/trainers/${slug}`,
-      keywords: combinedKeywords,
-      images: ogImages,
-      type: 'profile'
-    });
-  } else {
-    // Fallback: 기본 메타데이터 생성 (SEO Settings에 트레이너 데이터가 없는 경우)
-    // 센터 이름을 수동으로 추가하여 완전한 제목 구성
-    const centerInfo = getCenterById(center);
-    
-    // 트레이너 프로필 이미지 처리 (Fallback에서도)
-    let ogImages = undefined;
-    if (trainer.images && trainer.images.length > 0 && trainer.images[0].asset) {
-      try {
-        const trainerOGImageUrl = urlFor(trainer.images[0])
-          .width(1200)
-          .height(630)
-          .quality(90)
-          .format('webp')
-          .fit('crop')
-          .url();
-          
-        ogImages = [{
-          url: trainerOGImageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${trainer.name} - 전문 트레이너`
-        }];
-      } catch (error) {
-        console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
+      // SEO Settings 기반 메타데이터 생성 (트레이너 프로필 이미지 사용)
+      // 트레이너 SEO title에 이미 센터명이 포함되어 있으므로 generatePageMetadata 사용
+      return generatePageMetadata({
+        title: trainerSEO.metaTitle, // 센터명이 이미 포함된 완전한 제목
+        description: trainerSEO.metaDescription,
+        path: `/${center}/trainers/${slug}`,
+        keywords: combinedKeywords,
+        images: ogImages,
+        type: 'profile'
+      });
+    } else {
+      // Fallback: 기본 메타데이터 생성 (SEO Settings에 트레이너 데이터가 없는 경우)
+      // 센터 이름을 수동으로 추가하여 완전한 제목 구성
+      const centerInfo = getCenterById(center);
+      
+      // 트레이너 프로필 이미지 처리 (Fallback에서도)
+      let ogImages = undefined;
+      if (trainer.profileImages && trainer.profileImages.length > 0 && trainer.profileImages[0].asset) {
+        try {
+          const trainerOGImageUrl = urlFor(trainer.profileImages[0])
+            .width(1200)
+            .height(630)
+            .quality(90)
+            .format('webp')
+            .fit('crop')
+            .url();
+            
+          ogImages = [{
+            url: trainerOGImageUrl,
+            width: 1200,
+            height: 630,
+            alt: `${trainer.name} - 전문 트레이너`
+          }];
+        } catch (error) {
+          console.warn('트레이너 프로필 이미지 OG 변환 실패:', error);
+        }
       }
+
+      // Fallback 메타데이터 생성
+      return generatePageMetadata({
+        title: `${trainer.name} - ${centerInfo.name}의 전문 트레이너`,
+        description: `${trainer.name}은 ${centerInfo.name}의 전문 트레이너입니다. 풍부한 경험과 전문성을 가진 트레이너와 함께 효과적인 운동을 경험해보세요.`,
+        path: `/${center}/trainers/${slug}`,
+        keywords: ['전문트레이너', trainer.name, centerInfo.name, 'PT', '개인트레이닝'],
+        images: ogImages,
+        type: 'profile'
+      });
     }
-    
-    return generatePageMetadata({
-      title: `${trainer.name} - 전문 트레이너 | ${centerInfo.name}`,
-      description: trainer.description || `${trainer.name} 트레이너를 소개합니다.`,
-      path: `/${center}/trainers/${slug}`,
-      keywords: [trainer.name, '전문트레이너', 'PT', '개인트레이닝'],
-      images: ogImages,
-      type: 'profile'
-    });
+  } catch (error) {
+    console.error('트레이너 메타데이터 생성 오류:', error);
+    return {
+      title: '트레이너 정보',
+      description: '트레이너 정보 페이지입니다.',
+    };
   }
 }
 
@@ -175,20 +184,20 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
   const centerInfo = getCenterById(center);
   
   // 트레이너 정보 가져오기 (센터별)
-  const trainer = await getTrainerBySlug(slug, center);
+  const trainer = await client.fetch(queries.trainerBySlug, { slug, center });
   if (!trainer) {
     notFound();
   }
 
   // 해당 트레이너의 리뷰들 가져오기 (센터별)
-  const trainerReviews = await getReviewsByTrainer(trainer.id, center);
+  const trainerReviews = await client.fetch(queries.reviewsByTrainer, { trainerId: trainer._id, center });
 
   // SEO 최적화를 위한 센터별 구조화된 데이터 생성
   const personStructuredData = generatePersonStructuredData({
     name: trainer.name,
     description: trainer.description || `${trainer.name} 트레이너`,
     slug: trainer.slug,
-    images: trainer.images
+    images: trainer.profileImages
   }, center);
 
   return (
@@ -209,7 +218,7 @@ export default async function TrainerPage({ params }: TrainerPageProps) {
               {/* 트레이너 프로필 이미지 갤러리 */}
               <div className="lg:w-1/3">
                 <TrainerImageGallery
-                  images={trainer.images || []}
+                  images={trainer.profileImages || []}
                   trainerName={trainer.name}
                 />
               </div>

@@ -1,4 +1,4 @@
-import { client, queries, urlFor, getHighQualityImageUrl, getOriginalQualityImageUrl } from './sanity'
+import { client, queries, urlFor, getHighQualityImageUrl } from './sanity'
 import type { 
   Trainer, 
   Review, 

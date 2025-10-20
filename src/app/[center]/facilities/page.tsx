@@ -4,9 +4,10 @@ import Facilities from '@/components/Facilities';
 import Link from 'next/link';
 import { generatePageMetadata } from '@/lib/metadata';
 import { isValidCenterId, getCenterById, getAllCenters } from '@/constants/centers';
-import { getCenterPageSEO, getFacilitiesByCenter } from '@/lib/sanityData';
-import { urlFor } from '@/lib/sanity';
+import { getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor, client, queries, getHighQualityImageUrl } from '@/lib/sanity';
 import { getCenterHexColor } from '@/constants/colors';
+import type { SanityFacilityRaw } from '@/types';
 
 // 센터별 시설 페이지 props 타입 정의
 interface FacilitiesPageProps {
@@ -109,55 +110,94 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
   // 센터 정보 가져오기
   const centerInfo = getCenterById(center);
   
-  // 서버 사이드에서 시설 데이터 가져오기 - CORS 에러 방지
-  const facilitiesData = await getFacilitiesByCenter(center);
-  
-  // 센터가 준비중인 경우 준비중 메시지
-  if (centerInfo.status === 'preparing') {
+  // 🎯 Sanity에서 직접 센터별 시설 데이터 가져오기 (매번 새로운 데이터 반영)
+  try {
+    const facilitiesRaw = await client.fetch(queries.facilitiesByCenter, { center });
+    
+    // 시설 데이터 변환 함수
+    const transformFacility = (raw: SanityFacilityRaw) => {
+      const getHighQualityUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
+        if (imageData?.asset?._ref) {
+          return getHighQualityImageUrl(imageData.asset, 1200, 800, 95);
+        } else if (imageData?._ref) {
+          return getHighQualityImageUrl(imageData, 1200, 800, 95);
+        } else {
+          return '/images/1f_1.jpg';
+        }
+      };
+
+      const coverUrl = getHighQualityUrl(raw.cover);
+
+      return {
+        id: raw._id,
+        title: raw.title,
+        cover: {
+          url: coverUrl,
+          alt: raw.cover?.alt || raw.title,
+          caption: raw.cover?.caption
+        },
+        description: raw.description,
+        additionalImages: raw.additionalImages?.map(img => ({
+          url: getHighQualityUrl(img),
+          alt: img.alt || raw.title,
+          caption: img.caption
+        })),
+        order: raw.order,
+        isActive: raw.isActive,
+        center: raw.center,
+        name: raw.title,
+        image: coverUrl
+      };
+    };
+
+    const facilitiesData = facilitiesRaw.map(transformFacility);
+    
+    // 센터가 준비중인 경우 준비중 메시지
+    if (centerInfo.status === 'preparing') {
+      return (
+        <div className="min-h-screen">
+          
+          <main className="pt-12 md:pt-16">
+            {/* 준비중 안내 */}
+            <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-24 md:py-32">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                  시설 안내
+                </h1>
+                <p className="text-xl text-white/90 mb-8">
+                  {centerInfo.name}의 시설 정보를 준비 중입니다
+                </p>
+                <p className="text-lg text-white/80">
+                  곧 최신식 시설과 함께 만나뵙겠습니다
+                </p>
+              </div>
+            </section>
+          </main>
+          
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen">
-        
         <main className="pt-12 md:pt-16">
-          {/* 준비중 안내 */}
-          <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-24 md:py-32">
+          {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
+          <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 시설 안내
               </h1>
-              <p className="text-xl text-white/90 mb-8">
-                {centerInfo.name}의 시설 정보를 준비 중입니다
-              </p>
-              <p className="text-lg text-white/80">
-                곧 최신식 시설과 함께 만나뵙겠습니다
+              <p className="text-xl text-white/90 max-w-3xl mx-auto">
+                {centerInfo.name}의 쾌적하고 최신식 시설을 만나보세요
               </p>
             </div>
           </section>
-        </main>
-        
-      </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen">
-      <main className="pt-12 md:pt-16">
-        {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
-        <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              시설 안내
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto">
-              {centerInfo.name}의 쾌적하고 최신식 시설을 만나보세요
-            </p>
-          </div>
-        </section>
-
-        {/* 시설 상세 정보 */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* 메인 시설 정보 - 서버에서 가져온 데이터 전달 */}
-            <Facilities facilities={facilitiesData} />
+          {/* 시설 상세 정보 */}
+          <section className="py-16 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* 메인 시설 정보 - 서버에서 가져온 데이터 전달 */}
+              <Facilities facilities={facilitiesData} />
 
             <div className="mt-16 grid lg:grid-cols-2 gap-12">
               {/* 시설 특징 상세 설명 */}
@@ -254,7 +294,7 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
                 >
                   <svg 
                     className="w-6 h-6"
-                    style={{ color: '#6b7280' }} // gray-500
+                    style={{ color: '#6b7280' }}
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -331,5 +371,9 @@ export default async function FacilitiesPage({ params }: FacilitiesPageProps) {
         </section>
       </main>
     </div>
-  );
+    );
+  } catch (error) {
+    console.error('시설 데이터 로드 실패:', error);
+    notFound();
+  }
 }

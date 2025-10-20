@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Trainers from '@/components/Trainers';
-import { getTrainersByCenter, getCenterInfoByCenterId, getActiveCenterInfo, getCenterPageSEO } from '@/lib/sanityData';
-import { urlFor } from '@/lib/sanity';
+import { getCenterInfoByCenterId, getActiveCenterInfo, getCenterPageSEO } from '@/lib/sanityData';
+import { urlFor, client, queries } from '@/lib/sanity';
 import { generatePageMetadata } from '@/lib/metadata';
+import type { SanityTrainerRaw } from '@/types';
 
 // 센터별 트레이너 페이지 props 타입 정의
 interface TrainersPageProps {
@@ -140,27 +141,48 @@ export default async function TrainersPage({ params }: TrainersPageProps) {
     );
   }
   
-  // Sanity에서 센터별 트레이너 데이터 가져오기
-  const trainers = await getTrainersByCenter(centerInfo.centerId);
+  // 🎯 Sanity에서 직접 센터별 트레이너 데이터 가져오기 (매번 새로운 데이터 반영)
+  try {
+    const trainersRaw = await client.fetch(queries.trainersByCenter, { center: centerInfo.centerId });
+    
+    // 트레이너 데이터 변환 - Sanity 원본 데이터를 클라이언트 형식으로 변환
+    const trainers = trainersRaw.map((trainer: SanityTrainerRaw) => ({
+      id: trainer._id,
+      name: trainer.name,
+      slug: trainer.slug.current,
+      images: trainer.profileImages || [],
+      summary: trainer.summary,
+      specialties: [],
+      careers: trainer.careers,
+      educationalBackground: trainer.educationalBackground,
+      certificates: trainer.certificates,
+      awards: trainer.awards,
+      socialMedia: trainer.socialMedia,
+      bookingUrl: trainer.bookingUrl
+    }));
   
-  return (
-    <div className="min-h-screen">
-      <main className="pt-12 md:pt-16">
-        {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
-        <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              전문 트레이너
-            </h1>
-            <p className="text-xl text-white/90 max-w-3xl mx-auto">
-              {centerInfo.name}의 전문 트레이너들을 소개합니다
-            </p>
-          </div>
-        </section>
+    return (
+      <div className="min-h-screen">
+        <main className="pt-12 md:pt-16">
+          {/* 페이지 헤더 - 센터별 브랜딩 색상 적용 */}
+          <section className="bg-gradient-to-br from-[var(--center-primary)] to-[var(--center-secondary)] text-white py-12 md:py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                전문 트레이너
+              </h1>
+              <p className="text-xl text-white/90 max-w-3xl mx-auto">
+                {centerInfo.name}의 전문 트레이너들을 소개합니다
+              </p>
+            </div>
+          </section>
 
-        {/* 메인 페이지의 트레이너 섹션 재활용 - 헤더 숨김 */}
-        <Trainers trainers={trainers} hideHeader={true} currentCenter={center} />
-      </main>
-    </div>
-  );
+          {/* 메인 페이지의 트레이너 섹션 재활용 - 헤더 숨김 */}
+          <Trainers trainers={trainers} hideHeader={true} currentCenter={center} />
+        </main>
+      </div>
+    );
+  } catch (error) {
+    console.error('트레이너 데이터 로드 실패:', error);
+    notFound();
+  }
 }

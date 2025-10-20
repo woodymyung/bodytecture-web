@@ -6,9 +6,12 @@ import Trainers from '@/components/Trainers';
 import Facilities from '@/components/Facilities';
 import Location from '@/components/Location';
 import Contact from '@/components/Contact';
-import { getTrainersByCenter, getReviewsByCenter, getCenterInfoByCenterId, getKeyFeaturesByCenter, getFacilitiesByCenter } from '@/lib/sanityData';
+import { getCenterInfoByCenterId } from '@/lib/sanityData';
+import { client, queries } from '@/lib/sanity';
 import { generateLocalBusinessStructuredData } from '@/lib/metadata';
 import type { CenterId } from '@/constants/centers';
+import type { SanityTrainerRaw, SanityReviewRaw, SanityFacilityRaw } from '@/types';
+import { getHighQualityImageUrl } from '@/lib/sanity';
 
 // 정적 파라미터 생성 함수 - output: export 설정 시 필요  
 export async function generateStaticParams() {
@@ -94,10 +97,78 @@ export default async function CenterPage({ params }: CenterPageProps) {
     );
   }
 
-  // Sanity에서 센터별 데이터 가져오기 (운영중인 센터만)
-  const trainers = await getTrainersByCenter(centerInfo.centerId);
-  const reviews = await getReviewsByCenter(centerInfo.centerId);
-  const facilities = await getFacilitiesByCenter(centerInfo.centerId);
+  // 🎯 Sanity에서 센터별 데이터 가져오기 (운영중인 센터만, 매번 새로운 데이터 반영)
+  // 병렬로 트레이너, 리뷰, 시설 데이터 가져오기
+  const [trainersRaw, reviewsRaw, facilitiesRaw] = await Promise.all([
+    client.fetch(queries.trainersByCenter, { center: centerInfo.centerId }),
+    client.fetch(queries.reviewsByCenter, { center: centerInfo.centerId }),
+    client.fetch(queries.facilitiesByCenter, { center: centerInfo.centerId })
+  ]);
+
+  // 데이터 변환 - Sanity 원본 데이터를 클라이언트 형식으로 변환
+  const trainers = trainersRaw.map((trainer: SanityTrainerRaw) => ({
+    id: trainer._id,
+    name: trainer.name,
+    slug: trainer.slug.current,
+    images: trainer.profileImages || [],
+    summary: trainer.summary,
+    specialties: [],
+    careers: trainer.careers,
+    educationalBackground: trainer.educationalBackground,
+    certificates: trainer.certificates,
+    awards: trainer.awards,
+    socialMedia: trainer.socialMedia,
+    bookingUrl: trainer.bookingUrl
+  }));
+
+  const reviews = reviewsRaw.map((review: SanityReviewRaw) => ({
+    id: review._id,
+    author: review.author,
+    reviewContent: review.reviewContent,
+    rating: review.rating,
+    date: review.createdAt,
+    source: review.source,
+    trainer: review.trainer
+  }));
+
+  // 시설 데이터 변환 함수 - Sanity 원본 데이터를 클라이언트 형식으로 변환
+  const transformFacility = (raw: SanityFacilityRaw) => {
+    // 고화질 이미지 URL 생성
+    const getHighQualityUrl = (imageData: { asset?: { _ref: string }; _ref?: string; alt?: string; caption?: string } | undefined) => {
+      if (imageData?.asset?._ref) {
+        return getHighQualityImageUrl(imageData.asset, 1200, 800, 95);
+      } else if (imageData?._ref) {
+        return getHighQualityImageUrl(imageData, 1200, 800, 95);
+      } else {
+        return '/images/1f_1.jpg';
+      }
+    };
+
+    const coverUrl = getHighQualityUrl(raw.cover);
+
+    return {
+      id: raw._id,
+      title: raw.title,
+      cover: {
+        url: coverUrl,
+        alt: raw.cover?.alt || raw.title,
+        caption: raw.cover?.caption
+      },
+      description: raw.description,
+      additionalImages: raw.additionalImages?.map(img => ({
+        url: getHighQualityUrl(img),
+        alt: img.alt || raw.title,
+        caption: img.caption
+      })),
+      order: raw.order,
+      isActive: raw.isActive,
+      center: raw.center,
+      name: raw.title,
+      image: coverUrl
+    };
+  };
+
+  const facilities = facilitiesRaw.map(transformFacility);
 
   // 메인 페이지용 시설 미리보기 (처음 3개 시설 선택)
   const facilitiesPreview = facilities.slice(0, 3);

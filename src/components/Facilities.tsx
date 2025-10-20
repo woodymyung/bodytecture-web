@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import InfiniteSwipeSlider, { SliderItem } from './InfiniteSwipeSlider';
 import { Facility } from '@/types';
 
@@ -16,7 +15,7 @@ interface FacilitiesProps {
   showSlider?: boolean;      // 슬라이더 표시 여부
   showStats?: boolean;       // 통계 정보 표시 여부
   cardMode?: boolean;        // 카드 모드 (메인 페이지용)
-  showViewMore?: boolean;    // "더 보기" 버튼 표시 여부
+  showViewMore?: boolean;    // "더 보기" 버튼 표시 여부 (카드 모드에서만 사용)
   currentCenter?: string;    // 현재 센터 (더 보기 링크용)
   className?: string;        // 추가 CSS 클래스
 }
@@ -26,8 +25,6 @@ const Facilities: React.FC<FacilitiesProps> = ({
   showSlider = true,
   showStats = true,
   cardMode = false,
-  showViewMore = false,
-  currentCenter,
   className = ''
 }) => {
   // 시설 데이터가 없는 경우 처리
@@ -41,8 +38,11 @@ const Facilities: React.FC<FacilitiesProps> = ({
     );
   }
 
+  // 🎯 cover.url이 없는 항목 필터링 (데이터 유효성 검사)
+  const validFacilities = facilities.filter(facility => facility.cover?.url);
+
   // 슬라이더 아이템 생성
-  const sliderItems: SliderItem[] = facilities.map((facility, index) => ({
+  const sliderItems: SliderItem[] = validFacilities.map((facility, index) => ({
     id: facility.id,
     content: (
       <div className="relative w-full h-full">
@@ -75,7 +75,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
   }));
 
   // 시설 총 개수
-  const totalFacilities = facilities.length;
+  const totalFacilities = validFacilities.length;
 
   // 카드 모드일 때는 다른 렌더링
   if (cardMode) {
@@ -91,7 +91,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
 
           {/* 시설 카드 리스트 - 이미지 위에 오버레이 형태로 배치 */}
           <div className="space-y-8">
-            {facilities.map((facility) => (
+            {validFacilities.map((facility) => (
               <div key={facility.id} className="relative overflow-hidden rounded-2xl shadow-lg group hover:shadow-xl transition-shadow duration-300">
                 {/* 배경 이미지 */}
                 <div className="relative w-full h-[24rem] md:h-[32rem] lg:h-[36rem]">
@@ -142,7 +142,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
   return (
     <section className={`py-8 ${className}`}>
       {/* 시설 이미지 슬라이더 */}
-      {showSlider && facilities.length > 0 && (
+      {showSlider && validFacilities.length > 0 && (
         <div className="mb-8">
             <InfiniteSwipeSlider
               items={sliderItems}
@@ -227,7 +227,7 @@ const Facilities: React.FC<FacilitiesProps> = ({
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-6 bg-white rounded-full px-6 py-3 shadow-sm">
               <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">{facilities.length}</div>
+              <div className="text-xl font-bold text-gray-900">{validFacilities.length}</div>
               <div className="text-xs text-gray-600">총 시설</div>
               </div>
             <div className="w-px h-6 bg-gray-300"></div>
