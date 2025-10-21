@@ -25,6 +25,24 @@ const Location: React.FC<LocationProps> = ({ centerInfo }) => {
   const socialMedia = centerInfo?.socialMedia || {};
   const naverMapUrl = socialMedia?.naverMap?.url || SOCIAL_LINKS.naverMap.url;
 
+  // 센터별 지도 이미지 경로 결정 - 센터ID를 기반으로 다른 지도 이미지 사용
+  const getMapImagePath = () => {
+    const centerId = centerInfo?.centerId;
+    switch (centerId) {
+      case 'daechi':
+        return '/images/daechi_location.png'; // 대치점 전용 지도 이미지
+      case 'wangsimni':
+      default:
+        return '/images/bodytecture_map.png'; // 왕십리점 및 기본 지도 이미지
+    }
+  };
+
+  // 센터별 지도 alt 텍스트 생성 - 센터명에 맞는 설명 제공
+  const getMapAltText = () => {
+    const centerName = centerInfo?.name || '바디텍쳐';
+    return `${centerName} 위치 지도`;
+  };
+
   // 센터별 교통편 정보 확인 - Sanity 데이터가 없으면 null
   const hasSanityData = centerInfo && centerInfo.directions;
   const directions = centerInfo?.directions;
@@ -122,8 +140,8 @@ const Location: React.FC<LocationProps> = ({ centerInfo }) => {
                 className="block relative w-full h-full group"
               >
                 <Image
-                  src="/images/bodytecture_map.png"
-                  alt="바디텍쳐 왕십리 청계점 위치 지도"
+                  src={getMapImagePath()}
+                  alt={getMapAltText()}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
